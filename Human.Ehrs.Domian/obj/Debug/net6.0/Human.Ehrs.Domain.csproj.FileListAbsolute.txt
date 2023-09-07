@@ -1,0 +1,5 @@
+D:\GitLab\Human.Chrs\Human.Ehrs.Domian\obj\Debug\net6.0\Human.Ehrs.Domain.csproj.AssemblyReference.cache
+D:\GitLab\Human.Chrs\Human.Ehrs.Domian\obj\Debug\net6.0\Human.Ehrs.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\GitLab\Human.Chrs\Human.Ehrs.Domian\obj\Debug\net6.0\Human.Ehrs.Domain.AssemblyInfoInputs.cache
+D:\GitLab\Human.Chrs\Human.Ehrs.Domian\obj\Debug\net6.0\Human.Ehrs.Domain.AssemblyInfo.cs
+D:\GitLab\Human.Chrs\Human.Ehrs.Domian\obj\Debug\net6.0\Human.Ehrs.Domain.csproj.CoreCompileInputs.cache

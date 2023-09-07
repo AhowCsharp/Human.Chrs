@@ -1,0 +1,5 @@
+D:\GitLab\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.csproj.AssemblyReference.cache
+D:\GitLab\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.GeneratedMSBuildEditorConfig.editorconfig
+D:\GitLab\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.AssemblyInfoInputs.cache
+D:\GitLab\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.AssemblyInfo.cs
+D:\GitLab\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.csproj.CoreCompileInputs.cache

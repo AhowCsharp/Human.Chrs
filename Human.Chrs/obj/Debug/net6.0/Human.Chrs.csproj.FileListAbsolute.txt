@@ -1,0 +1,6 @@
+D:\GitLab\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.csproj.AssemblyReference.cache
+D:\GitLab\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.GeneratedMSBuildEditorConfig.editorconfig
+D:\GitLab\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.AssemblyInfoInputs.cache
+D:\GitLab\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.AssemblyInfo.cs
+D:\GitLab\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.csproj.CoreCompileInputs.cache
+D:\GitLab\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.MvcApplicationPartsAssemblyInfo.cache
