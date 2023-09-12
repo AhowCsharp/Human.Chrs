@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Linq;
 
-namespace LineTag.Admin.Infra.Swagger
+namespace Human.Chrs.Infra.Swagger
 {
     public class SwaggerFileOperationFilter : IOperationFilter
     {

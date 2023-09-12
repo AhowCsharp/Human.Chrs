@@ -4,14 +4,14 @@
     "D:\\GitLab\\Human.Chrs\\Human.Repository\\Human.Repository.csproj": {}
   },
   "projects": {
-    "D:\\GitLab\\Human.Chrs\\Human.Ehrs.Domian\\Human.Ehrs.Domain.csproj": {
+    "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\GitLab\\Human.Chrs\\Human.Ehrs.Domian\\Human.Ehrs.Domain.csproj",
-        "projectName": "Human.Ehrs.Domain",
-        "projectPath": "D:\\GitLab\\Human.Chrs\\Human.Ehrs.Domian\\Human.Ehrs.Domain.csproj",
+        "projectUniqueName": "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj",
+        "projectName": "Human.Chrs.Domain",
+        "projectPath": "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj",
         "packagesPath": "C:\\Users\\j3537\\.nuget\\packages\\",
-        "outputPath": "D:\\GitLab\\Human.Chrs\\Human.Ehrs.Domian\\obj\\",
+        "outputPath": "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\j3537\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,6 +40,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "BouncyCastle.NetCore": {
+              "target": "Package",
+              "version": "[2.2.1, )"
+            },
             "LinqKit": {
               "target": "Package",
               "version": "[1.2.4, )"
@@ -129,8 +133,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\GitLab\\Human.Chrs\\Human.Ehrs.Domian\\Human.Ehrs.Domain.csproj": {
-                "projectPath": "D:\\GitLab\\Human.Chrs\\Human.Ehrs.Domian\\Human.Ehrs.Domain.csproj"
+              "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj": {
+                "projectPath": "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj"
               }
             }
           }
@@ -176,6 +180,10 @@
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.3, )"
+            },
+            "RestSharp": {
+              "target": "Package",
+              "version": "[110.2.0, )"
             },
             "Swashbuckle.AspNetCore.Swagger": {
               "target": "Package",

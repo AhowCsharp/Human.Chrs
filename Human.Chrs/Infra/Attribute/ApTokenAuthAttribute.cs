@@ -1,10 +1,6 @@
-﻿using LineTag.Core.Domain.Admin;
-using LineTag.Core.Domain.DTO;
-using LineTag.Core.Models;
-using LineTag.Core.Repositories;
-using LineTag.Core.Services;
-using LineTag.Core.Utility;
-using LineTag.Infrastructure.EF;
+﻿using Human.Chrs.Domain.Helper;
+using Human.Chrs.Domain.IRepository;
+using Human.Chrs.Domain.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LineTag.Admin.Infra.Attribute
+namespace Human.Chrs.Infra.Attribute
 {
     public class ApTokenAuthAttribute : System.Attribute, IAsyncAuthorizationFilter
     {
@@ -26,7 +22,7 @@ namespace LineTag.Admin.Infra.Attribute
 
             if (!context.HttpContext.Request.Headers.ContainsKey("X-Ap-Token"))
             {
-                var response = new ResultErrorResponse(ResultError.D0301TOKEN);
+                var response = new { error = "Unauthorized", code = "沒有權杖" };
                 context.Result = new ObjectResult(response) { StatusCode = StatusCodes.Status401Unauthorized };
 
                 return;
@@ -42,17 +38,16 @@ namespace LineTag.Admin.Infra.Attribute
                 {
                     var userService = (UserService)context.HttpContext.RequestServices.GetService(typeof(UserService));
                     userService.SetApToken(apToken);
-                    userService.SetSkipLineUserId(ap.SkipLineUserId);
                 }
                 else
                 {
-                    var response = new ResultErrorResponse(ResultError.D0303TOKEN);
+                    var response = new { error = "Token Expired", code = "權杖過期" };
                     context.Result = new ObjectResult(response) { StatusCode = StatusCodes.Status401Unauthorized };
                 }
             }
             catch
             {
-                var response = new ResultErrorResponse(ResultError.D0304TOKEN);
+                var response = new { error = "Token Error", code = "權杖錯誤" };
                 context.Result = new ObjectResult(response) { StatusCode = StatusCodes.Status401Unauthorized };
             }
         }

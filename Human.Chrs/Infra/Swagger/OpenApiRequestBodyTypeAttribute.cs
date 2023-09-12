@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LineTag.Admin.Infra.Swagger
+namespace Human.Chrs.Infra.Swagger
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class OpenApiRequestBodyTypeAttribute : System.Attribute

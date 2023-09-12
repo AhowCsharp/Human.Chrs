@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace LineTag.Admin.Infra.Swagger
+namespace Human.Chrs.Infra.Swagger
 {
     public class SwaggerBodyTypeOperationFilter : IOperationFilter
     {

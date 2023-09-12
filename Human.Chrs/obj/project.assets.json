@@ -91,6 +91,19 @@
           }
         }
       },
+      "BouncyCastle.NetCore/2.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/BouncyCastle.Crypto.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/BouncyCastle.Crypto.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "dotMorten.Microsoft.SqlServer.Types/1.5.0": {
         "type": "package",
         "dependencies": {
@@ -1766,10 +1779,11 @@
           }
         }
       },
-      "Human.Ehrs.Domain/1.0.0": {
+      "Human.Chrs.Domain/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
+          "BouncyCastle.NetCore": "2.2.1",
           "LinqKit": "1.2.4",
           "Microsoft.AspNetCore.Mvc.Abstractions": "2.2.0",
           "Microsoft.EntityFrameworkCore": "7.0.10",
@@ -1783,10 +1797,10 @@
           "Swashbuckle.AspNetCore.SwaggerUI": "6.5.0"
         },
         "compile": {
-          "bin/placeholder/Human.Ehrs.Domain.dll": {}
+          "bin/placeholder/Human.Chrs.Domain.dll": {}
         },
         "runtime": {
-          "bin/placeholder/Human.Ehrs.Domain.dll": {}
+          "bin/placeholder/Human.Chrs.Domain.dll": {}
         }
       },
       "Human.Repository/1.0.0": {
@@ -1796,12 +1810,13 @@
           "AutoMapper.Extensions.ExpressionMapping": "6.0.4",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
           "EFCore.BulkExtensions": "7.1.6",
-          "Human.Ehrs.Domain": "1.0.0",
+          "Human.Chrs.Domain": "1.0.0",
           "LinqKit": "1.2.4",
           "Microsoft.EntityFrameworkCore": "7.0.10",
           "Microsoft.EntityFrameworkCore.SqlServer": "7.0.10",
           "NLog.Web.AspNetCore": "5.3.4",
           "Newtonsoft.Json": "13.0.3",
+          "RestSharp": "110.2.0",
           "Swashbuckle.AspNetCore.Swagger": "6.5.0",
           "Swashbuckle.AspNetCore.SwaggerGen": "6.5.0",
           "Swashbuckle.AspNetCore.SwaggerUI": "6.5.0"
@@ -1895,6 +1910,21 @@
         "azureicon.png",
         "lib/netstandard2.0/Azure.Identity.dll",
         "lib/netstandard2.0/Azure.Identity.xml"
+      ]
+    },
+    "BouncyCastle.NetCore/2.2.1": {
+      "sha512": "yfWn8JYPc4rkeM2kcsCqFVFOvwCuuQvIieGtQWcjoWxOioeznXQB3M/GmHgbCWbJjc8ycrwGhZaZPiasifYi4A==",
+      "type": "package",
+      "path": "bouncycastle.netcore/2.2.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "bouncycastle.netcore.2.2.1.nupkg.sha512",
+        "bouncycastle.netcore.nuspec",
+        "lib/net45/BouncyCastle.Crypto.dll",
+        "lib/net45/BouncyCastle.Crypto.xml",
+        "lib/netstandard2.0/BouncyCastle.Crypto.dll",
+        "lib/netstandard2.0/BouncyCastle.Crypto.xml"
       ]
     },
     "dotMorten.Microsoft.SqlServer.Types/1.5.0": {
@@ -4650,10 +4680,10 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Human.Ehrs.Domain/1.0.0": {
+    "Human.Chrs.Domain/1.0.0": {
       "type": "project",
-      "path": "../Human.Ehrs.Domian/Human.Ehrs.Domain.csproj",
-      "msbuildProject": "../Human.Ehrs.Domian/Human.Ehrs.Domain.csproj"
+      "path": "../Human.Chrs.Domian/Human.Chrs.Domain.csproj",
+      "msbuildProject": "../Human.Chrs.Domian/Human.Chrs.Domain.csproj"
     },
     "Human.Repository/1.0.0": {
       "type": "project",
@@ -4663,13 +4693,13 @@
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "Human.Ehrs.Domain >= 1.0.0",
       "Human.Repository >= 1.0.0",
       "LinqKit >= 1.2.4",
       "Microsoft.EntityFrameworkCore >= 7.0.10",
       "Microsoft.EntityFrameworkCore.SqlServer >= 7.0.10",
       "NLog.Web.AspNetCore >= 5.3.4",
       "Newtonsoft.Json >= 13.0.3",
+      "RestSharp >= 110.2.0",
       "Swashbuckle.AspNetCore >= 6.2.3",
       "Swashbuckle.AspNetCore.Swagger >= 6.5.0",
       "Swashbuckle.AspNetCore.SwaggerGen >= 6.5.0",
@@ -4703,9 +4733,6 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "D:\\GitLab\\Human.Chrs\\Human.Ehrs.Domian\\Human.Ehrs.Domain.csproj": {
-              "projectPath": "D:\\GitLab\\Human.Chrs\\Human.Ehrs.Domian\\Human.Ehrs.Domain.csproj"
-            },
             "D:\\GitLab\\Human.Chrs\\Human.Repository\\Human.Repository.csproj": {
               "projectPath": "D:\\GitLab\\Human.Chrs\\Human.Repository\\Human.Repository.csproj"
             }
@@ -4741,6 +4768,10 @@
           "Newtonsoft.Json": {
             "target": "Package",
             "version": "[13.0.3, )"
+          },
+          "RestSharp": {
+            "target": "Package",
+            "version": "[110.2.0, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",

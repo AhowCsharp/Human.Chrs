@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "VIUXVgZwr0PyeOm0qmVP1CzG5an8zlaAT/BaOhbqMsRsxfASiFHcrSvfPZTPzVPi7nn3ZkqqBc+l2f3j4JA+Tw==",
+  "dgSpecHash": "8LXP9SoST8KLPgZZO6fwecj+kSXAIaaqFhmjruFE1KNvamaujf0/nCcfTlNTCISXzf8s8Nn6sVOnjlh8xHrUIg==",
   "success": true,
   "projectFilePath": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\Human.Chrs.csproj",
   "expectedPackageFiles": [
@@ -9,6 +9,7 @@
     "C:\\Users\\j3537\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
+    "C:\\Users\\j3537\\.nuget\\packages\\bouncycastle.netcore\\2.2.1\\bouncycastle.netcore.2.2.1.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\dotmorten.microsoft.sqlserver.types\\1.5.0\\dotmorten.microsoft.sqlserver.types.1.5.0.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\efcore.bulkextensions\\7.1.6\\efcore.bulkextensions.7.1.6.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\entityframework\\6.3.0\\entityframework.6.3.0.nupkg.sha512",

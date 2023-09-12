@@ -1,10 +1,11 @@
-﻿using LineTag.Admin.Infra.Attribute;
+﻿using Human.Chrs.Infra.Attribute;
+using Human.Chrs.Infra.Swagger;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LineTag.Admin.Infra.Swagger
+namespace Human.Chrs.Infra.Swagger
 {
     public class AddRequireHeaderParameter : IOperationFilter
     {
@@ -26,21 +27,21 @@ namespace LineTag.Admin.Infra.Swagger
                 });
             }
 
-            if (context.ApiDescription.CustomAttributes().Any(x => x.GetType() == typeof(ApOfficialAccountIdAuthAttribute)))
+            if (context.ApiDescription.CustomAttributes().Any(x => x.GetType() == typeof(ApCompanyIdAuthAttribute)))
             {
                 operation.Parameters.Add(new OpenApiParameter
                 {
 #if DEBUG
                     Example = new Microsoft.OpenApi.Any.OpenApiString("1"),
 #endif
-                    Name = "X-Ap-OfficialAccountId",
-                    Description = "OfficialAccountId",
+                    Name = "X-Ap-CompanyId",
+                    Description = "CompanyId",
                     In = ParameterLocation.Header,
                     Required = true
                 });
             }
 
-            if (context.ApiDescription.CustomAttributes().Any(x => x.GetType() == typeof(ApLineUserIdAuthAttribute)))
+            if (context.ApiDescription.CustomAttributes().Any(x => x.GetType() == typeof(ApUserIdAuthAttribute)))
             {
                 operation.Parameters.Add(new OpenApiParameter
                 {
@@ -48,7 +49,7 @@ namespace LineTag.Admin.Infra.Swagger
                     //Example = new Microsoft.OpenApi.Any.OpenApiString("U234a729732732d29f0b1ff1dd9ab4baa,AN34pC0dnUUujrtOLziJrqq8USq6k3/fwEqppe5BajwOFMCrQYHTuHUFbAb/I6/x0A=="), // Loki Tao (working)
                     Example = new Microsoft.OpenApi.Any.OpenApiString("U15a60bd071495d2eab95538de8878e7a,AOn4BfwIeqT9XSC6Qb95lS7PXl9ItSqgnponovl0RnJCZs4GnEJkV3bkswu0ve+okA=="), // 阿棻
 #endif
-                    Name = "X-Ap-LineUserId",
+                    Name = "X-Ap-UserId",
                     Description = "UserID",
                     In = ParameterLocation.Header,
                     Required = false
