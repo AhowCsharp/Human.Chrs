@@ -9,13 +9,7 @@ using Human.Chrs.Domain.SeedWork;
 
 namespace Human.Chrs.Domain.IRepository.Base
 {
-    public interface IRepository<TDTO>
-        where TDTO : IDTO
-    {
-        Task<TDTO> InsertAsync(TDTO dto);
-    }
-
-    public interface IRepository<TDTO, TIdentity> : IRepository<TDTO>
+    public interface IRepository<TDTO, TIdentity>
         where TDTO : IDTO
     {
         Task<TDTO> UpdateAsync(TDTO dto);

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using Human.Chrs.Domain.DTO;
+using Human.Repository.EF;
 
 namespace Human.Repository.AutoMapper
 {
@@ -10,8 +11,8 @@ namespace Human.Repository.AutoMapper
     {
         public AutoMapperConfiguration()
         {
-            //CreateMap<Admin, NewAdminDTO>()
-            //    .ForMember(x => x.AuthType, x => x.MapFrom(o => AuthType.Get(o.AuthType)));
+            CreateMap<Staff, StaffDTO>().ReverseMap();
+            CreateMap<Company, CompanyDTO>().ReverseMap();
         }
 
         //private IEnumerable<NewMessageDTO> GetMessageList(string json)

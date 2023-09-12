@@ -17,7 +17,7 @@ builder.Services.AddHttpContextAccessor();
 IConfiguration configuration = builder.Configuration;
 
 builder.Services.Configure<ChrsConfig>(configuration.GetSection("HumanConfig"));
-var connectionString = builder.Configuration.GetConnectionString("EIP");
+var connectionString = configuration.GetConnectionString("EIP");
 builder.Services.AddDbContext<HumanChrsContext>(options => options.UseSqlServer(connectionString));
 
 //builder.Services.AddScoped<IDbConnection, SqlConnection>(serviceProvider => {
@@ -29,7 +29,7 @@ builder.Services.AddDbContext<HumanChrsContext>(options => options.UseSqlServer(
 builder.Services.AddMvc().AddJsonOptions(option => option.JsonSerializerOptions.PropertyNamingPolicy = null);
 
 // Swagger
-var environmentName = builder.Configuration.GetSection("HumanConfig")["EnvironmentName"];
+var environmentName = configuration.GetSection("HumanConfig")["EnvironmentName"];
 
 builder.Services.AddSwaggerGen(swagger =>
 {
@@ -65,7 +65,6 @@ builder.Services.AddSingleton(provider =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 

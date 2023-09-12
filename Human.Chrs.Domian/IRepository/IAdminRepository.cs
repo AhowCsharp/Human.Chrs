@@ -7,6 +7,8 @@ namespace Human.Chrs.Domain.IRepository
 {
     public interface IAdminRepository : IRepository<AdminDTO, int>
     {
-        Task<AdminDTO> GetAvailableAdminAsync(int companyId, string userId);
+        Task<AdminDTO> GetAvailableAdminAsync(int companyId, string account);
+
+        Task<AdminDTO> VerifyLoginAdminAsync(string account, string password);
     }
 }

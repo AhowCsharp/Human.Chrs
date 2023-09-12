@@ -26,7 +26,7 @@ namespace Human.Chrs.Infra.Attribute
 
             var userService = (UserService)context.HttpContext.RequestServices.GetService(typeof(UserService));
 
-            if (!context.HttpContext.Request.Headers.ContainsKey("X-Ap-UserId"))
+            if (!context.HttpContext.Request.Headers.ContainsKey("X-Ap-Account"))
             {
                 var response = new { error = "Unauthorized", code = "未註冊會員" };
                 context.Result = new ObjectResult(response) { StatusCode = StatusCodes.Status401Unauthorized };
@@ -39,9 +39,9 @@ namespace Human.Chrs.Infra.Attribute
                 var loginDomain = context.HttpContext.RequestServices.GetService(typeof(LoginDomain)) as LoginDomain;
                 var x_CompanyId = context.HttpContext.Request.Headers["X-Ap-CompanyId"].ToString();
                 var CompanyId = Convert.ToInt32(x_CompanyId);
-                var UserId = context.HttpContext.Request.Headers["X-Ap-LineUserId"].ToString();
+                var Account = context.HttpContext.Request.Headers["X-Ap-Account"].ToString();
 
-                var admin = await loginDomain.GetAdminWithSaltHashAsync(CompanyId, UserId);
+                var admin = await loginDomain.GetAdminWithSaltHashAsync(CompanyId, Account);
                 if (admin == null)
                 {
                     var response = new { error = "Unauthorized", code = "未註冊會員" };
