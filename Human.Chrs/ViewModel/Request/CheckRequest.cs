@@ -13,9 +13,13 @@ namespace Human.Chrs.Domain.DTO
 
         public int StaffId { get; set; }
 
+        public int DepartmentId { get; set; }
+
         public DateTime CheckTime { get; set; }
 
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+
+        public string Memo { get; set; }
     }
 }

@@ -15,11 +15,13 @@ public partial class Company
 
     public string Address { get; set; }
 
-    public string Coordinate { get; set; }
-
     public DateTime? ContractStartDate { get; set; }
 
     public DateTime? ContractEndDate { get; set; }
 
     public int? ContractType { get; set; }
+
+    public double Latitude { get; set; }
+
+    public double Longitude { get; set; }
 }

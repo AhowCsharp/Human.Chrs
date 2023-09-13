@@ -13,3 +13,18 @@ D:\GitLab\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.dll
 D:\GitLab\Human.Chrs\Human.Repository\obj\Debug\net6.0\refint\Human.Repository.dll
 D:\GitLab\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.pdb
 D:\GitLab\Human.Chrs\Human.Repository\obj\Debug\net6.0\ref\Human.Repository.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\bin\Debug\net6.0\Human.Repository.deps.json
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\bin\Debug\net6.0\Human.Repository.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\bin\Debug\net6.0\Human.Repository.pdb
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\bin\Debug\net6.0\Human.Chrs.Domain.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\bin\Debug\net6.0\Human.Chrs.Domain.pdb
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.csproj.AssemblyReference.cache
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.AssemblyInfoInputs.cache
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.AssemblyInfo.cs
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.csproj.CoreCompileInputs.cache
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.csproj.CopyComplete
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\obj\Debug\net6.0\refint\Human.Repository.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\obj\Debug\net6.0\Human.Repository.pdb
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Repository\obj\Debug\net6.0\ref\Human.Repository.dll

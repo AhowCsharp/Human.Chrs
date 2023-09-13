@@ -12,8 +12,11 @@ namespace Human.Repository.AutoMapper
         public AutoMapperConfiguration()
         {
             CreateMap<Staff, StaffDTO>().ReverseMap();
+            CreateMap<Admin, AdminDTO>().ReverseMap();
             CreateMap<Company, CompanyDTO>().ReverseMap();
-            CreateMap<CheckRecords, CheckRecordsDTO>().ReverseMap();
+            CreateMap<CompanyRule, CompanyRuleDTO>().ReverseMap();
+            CreateMap<CheckRecords, CheckRecordsDTO>().ReverseMap(); 
+            CreateMap<OverTimeLog, OverTimeLogDTO>().ReverseMap();
         }
 
         //private IEnumerable<NewMessageDTO> GetMessageList(string json)

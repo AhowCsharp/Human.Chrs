@@ -23,21 +23,13 @@ namespace LineTag.Infrastructure.Repositories
         {
         }
 
-        public async Task<bool> CheckInAsync(CheckRecordsDTO dto)
+        public async Task<CheckRecordsDTO> GetCheckRecordAsync(int companyId,int staffId)
         {
-            var today = DateTimeHelper.TaipeiNow.Date;
-            var tomorrow = today.AddDays(1);
-            var data = await _context.CheckRecords.AnyAsync(x => x.CompanyId == dto.CompanyId && x.StaffId == dto.StaffId &&
-            x.CheckInTime >= today && x.CheckInTime < tomorrow);
-            if (data)
-            {
-                return false;
-            }
-            else
-            {
-                await InsertAsync(dto);
-                return true;
-            }
+            DateTime today = DateTimeHelper.TaipeiNow.Date; // 取得台北今天的日期，時間設為 00:00:00
+            DateTime tomorrow = DateTimeHelper.TaipeiNow.Date.AddDays(1);
+            var data = await _context.CheckRecords.FirstOrDefaultAsync(x => x.CompanyId == companyId && x.StaffId == staffId &&
+                        x.CheckInTime >= today && x.CheckInTime < tomorrow);
+            return _mapper.Map<CheckRecordsDTO>(data);
         }
     }
 }

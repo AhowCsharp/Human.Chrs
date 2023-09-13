@@ -21,6 +21,10 @@ public partial class HumanChrsContext : DbContext
 
     public virtual DbSet<Company> Company { get; set; }
 
+    public virtual DbSet<CompanyRule> CompanyRule { get; set; }
+
+    public virtual DbSet<OverTimeLog> OverTimeLog { get; set; }
+
     public virtual DbSet<PersonalDetail> PersonalDetail { get; set; }
 
     public virtual DbSet<Staff> Staff { get; set; }
@@ -83,6 +87,18 @@ public partial class HumanChrsContext : DbContext
                 .HasMaxLength(50);
             entity.Property(e => e.ContractEndDate).HasColumnType("date");
             entity.Property(e => e.ContractStartDate).HasColumnType("date");
+        });
+
+        modelBuilder.Entity<CompanyRule>(entity =>
+        {
+            entity.Property(e => e.DepartmentName).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<OverTimeLog>(entity =>
+        {
+            entity.Property(e => e.Inspector).HasMaxLength(50);
+            entity.Property(e => e.OvertimeDate).HasColumnType("date");
+            entity.Property(e => e.ValidateDate).HasColumnType("date");
         });
 
         modelBuilder.Entity<PersonalDetail>(entity =>

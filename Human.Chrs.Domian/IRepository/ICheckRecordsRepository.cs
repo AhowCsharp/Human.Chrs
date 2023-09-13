@@ -9,6 +9,6 @@ namespace Human.Chrs.Domain.IRepository
 {
     public interface ICheckRecordsRepository : IRepository<CheckRecordsDTO, int>
     {
-        Task<bool> CheckInAsync(CheckRecordsDTO dto);
+        Task<CheckRecordsDTO> GetCheckRecordAsync(int companyId, int staffId);
     }
 }

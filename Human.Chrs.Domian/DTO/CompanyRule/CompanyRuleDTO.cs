@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Human.Chrs.Domain.SeedWork;
+
+namespace Human.Chrs.Domain.DTO
+{
+    public partial class CompanyRuleDTO : IDTO
+    {
+        public int Id { get; set; }
+
+        public int CompanyId { get; set; }
+
+        public int DepartmentId { get; set; }
+
+        public TimeSpan CheckInStartTime { get; set; }
+
+        public TimeSpan CheckInEndTime { get; set; }
+
+        public TimeSpan CheckOutStartTime { get; set; }
+
+        public TimeSpan CheckOutEndTime { get; set; }
+
+        public string DepartmentName { get; set; }
+    }
+}

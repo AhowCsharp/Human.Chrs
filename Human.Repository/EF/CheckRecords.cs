@@ -13,19 +13,23 @@ public partial class CheckRecords
 
     public int StaffId { get; set; }
 
-    public DateTime CheckInTime { get; set; }
+    public DateTime? CheckInTime { get; set; }
 
-    public DateTime CheckOutTime { get; set; }
-
-    public int IsLate { get; set; }
-
-    public int? LateTime { get; set; }
-
-    public string CheckInCoordinate { get; set; }
-
-    public string CheckOutCoordinate { get; set; }
+    public DateTime? CheckOutTime { get; set; }
 
     public string CheckInMemo { get; set; }
 
     public string CheckOutMemo { get; set; }
+
+    public int? IsCheckInOutLocation { get; set; }
+
+    public int? IsCheckOutOutLocation { get; set; }
+
+    public int? IsCheckInLate { get; set; }
+
+    public int? CheckInLateTimes { get; set; }
+
+    public int? CheckOutEarlyTimes { get; set; }
+
+    public int? IsCheckOutEarly { get; set; }
 }

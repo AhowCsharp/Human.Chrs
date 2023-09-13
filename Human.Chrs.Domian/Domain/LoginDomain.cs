@@ -32,6 +32,7 @@ namespace Human.Chrs.Domain
         public async Task<CommonResult<LoginDTO>> LoginVerifyAsync(string account, string password)
         {
             var result = new CommonResult<LoginDTO>();
+            int companyId = 0;
             LoginDTO? loginUserInfo = new LoginDTO();
             StaffDTO? staff = await _staffRepository.VerifyLoginStaffAsync(account, password);
             AdminDTO? adminUser = staff == null ? await _adminRepository.VerifyLoginAdminAsync(account, password) : null;
@@ -49,6 +50,7 @@ namespace Human.Chrs.Domain
                 loginUserInfo.StaffName = adminUser.UserName;
                 loginUserInfo.CompanyId = adminUser.CompanyId;
                 loginUserInfo.Id = adminUser.Id;
+                companyId = adminUser.CompanyId;
             }
             else if (staff != null)
             {
@@ -58,9 +60,23 @@ namespace Human.Chrs.Domain
                 loginUserInfo.StaffName = staff.StaffName;
                 loginUserInfo.CompanyId = staff.CompanyId;
                 loginUserInfo.Id = staff.Id;
+                companyId = staff.CompanyId;
+            }
+            var company = await _companyRepository.GetAsync(companyId);
+            if (company == null)
+            {
+                result.AddError("公司尚未註冊");
+                return result;
+            }
+            if(DateTimeHelper.TaipeiNow < company.ContractStartDate || DateTimeHelper.TaipeiNow > company.ContractEndDate)
+            {
+                result.AddError("貴司權限已過期");
+                return result;
             }
 
-            result.Data = loginUserInfo;  // 假設CommonResult有一個Data屬性用於儲存結果
+            result.Data = loginUserInfo;
+            
+            // 假設CommonResult有一個Data屬性用於儲存結果
             return result;
         }
 

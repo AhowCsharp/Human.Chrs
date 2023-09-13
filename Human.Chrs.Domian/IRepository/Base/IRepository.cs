@@ -19,5 +19,7 @@ namespace Human.Chrs.Domain.IRepository.Base
         Task DeleteAsync(TIdentity id);
 
         Task<IEnumerable<TDTO>> UpdateAsync(IEnumerable<TDTO> dtos);
+
+        Task<TDTO> InsertAsync(TDTO dto);
     }
 }

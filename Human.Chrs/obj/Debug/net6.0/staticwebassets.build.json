@@ -1,19 +1,11 @@
 {
   "Version": 1,
-  "Hash": "mhwqiXLY7NLbqORtF2g799RBqwkH59vB3lqkGymRc6E=",
+  "Hash": "sjgd2Uj3pDgtSF9YmipmLt1c3ACcLEU85kvN1q90ueU=",
   "Source": "Human.Chrs",
   "BasePath": "_content/Human.Chrs",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [
-    {
-      "Name": "Human.Chrs\\wwwroot",
-      "Source": "Human.Chrs",
-      "ContentRoot": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\",
-      "BasePath": "_content/Human.Chrs",
-      "Pattern": "**"
-    }
-  ],
+  "DiscoveryPatterns": [],
   "Assets": []
 }

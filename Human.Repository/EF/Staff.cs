@@ -76,4 +76,6 @@ public partial class Staff
     public string StaffName { get; set; }
 
     public int? Auth { get; set; }
+
+    public int? DepartmentId { get; set; }
 }
