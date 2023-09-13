@@ -64,68 +64,6 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        //public async Task<CommonResult<VerifySignInDTO>> LoginVerifyAsync(string code)
-
-        //{
-        //    var result = new CommonResult<VerifySignInDTO>();
-
-        //    LineLoginToken lineLoginToken = null;
-
-        //    try
-        //    {
-        //        lineLoginToken = await _adminRepository.GetLoginTokenAsync(code, _config.LoginUrl);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex.Message);
-        //        result.AddError("登入資訊Code錯誤");
-        //    }
-
-        //    if (lineLoginToken != null)
-        //    {
-        //        var profile = await _adminRepository.GetLoginProfileAsync(lineLoginToken.id_token);
-        //        if (string.IsNullOrEmpty(profile.sub))
-        //        {
-        //            result.AddError("id_token資料錯誤");
-        //        }
-
-        //        var aos = await _adminRepository.GetAvailableAdminListAsync(profile.sub);
-
-        //        if (!aos.Any())
-        //        {
-        //            result.AddError("使用者帳號不存在");
-        //        }
-
-        //        if (!result.Success)
-        //        {
-        //            return result;
-        //        }
-
-        //        foreach (var dto in aos.ToList())
-        //        {
-        //            dto.Name = profile.name;
-        //            dto.PictureUrl = profile.picture;
-        //        }
-
-        //        await _adminRepository.UpdateByLineProfileAsync(aos);
-
-        //        var admin = aos.OrderByDescending(x => x.LastUseDate).FirstOrDefault();
-
-        //        var useridSalted = CryptHelper.SaltHash(admin.UserId);
-
-        //        var response = new VerifySignInDTO()
-        //        {
-        //            // 加鹽雜湊UserId
-        //            LineUserId = $"{admin.UserId},{useridSalted}",
-        //            OfficialAccountId = admin.OfficialAccountId
-        //        };
-
-        //        result.Data = response;
-        //    }
-
-        //    return result;
-        //}
-
         public async Task<AdminDTO> GetAdminWithSaltHashAsync(int companyId, string account)
         {
             var account_datas = account.Split(",");

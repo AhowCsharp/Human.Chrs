@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="ViewModel\Response\" />
-    <Folder Include="ViewModel\Request\" />
     <Folder Include="wwwroot\Upload\" />
   </ItemGroup>
 
