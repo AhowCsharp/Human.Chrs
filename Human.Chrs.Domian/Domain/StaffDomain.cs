@@ -18,6 +18,7 @@ namespace Human.Chrs.Domain
         private readonly IOverTimeLogRepository _overTimeLogRepository;
         private readonly IVacationLogRepository _vacationLogRepository;
         private readonly UserService _userService;
+        private readonly GeocodingService _geocodingService;
 
         public StaffDomain(
             ILogger<StaffDomain> logger,
@@ -28,6 +29,7 @@ namespace Human.Chrs.Domain
             ICompanyRepository companyRepository,
             IVacationLogRepository vacationLogRepository,
             IOverTimeLogRepository overTimeLogRepository,
+            GeocodingService geocodingService,
             UserService userService)
         {
             _logger = logger;
@@ -39,6 +41,7 @@ namespace Human.Chrs.Domain
             _vacationLogRepository = vacationLogRepository;
             _checkRecordsRepository = checkRecordsRepository;
             _overTimeLogRepository = overTimeLogRepository;
+            _geocodingService = geocodingService;
             _userService = userService;
         }
 
@@ -66,6 +69,26 @@ namespace Human.Chrs.Domain
             result.Data = await _vacationLogRepository.GetTop5VacationLogsAsync(user.Id, user.CompanyId); ;
 
             return result;
+        }
+
+        public async Task<(double,double)> GetStaffViewInfoAsync()
+        {
+            var result = new CommonResult<Object>();
+            var user = _userService.GetCurrentUser();
+            var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
+            if (!exist)
+            {
+                result.AddError("沒找到對應的員工");
+                //return result;
+            }
+            var company = await _companyRepository.GetAsync(user.CompanyId);
+            if (company == null)
+            {
+                result.AddError("沒找到對應的公司");
+                //return result;
+            }
+            var xx = await _geocodingService.GetCoordinates(company.Address);
+            return xx;
         }
     }
 }

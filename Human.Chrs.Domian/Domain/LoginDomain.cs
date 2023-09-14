@@ -47,11 +47,11 @@ namespace Human.Chrs.Domain
                 var useridSalted = CryptHelper.SaltHashPlus(adminUser.Id.ToString());
                 loginUserInfo.Auth = adminUser.Auth;
                 loginUserInfo.StaffNo = adminUser.Id.ToString();
-                loginUserInfo.StaffAccount = adminUser.Account;
                 loginUserInfo.StaffName = adminUser.UserName;
                 loginUserInfo.CompanyId = adminUser.CompanyId;
                 loginUserInfo.UserId = $"{adminUser.Id},{useridSalted}";
                 loginUserInfo.AdminToken = adminUser.AdminToken;
+                loginUserInfo.DepartmentId = adminUser.DepartmentId;
                 companyId = adminUser.CompanyId;
             }
             else if (staff != null)
@@ -59,10 +59,10 @@ namespace Human.Chrs.Domain
                 var useridSalted = CryptHelper.SaltHashPlus(staff.Id.ToString());
                 loginUserInfo.Auth = staff.Auth;
                 loginUserInfo.StaffNo = staff.StaffNo;
-                loginUserInfo.StaffAccount = staff.StaffAccount;
                 loginUserInfo.StaffName = staff.StaffName;
                 loginUserInfo.CompanyId = staff.CompanyId;
                 loginUserInfo.UserId = $"{staff.Id},{useridSalted}";
+                loginUserInfo.DepartmentId = staff.DepartmentId;
                 companyId = staff.CompanyId;
             }
             var company = await _companyRepository.GetAsync(companyId);
@@ -104,24 +104,21 @@ namespace Human.Chrs.Domain
             else if (adminUser != null)
             {
                 loginUserInfo.Auth = adminUser.Auth;
-                loginUserInfo.StaffAccount = adminUser.Account;
                 loginUserInfo.StaffName = adminUser.UserName;
                 loginUserInfo.CompanyId = adminUser.CompanyId;
                 loginUserInfo.DepartmentId = adminUser.DepartmentId;
                 loginUserInfo.StaffNo = adminUser.StaffNo;
                 loginUserInfo.AdminToken = adminUser.AdminToken;
-                loginUserInfo.Id = adminUser.Id;
             }
             else if (staff != null)
             {
                 loginUserInfo.Auth = staff.Auth;
                 loginUserInfo.StaffNo = staff.StaffNo;
-                loginUserInfo.StaffAccount = staff.StaffAccount;
                 loginUserInfo.StaffName = staff.StaffName;
                 loginUserInfo.DepartmentId = staff.DepartmentId;
                 loginUserInfo.CompanyId = staff.CompanyId;
-                loginUserInfo.Id = staff.Id;
             }
+            loginUserInfo.UserId = user_datas[0];
             result.Data = loginUserInfo;
 
             return result;

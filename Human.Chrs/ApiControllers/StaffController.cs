@@ -8,16 +8,19 @@ namespace LineTag.Admin.ApiControllers
     /// <response code="401">登入失敗、驗證失敗</response>
     [Route("check")]
     [ApiController]
-    public class CheckInAndOutController : BaseController
+    public class StaffController : BaseController
     {
-        private readonly ILogger<CheckInAndOutController> _logger;
+        private readonly ILogger<StaffController> _logger;
         private readonly CheckInAndOutDomain _checkdomain;
+        private readonly StaffDomain _staffdomain;
 
-        public CheckInAndOutController(
-            ILogger<CheckInAndOutController> logger,
+        public StaffController(
+            ILogger<StaffController> logger,
+            StaffDomain staffdomain,
             CheckInAndOutDomain checkdomain)
         {
             _logger = logger;
+            _staffdomain = staffdomain;
             _checkdomain = checkdomain;
         }
 
@@ -120,6 +123,44 @@ namespace LineTag.Admin.ApiControllers
                 {
                     return BadRequest(result.Errors);
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(CheckDistance));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 驗證登入資訊
+        /// </summary>
+        /// <param name="loginRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("view")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetStaffViewInfoAsync()
+        {
+            try
+            {
+                var result = await _staffdomain.GetStaffViewInfoAsync();
+                return Ok(result);
+                //if (result.Success)
+                //{
+                //    return Ok(result.Data);
+                //}
+                //else
+                //{
+                //    return BadRequest(result.Errors);
+                //}
             }
             catch (Exception ex)
             {

@@ -38,7 +38,7 @@ namespace Human.Chrs.Domain.Services
         {
             _user = _user ?? new CurrentUser();
 
-            _user.Id = dto.Id;
+            _user.Id = Convert.ToInt32(dto.UserId);
             _user.CompanyId = dto.CompanyId;
             _user.StaffName = dto.StaffName;
             _user.DepartmentId = dto.DepartmentId;

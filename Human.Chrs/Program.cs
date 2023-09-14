@@ -62,9 +62,11 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<UserService>();
+builder.Services.AddTransient<GeocodingService>();
 
 builder.Services.AddScoped<AdminDomain>();
 builder.Services.AddScoped<CheckInAndOutDomain>();
+builder.Services.AddScoped<StaffDomain>();
 builder.Services.AddScoped<LoginDomain>();
 
 builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
@@ -74,6 +76,8 @@ builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ICompanyRuleRepository, CompanyRuleRepository>();
 builder.Services.AddScoped<IOverTimeLogRepository, OverTimeLogRepository>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
+builder.Services.AddScoped<IPersonalDetailRepository, PersonalDetailRepository>();
+builder.Services.AddScoped<IVacationLogRepository, VacationLogRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 builder.Services.AddHttpClient();

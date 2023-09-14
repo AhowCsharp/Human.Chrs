@@ -7,9 +7,8 @@ using Human.Chrs.Domain.SeedWork;
 
 namespace Human.Chrs.Domain.DTO
 {
-    public class LoginDTO : IDTO
+    public class LoginDTO
     {
-        public int Id { get; set; }
 
         public string UserId { get; set; }
 
@@ -18,8 +17,6 @@ namespace Human.Chrs.Domain.DTO
         public string StaffNo { get; set; }
 
         public int CompanyId { get; set; }
-
-        public string StaffAccount { get; set; }
 
         public int? DepartmentId { get; set; }
 
