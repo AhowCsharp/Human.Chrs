@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Human.Chrs.Domain.DTO
+namespace Human.Chrs.ViewModel.Request
 {
     public class DistanceRequest
     {

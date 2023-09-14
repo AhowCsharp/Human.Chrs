@@ -7,11 +7,11 @@ using Human.Chrs.Domain.SeedWork;
 
 namespace Human.Chrs.Domain.DTO
 {
-    public partial class StaffDTO : IDTO
+    public class StaffDTO : IDTO
     {
         public int Id { get; set; }
 
-        public string StaffNo { get; set; }
+        public string StaffNo { get; set; } //員編
 
         public int CompanyId { get; set; }
 
@@ -19,31 +19,31 @@ namespace Human.Chrs.Domain.DTO
 
         public string StaffPassWord { get; set; }
 
-        public string Department { get; set; }
+        public string Department { get; set; }//部門名稱
 
-        public DateTime EntryDate { get; set; }
+        public DateTime EntryDate { get; set; }//入職日
 
-        public DateTime? ResignationDate { get; set; }
+        public DateTime? ResignationDate { get; set; }//註冊日
 
-        public string LevelPosition { get; set; }
+        public string LevelPosition { get; set; }//職等
 
-        public string WorkPosition { get; set; }
+        public string WorkPosition { get; set; }//工作地點
 
         public string Email { get; set; }
 
         public int Status { get; set; }
 
-        public int? SpecialRestDays { get; set; }
+        public int? SpecialRestDays { get; set; }//特修
 
-        public int? SickDays { get; set; }
+        public int? SickDays { get; set; }//病假
 
-        public int? ThingDays { get; set; }
+        public int? ThingDays { get; set; }//市價
 
-        public int? ChildbirthDays { get; set; }
+        public int? ChildbirthDays { get; set; }//育嬰假
 
-        public int? DeathDays { get; set; }
+        public int? DeathDays { get; set; }//喪假
 
-        public int? MarryDays { get; set; }
+        public int? MarryDays { get; set; }//婚嫁
 
         public int? SpecialRestHours { get; set; }
 
@@ -78,5 +78,7 @@ namespace Human.Chrs.Domain.DTO
         public string StaffName { get; set; }
 
         public int? Auth { get; set; }
+
+        public int DepartmentId { get; set; }
     }
 }

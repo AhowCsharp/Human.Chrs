@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Human.Repository.EF;
 using Human.Chrs.Domain.DTO;
+using Human.Chrs.Domain.CommonModels;
 
 namespace LineTag.Infrastructure.Repositories
 {
@@ -22,9 +23,9 @@ namespace LineTag.Infrastructure.Repositories
         {
         }
 
-        public async Task<AdminDTO> GetAvailableAdminAsync(int companyId, string account)
+        public async Task<AdminDTO> GetAvailableAdminAsync(int id, int companyId)
         {
-            var data = await _context.Admin.SingleOrDefaultAsync(x => x.Account == account && x.CompanyId == companyId);
+            var data = await _context.Admin.SingleOrDefaultAsync(x => x.Id == id && x.CompanyId == companyId);
 
             return _mapper.Map<AdminDTO>(data);
         }
@@ -34,6 +35,13 @@ namespace LineTag.Infrastructure.Repositories
             var data = await _context.Admin.SingleOrDefaultAsync(x => x.Account == account && x.Password == password);
 
             return _mapper.Map<AdminDTO>(data);
+        }
+
+        public async Task<bool> VerifyAdminTokenAsync(CurrentUser admin)
+        {
+            var data = await _context.Admin.AnyAsync(x => x.Id == admin.Id && x.CompanyId == admin.CompanyId && x.AdminToken == admin.AdminToken);
+
+            return data;
         }
     }
 }

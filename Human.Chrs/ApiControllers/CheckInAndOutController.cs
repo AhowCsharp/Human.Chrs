@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Human.Chrs.Domain;
 using Human.Chrs.Infra.Attribute;
-using Human.Chrs.Domain.DTO;
+using Human.Chrs.ViewModel.Request;
 
 namespace LineTag.Admin.ApiControllers
 {
     /// <response code="401">登入失敗、驗證失敗</response>
-    [Route("login")]
+    [Route("check")]
     [ApiController]
     public class CheckInAndOutController : BaseController
     {
@@ -31,14 +31,14 @@ namespace LineTag.Admin.ApiControllers
         /// <response code="500">內部錯誤</response>
         /// <returns></returns>
         [HttpPost]
-        [Route("check")]
+        [Route("checkinout")]
         [ApTokenAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> CheckInAndOut(CheckRequest checkRequest)
         {
             try
             {
-                var result = await _checkdomain.CheckInOutAsync(checkRequest.CompanyId, checkRequest.StaffId, checkRequest.DepartmentId, checkRequest.Longitude, checkRequest.Latitude, checkRequest.Memo);
+                var result = await _checkdomain.CheckInOutAsync(checkRequest.Longitude, checkRequest.Latitude, checkRequest.Memo);
 
                 if (result.Success)
                 {
@@ -67,7 +67,7 @@ namespace LineTag.Admin.ApiControllers
         /// <response code="500">內部錯誤</response>
         /// <returns></returns>
         [HttpPost]
-        [Route("check")]
+        [Route("overtime")]
         [ApTokenAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RegisterOverTime(OverTimeRequest overtimeRequest)

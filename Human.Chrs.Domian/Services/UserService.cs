@@ -34,27 +34,16 @@ namespace Human.Chrs.Domain.Services
             _user.CompanyId = companyId;
         }
 
-        public void SetCurrentUser(CurrentUser user)
-        {
-            _user = _user ?? new CurrentUser();
-
-            _user.Id = user.Id;
-            _user.CompanyId = user.CompanyId;
-            _user.StaffName = user.StaffName;
-            _user.WorkPosition = user.WorkPosition;
-            _user.Email = user.Email;
-            _user.Auth = user.Auth;
-        }
-
-        public void SetCurrentAdmin(AdminDTO dto)
+        public void SetCurrentUser(LoginDTO dto)
         {
             _user = _user ?? new CurrentUser();
 
             _user.Id = dto.Id;
             _user.CompanyId = dto.CompanyId;
-            _user.StaffName = dto.UserName;
-            _user.WorkPosition = dto.WorkPosition;
-            _user.Auth = dto.Permissions;
+            _user.StaffName = dto.StaffName;
+            _user.DepartmentId = dto.DepartmentId;
+            _user.AdminToken = dto.AdminToken;
+            _user.Auth = dto.Auth;
         }
     }
 }

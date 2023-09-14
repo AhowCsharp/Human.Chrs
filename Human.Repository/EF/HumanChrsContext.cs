@@ -36,7 +36,11 @@ public partial class HumanChrsContext : DbContext
         modelBuilder.Entity<Admin>(entity =>
         {
             entity.Property(e => e.Account).IsRequired();
+            entity.Property(e => e.AdminToken).IsRequired();
             entity.Property(e => e.Password).IsRequired();
+            entity.Property(e => e.StaffNo)
+                .IsRequired()
+                .HasMaxLength(50);
             entity.Property(e => e.UserName)
                 .IsRequired()
                 .HasMaxLength(50);

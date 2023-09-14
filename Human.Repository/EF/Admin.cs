@@ -17,7 +17,13 @@ public partial class Admin
 
     public string Password { get; set; }
 
-    public int? Permissions { get; set; }
+    public int? Auth { get; set; }
 
     public string WorkPosition { get; set; }
+
+    public string StaffNo { get; set; }
+
+    public int DepartmentId { get; set; }
+
+    public string AdminToken { get; set; }
 }

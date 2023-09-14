@@ -7,7 +7,7 @@ using Human.Chrs.Domain.SeedWork;
 
 namespace Human.Chrs.Domain.DTO
 {
-    public partial class OverTimeLogDTO : IDTO
+    public class OverTimeLogDTO : IDTO
     {
         public int Id { get; set; }
 

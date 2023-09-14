@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Human.Chrs.Domain.SeedWork;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,13 @@ using System.Threading.Tasks;
 
 namespace Human.Chrs.Domain.DTO
 {
-    public class ApplicationDTO
+    public class ApplicationDTO : IDTO
     {
+        /// <summary>
+        /// 編號
+        /// </summary>
+        public int Id { get; set; }
+
         /// <summary>
         /// 帳號
         /// </summary>

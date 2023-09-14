@@ -41,13 +41,13 @@ namespace Human.Chrs.Infra.Swagger
                 });
             }
 
-            if (context.ApiDescription.CustomAttributes().Any(x => x.GetType() == typeof(ApUserIdAuthAttribute)))
+            if (context.ApiDescription.CustomAttributes().Any(x => x.GetType() == typeof(ApUserAuthAttribute)))
             {
                 operation.Parameters.Add(new OpenApiParameter
                 {
 #if DEBUG
                     //Example = new Microsoft.OpenApi.Any.OpenApiString("U234a729732732d29f0b1ff1dd9ab4baa,AN34pC0dnUUujrtOLziJrqq8USq6k3/fwEqppe5BajwOFMCrQYHTuHUFbAb/I6/x0A=="), // Loki Tao (working)
-                    Example = new Microsoft.OpenApi.Any.OpenApiString("U15a60bd071495d2eab95538de8878e7a,AOn4BfwIeqT9XSC6Qb95lS7PXl9ItSqgnponovl0RnJCZs4GnEJkV3bkswu0ve+okA=="), // 阿棻
+                    Example = new Microsoft.OpenApi.Any.OpenApiString("1,AOzIDKKxvfFR0U4c3TCM0I8hSQFfUedykUFrwRpSKB5OXdM5UhYCqDF8zx1Zl5CjOVyhelXFcKoklf3rVyjN+coil22SgF5YYSwATAiKN5gH"), // 阿棻
 #endif
                     Name = "X-Ap-UserId",
                     Description = "UserID",

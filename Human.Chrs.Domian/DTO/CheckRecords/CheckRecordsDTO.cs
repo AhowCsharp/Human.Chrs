@@ -7,7 +7,7 @@ using Human.Chrs.Domain.SeedWork;
 
 namespace Human.Chrs.Domain.DTO
 {
-    public partial class CheckRecordsDTO : IDTO
+    public class CheckRecordsDTO : IDTO
     {
         public int Id { get; set; }
 

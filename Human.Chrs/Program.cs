@@ -9,6 +9,11 @@ using System.Data.SqlClient;
 using RestSharp;
 using Human.Chrs.Infra.Swagger;
 using Human.Repository.AutoMapper;
+using Human.Chrs.Domain.IRepository;
+using Human.Repository.Repository;
+using LineTag.Infrastructure.Repositories;
+using Human.Chrs.Domain.Services;
+using Human.Chrs.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 var env = builder.Environment;
@@ -17,14 +22,15 @@ builder.Services.AddHttpContextAccessor();
 IConfiguration configuration = builder.Configuration;
 
 builder.Services.Configure<ChrsConfig>(configuration.GetSection("HumanConfig"));
-var connectionString = configuration.GetConnectionString("EIP");
+var connectionString = configuration.GetConnectionString("SqlConnection");
 builder.Services.AddDbContext<HumanChrsContext>(options => options.UseSqlServer(connectionString));
 
-//builder.Services.AddScoped<IDbConnection, SqlConnection>(serviceProvider => {
-//    SqlConnection conn = new SqlConnection();
-//    conn.ConnectionString = connectionString;
-//    return conn;
-//});
+builder.Services.AddScoped<IDbConnection, SqlConnection>(serviceProvider =>
+{
+    SqlConnection conn = new SqlConnection();
+    conn.ConnectionString = connectionString;
+    return conn;
+});
 // 保持屬性名稱不變
 builder.Services.AddMvc().AddJsonOptions(option => option.JsonSerializerOptions.PropertyNamingPolicy = null);
 
@@ -54,6 +60,20 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod(); // 允許任何來源請求API
         });
 });
+
+builder.Services.AddScoped<UserService>();
+
+builder.Services.AddScoped<AdminDomain>();
+builder.Services.AddScoped<CheckInAndOutDomain>();
+builder.Services.AddScoped<LoginDomain>();
+
+builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<ICheckRecordsRepository, CheckRecordsRepository>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+builder.Services.AddScoped<ICompanyRuleRepository, CompanyRuleRepository>();
+builder.Services.AddScoped<IOverTimeLogRepository, OverTimeLogRepository>();
+builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 builder.Services.AddHttpClient();

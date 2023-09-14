@@ -5,18 +5,14 @@ using Microsoft.EntityFrameworkCore;
 using Human.Chrs.Domain.IRepository;
 using System.Threading.Tasks;
 using Human.Repository.EF;
+using Human.Repository.Repository.Base;
 
 namespace Human.Repository.Repository
 {
-    public class ApplicationRepository : IApplicationRepository
+    public class ApplicationRepository : BaseRepository<Application, ApplicationDTO, int>, IApplicationRepository
     {
-        private readonly IMapper _mapper;
-        private readonly HumanChrsContext _context;
-
-        public ApplicationRepository(IMapper mapper, HumanChrsContext context)
+        public ApplicationRepository(IMapper mapper, HumanChrsContext context) : base(mapper, context)
         {
-            _mapper = mapper;
-            _context = context;
         }
 
         public async Task<ApplicationDTO> GetAsync(string token)

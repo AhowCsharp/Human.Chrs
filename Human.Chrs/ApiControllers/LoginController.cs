@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Human.Chrs.Domain;
 using Human.Chrs.Infra.Attribute;
-using Human.Chrs.Domain.DTO;
+using Human.Chrs.ViewModel.Request;
 
 namespace LineTag.Admin.ApiControllers
 {

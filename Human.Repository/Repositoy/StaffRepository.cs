@@ -28,5 +28,26 @@ namespace LineTag.Infrastructure.Repositories
 
             return _mapper.Map<StaffDTO>(data);
         }
+
+        public async Task<bool> VerifyExistStaffAsync(int staffId, int companyId)
+        {
+            var data = await _context.Staff.AnyAsync(x => x.Id == staffId && x.CompanyId == companyId && x.Status == 1);
+
+            return data;
+        }
+
+        public async Task<StaffDTO> GetUsingStaffAsync(int staffId, int companyId)
+        {
+            var data = await _context.Staff.SingleOrDefaultAsync(x => x.Id == staffId && x.CompanyId == companyId && x.Status == 1);
+
+            return _mapper.Map<StaffDTO>(data);
+        }
+
+        public async Task<IEnumerable<StaffDTO>> GetAllStaffAsync(int staffId, int companyId)
+        {
+            var data = await _context.Staff.Where(x => x.Id == staffId && x.CompanyId == companyId).ToListAsync();
+
+            return data.Select(_mapper.Map<StaffDTO>);
+        }
     }
 }

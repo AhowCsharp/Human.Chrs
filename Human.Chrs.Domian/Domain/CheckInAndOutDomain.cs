@@ -9,7 +9,7 @@ namespace Human.Chrs.Domain
 {
     public class CheckInAndOutDomain
     {
-        private readonly ILogger<CheckInAndOutDomain> _logger; 
+        private readonly ILogger<CheckInAndOutDomain> _logger;
         private readonly IAdminRepository _adminRepository;
         private readonly ICompanyRepository _companyRepository;
         private readonly ICompanyRuleRepository _companyRuleRepository;
@@ -39,29 +39,29 @@ namespace Human.Chrs.Domain
             _userService = userService;
         }
 
-        public async Task<CommonResult> CheckInOutAsync(int companyId,int staffId, int departmentId,double longitude, double latitude,string memo)
+        public async Task<CommonResult> CheckInOutAsync(double longitude, double latitude, string memo)
         {
             var result = new CommonResult();
             var record = new CheckRecordsDTO();
+            var user = _userService.GetCurrentUser();
             int exceededMinutes = 0;
-            var company = await _companyRepository.GetAsync(companyId);
+            var company = await _companyRepository.GetAsync(user.CompanyId);
             if (company == null)
             {
                 result.AddError("找不到該公司");
                 return result;
             }
-            var rule = await _companyRuleRepository.GetCompanyRuleAsync(companyId, departmentId);
+            var rule = await _companyRuleRepository.GetCompanyRuleAsync(user.CompanyId, user.DepartmentId.Value);
             if (rule == null)
             {
                 result.AddError("該公司尚未設置規則");
                 return result;
             }
-            var checkLog = await _checkRecordsRepository.GetCheckRecordAsync(companyId, staffId);
+            var checkLog = await _checkRecordsRepository.GetCheckRecordAsync(user.CompanyId, user.Id);
             if (checkLog == null)
             {
-
-                record.CompanyId = companyId;
-                record.StaffId = staffId;
+                record.CompanyId = user.CompanyId;
+                record.StaffId = user.Id;
                 record.IsCheckInOutLocation = DistanceHelper.CalculateDistance(company.Latitude, company.Longitude, latitude, longitude) > 200 ? 1 : 0;
                 record.CheckInTime = DateTimeHelper.TaipeiNow;
                 record.CheckInMemo = memo;
@@ -90,7 +90,7 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult> InsertOverTimeAsync(int staffId, int companyId, int hours,string reason)
+        public async Task<CommonResult> InsertOverTimeAsync(int staffId, int companyId, int hours, string reason)
         {
             var result = new CommonResult();
             var overTime = new OverTimeLogDTO();
@@ -110,7 +110,7 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult<bool>> CheckDistanceAsync(int companyId,double longitude, double latitude)
+        public async Task<CommonResult<bool>> CheckDistanceAsync(int companyId, double longitude, double latitude)
         {
             var result = new CommonResult<bool>();
             var company = await _companyRepository.GetAsync(companyId);
