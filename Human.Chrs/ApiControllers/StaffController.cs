@@ -36,6 +36,8 @@ namespace LineTag.Admin.ApiControllers
         [HttpPost]
         [Route("checkinout")]
         [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> CheckInAndOut(CheckRequest checkRequest)
         {
@@ -72,6 +74,8 @@ namespace LineTag.Admin.ApiControllers
         [HttpPost]
         [Route("overtime")]
         [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> RegisterOverTime(OverTimeRequest overtimeRequest)
         {
@@ -108,6 +112,8 @@ namespace LineTag.Admin.ApiControllers
         [HttpGet]
         [Route("distance")]
         [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> CheckDistance(DistanceRequest checkRequest)
         {

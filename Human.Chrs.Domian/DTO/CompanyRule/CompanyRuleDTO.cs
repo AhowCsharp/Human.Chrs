@@ -26,5 +26,7 @@ namespace Human.Chrs.Domain.DTO
         public string DepartmentName { get; set; }
 
         public string AfternoonTime { get; set; }
+
+        public int NeedWorkMinute { get; set; }
     }
 }

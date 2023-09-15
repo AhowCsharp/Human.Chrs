@@ -73,18 +73,24 @@ namespace Human.Chrs.Domain
                 record.CheckInLateTimes = exceededMinutes;
                 await _checkRecordsRepository.InsertAsync(record);
             }
-            else
+            else if (checkLog.CheckOutTime == null)
             {
                 checkLog.IsCheckOutOutLocation = DistanceHelper.CalculateDistance(company.Latitude, company.Longitude, latitude, longitude) > 200 ? 1 : 0;
                 checkLog.CheckOutTime = DateTimeHelper.TaipeiNow;
                 checkLog.CheckOutMemo = memo;
                 checkLog.IsCheckOutEarly = DateTimeHelper.TaipeiNow.TimeOfDay < rule.CheckOutStartTime ? 1 : 0;
+                checkLog.IsCheckOutEarly = DateTimeHelper.TaipeiNow.TimeOfDay < checkLog.CheckInTime.Value.TimeOfDay.Add(TimeSpan.FromHours(rule.NeedWorkMinute / 60)) ? 1 : 0;
                 if (checkLog.IsCheckOutEarly == 1)
                 {
-                    exceededMinutes = (int)(rule.CheckOutStartTime - DateTimeHelper.TaipeiNow.TimeOfDay).TotalMinutes;
+                    exceededMinutes = (int)(checkLog.CheckInTime.Value.TimeOfDay.Add(TimeSpan.FromHours(rule.NeedWorkMinute / 60)) - DateTimeHelper.TaipeiNow.TimeOfDay).TotalMinutes;
                 }
                 checkLog.CheckOutEarlyTimes = exceededMinutes;
                 await _checkRecordsRepository.UpdateAsync(checkLog);
+            }
+            else
+            {
+                result.AddError("今天已打過卡");
+                return result;
             }
 
             return result;

@@ -107,11 +107,41 @@ namespace Human.Chrs.Domain
                 return result;
             }
             staffView.IsOverLocation = (_checkInAndOutDomain.CheckDistanceAsync(company, longitude, latitude)).Data;
-            staffView.IsCheckIn = checkRecord != null;
-            staffView.CheckInRange = rule.CheckInStartTime.ToString() + "~" + rule.CheckInEndTime.ToString();
-            staffView.CheckOutRange = rule.CheckOutStartTime.ToString() + "~" + rule.CheckOutEndTime.ToString();
+            staffView.CheckInRange = rule.CheckInStartTime.ToString(@"hh\:mm") + "~" + rule.CheckInEndTime.ToString(@"hh\:mm");
+            staffView.CheckOutRange = rule.CheckOutStartTime.ToString(@"hh\:mm") + "~" + rule.CheckOutEndTime.ToString(@"hh\:mm");
             staffView.AfternoonRange = rule.AfternoonTime;
+            staffView.CompanyName = company.CompanyName;
             staffView.VacationLogDTOs = await _vacationLogRepository.GetTop5VacationLogsAsync(user.Id, user.CompanyId);
+            if (checkRecord != null)
+            {
+                if (checkRecord.CheckInTime != null && checkRecord.CheckOutTime == null)
+                {
+                    staffView.IsCheckIn = true;
+                    staffView.ChekinTime = checkRecord.CheckInTime;
+                    staffView.IsCheckOut = false;
+                }
+                else if (checkRecord.CheckInTime != null && checkRecord.CheckOutTime != null)
+                {
+                    staffView.IsCheckIn = true;
+                    staffView.ChekinTime = checkRecord.CheckInTime;
+                    staffView.IsCheckOut = true;
+                    staffView.ChekOutTime = checkRecord.CheckOutTime;
+                }
+            }
+            else 
+            {
+                staffView.IsCheckIn = false;
+                staffView.IsCheckOut = false;
+            }
+            staffView.CheckInStartHour = int.Parse(staffView.CheckInRange.Split('~', ':')[0]);
+            staffView.CheckInStartMinute = int.Parse(staffView.CheckInRange.Split('~', ':')[1]);
+            staffView.CheckInEndHour = int.Parse(staffView.CheckInRange.Split('~', ':')[2]);
+            staffView.CheckInEndMinute = int.Parse(staffView.CheckInRange.Split('~', ':')[3]);
+            staffView.CheckOutStartHour = int.Parse(staffView.CheckOutRange.Split('~', ':')[0]);
+            staffView.CheckOutStartMinute = int.Parse(staffView.CheckOutRange.Split('~', ':')[1]);
+            staffView.CheckOutEndHour = int.Parse(staffView.CheckOutRange.Split('~', ':')[2]);
+            staffView.CheckOutEndMinute = int.Parse(staffView.CheckOutRange.Split('~', ':')[3]);
+
             result.Data = staffView;
             return result;
         }

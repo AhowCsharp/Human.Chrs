@@ -24,4 +24,6 @@ public partial class CompanyRule
     public string DepartmentName { get; set; }
 
     public string AfternoonTime { get; set; }
+
+    public int NeedWorkMinute { get; set; }
 }

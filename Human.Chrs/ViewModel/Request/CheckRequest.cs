@@ -9,14 +9,6 @@ namespace Human.Chrs.ViewModel.Request
 {
     public class CheckRequest
     {
-        public int CompanyId { get; set; }
-
-        public int StaffId { get; set; }
-
-        public int DepartmentId { get; set; }
-
-        public DateTime CheckTime { get; set; }
-
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
