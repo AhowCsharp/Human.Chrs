@@ -51,7 +51,7 @@ namespace Human.Chrs.Domain
                 result.AddError("找不到該公司");
                 return result;
             }
-            var rule = await _companyRuleRepository.GetCompanyRuleAsync(user.CompanyId, user.DepartmentId.Value);
+            var rule = await _companyRuleRepository.GetCompanyRuleAsync(user.CompanyId, user.DepartmentId);
             if (rule == null)
             {
                 result.AddError("該公司尚未設置規則");
@@ -119,6 +119,16 @@ namespace Human.Chrs.Domain
                 result.AddError("找不到該公司");
                 return result;
             }
+            double distance = DistanceHelper.CalculateDistance(company.Latitude, company.Longitude, latitude, longitude);
+            bool overDistance = distance > 200;
+            result.Data = overDistance;
+
+            return result;
+        }
+
+        public CommonResult<bool> CheckDistanceAsync(CompanyDTO company, double longitude, double latitude)
+        {
+            var result = new CommonResult<bool>();
             double distance = DistanceHelper.CalculateDistance(company.Latitude, company.Longitude, latitude, longitude);
             bool overDistance = distance > 200;
             result.Data = overDistance;

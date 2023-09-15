@@ -12,7 +12,7 @@ namespace Human.Chrs.Domain.CommonModels
 
         public string StaffName { get; set; }
 
-        public int? DepartmentId { get; set; }
+        public int DepartmentId { get; set; }
 
         public string Email { get; set; }
 

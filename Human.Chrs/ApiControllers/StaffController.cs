@@ -6,7 +6,7 @@ using Human.Chrs.ViewModel.Request;
 namespace LineTag.Admin.ApiControllers
 {
     /// <response code="401">登入失敗、驗證失敗</response>
-    [Route("check")]
+    [Route("staff")]
     [ApiController]
     public class StaffController : BaseController
     {
@@ -147,20 +147,19 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuth]
         [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetStaffViewInfoAsync()
+        public async Task<IActionResult> GetStaffViewInfoAsync(double longitude, double latitude)
         {
             try
             {
-                var result = await _staffdomain.GetStaffViewInfoAsync();
-                return Ok(result);
-                //if (result.Success)
-                //{
-                //    return Ok(result.Data);
-                //}
-                //else
-                //{
-                //    return BadRequest(result.Errors);
-                //}
+                var result = await _staffdomain.GetStaffViewInfoAsync(longitude, latitude);
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
             }
             catch (Exception ex)
             {

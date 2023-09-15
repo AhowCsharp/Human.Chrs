@@ -9,7 +9,6 @@ namespace Human.Chrs.Domain.DTO
 {
     public class LoginDTO
     {
-
         public string UserId { get; set; }
 
         public string StaffName { get; set; }
@@ -18,7 +17,7 @@ namespace Human.Chrs.Domain.DTO
 
         public int CompanyId { get; set; }
 
-        public int? DepartmentId { get; set; }
+        public int DepartmentId { get; set; }
 
         public int? Auth { get; set; }
 

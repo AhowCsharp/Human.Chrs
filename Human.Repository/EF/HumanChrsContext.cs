@@ -95,6 +95,7 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<CompanyRule>(entity =>
         {
+            entity.Property(e => e.AfternoonTime).HasMaxLength(50);
             entity.Property(e => e.DepartmentName).HasMaxLength(50);
         });
 

@@ -22,4 +22,6 @@ public partial class CompanyRule
     public TimeSpan CheckOutEndTime { get; set; }
 
     public string DepartmentName { get; set; }
+
+    public string AfternoonTime { get; set; }
 }

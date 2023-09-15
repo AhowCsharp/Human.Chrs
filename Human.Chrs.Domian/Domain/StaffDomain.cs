@@ -17,6 +17,7 @@ namespace Human.Chrs.Domain
         private readonly IStaffRepository _staffRepository;
         private readonly IOverTimeLogRepository _overTimeLogRepository;
         private readonly IVacationLogRepository _vacationLogRepository;
+        private readonly CheckInAndOutDomain _checkInAndOutDomain;
         private readonly UserService _userService;
         private readonly GeocodingService _geocodingService;
 
@@ -29,6 +30,7 @@ namespace Human.Chrs.Domain
             ICompanyRepository companyRepository,
             IVacationLogRepository vacationLogRepository,
             IOverTimeLogRepository overTimeLogRepository,
+            CheckInAndOutDomain checkInAndOutDomain,
             GeocodingService geocodingService,
             UserService userService)
         {
@@ -41,6 +43,7 @@ namespace Human.Chrs.Domain
             _vacationLogRepository = vacationLogRepository;
             _checkRecordsRepository = checkRecordsRepository;
             _overTimeLogRepository = overTimeLogRepository;
+            _checkInAndOutDomain = checkInAndOutDomain;
             _geocodingService = geocodingService;
             _userService = userService;
         }
@@ -71,24 +74,46 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<(double,double)> GetStaffViewInfoAsync()
+        public async Task<CommonResult<StaffViewDTO>> GetStaffViewInfoAsync(double longitude, double latitude)
         {
-            var result = new CommonResult<Object>();
+            var result = new CommonResult<StaffViewDTO>();
+            var staffView = new StaffViewDTO();
             var user = _userService.GetCurrentUser();
             var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
             if (!exist)
             {
                 result.AddError("沒找到對應的員工");
-                //return result;
+                return result;
             }
             var company = await _companyRepository.GetAsync(user.CompanyId);
             if (company == null)
             {
                 result.AddError("沒找到對應的公司");
-                //return result;
+                return result;
             }
-            var xx = await _geocodingService.GetCoordinates(company.Address);
-            return xx;
+
+            if (company.Latitude == 0 || company.Longitude == 0)
+            {
+                var location = await _geocodingService.GetCoordinates(company.Address);
+                company.Latitude = location.Latitude;
+                company.Longitude = location.Longitude;
+                await _companyRepository.UpdateAsync(company);
+            }
+            var checkRecord = await _checkRecordsRepository.GetCheckRecordAsync(user.CompanyId, user.Id);
+            var rule = await _companyRuleRepository.GetCompanyRuleAsync(user.CompanyId, user.DepartmentId);
+            if (rule == null)
+            {
+                result.AddError("未找到貴司登記的上班規定");
+                return result;
+            }
+            staffView.IsOverLocation = (_checkInAndOutDomain.CheckDistanceAsync(company, longitude, latitude)).Data;
+            staffView.IsCheckIn = checkRecord != null;
+            staffView.CheckInRange = rule.CheckInStartTime.ToString() + "~" + rule.CheckInEndTime.ToString();
+            staffView.CheckOutRange = rule.CheckOutStartTime.ToString() + "~" + rule.CheckOutEndTime.ToString();
+            staffView.AfternoonRange = rule.AfternoonTime;
+            staffView.VacationLogDTOs = await _vacationLogRepository.GetTop5VacationLogsAsync(user.Id, user.CompanyId);
+            result.Data = staffView;
+            return result;
         }
     }
 }

@@ -24,5 +24,7 @@ namespace Human.Chrs.Domain.DTO
         public TimeSpan CheckOutEndTime { get; set; }
 
         public string DepartmentName { get; set; }
+
+        public string AfternoonTime { get; set; }
     }
 }
