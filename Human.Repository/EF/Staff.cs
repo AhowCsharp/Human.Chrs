@@ -31,29 +31,29 @@ public partial class Staff
 
     public int Status { get; set; }
 
-    public int? SpecialRestDays { get; set; }
+    public int SpecialRestDays { get; set; }
 
-    public int? SickDays { get; set; }
+    public int SickDays { get; set; }
 
-    public int? ThingDays { get; set; }
+    public int ThingDays { get; set; }
 
-    public int? ChildbirthDays { get; set; }
+    public int ChildbirthDays { get; set; }
 
-    public int? DeathDays { get; set; }
+    public int DeathDays { get; set; }
 
-    public int? MarryDays { get; set; }
+    public int MarryDays { get; set; }
 
-    public int? SpecialRestHours { get; set; }
+    public int SpecialRestHours { get; set; }
 
-    public int? SickHours { get; set; }
+    public int SickHours { get; set; }
 
-    public int? ThingHours { get; set; }
+    public int ThingHours { get; set; }
 
-    public int? ChildbirthHours { get; set; }
+    public int ChildbirthHours { get; set; }
 
-    public int? DeathHours { get; set; }
+    public int DeathHours { get; set; }
 
-    public int? MarryHours { get; set; }
+    public int MarryHours { get; set; }
 
     public int? PersonalDetailId { get; set; }
 

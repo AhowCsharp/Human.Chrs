@@ -65,7 +65,7 @@ namespace LineTag.Admin.ApiControllers
         /// <summary>
         /// 報加班
         /// </summary>
-        /// <param name="checkRequest">請求資料</param>
+        /// <param name="overtimeRequest">請求資料</param>
         /// <response code="200">OK</response>
         /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
         /// <response code="403">無此權限</response>
@@ -81,7 +81,7 @@ namespace LineTag.Admin.ApiControllers
         {
             try
             {
-                var result = await _checkdomain.InsertOverTimeAsync(overtimeRequest.StaffId, overtimeRequest.CompanyId, overtimeRequest.Hours, overtimeRequest.Reason);
+                var result = await _checkdomain.InsertOverTimeAsync(overtimeRequest.ChooseDate,overtimeRequest.Hours, overtimeRequest.Reason);
 
                 if (result.Success)
                 {
@@ -101,9 +101,85 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
-        /// 驗證登入資訊
+        /// 報加班
         /// </summary>
-        /// <param name="loginRequest">請求資料</param>
+        /// <param name="vacationRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("vacation")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ApplyVacation(VacationRequest vacationRequest)
+        {
+            try
+            {
+                var result = await _staffdomain.ApplyVacationAsync(vacationRequest.Type, vacationRequest.StartDate, vacationRequest.EndDate, vacationRequest.Hours, vacationRequest.Reason);
+
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(ApplyVacation));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 備忘錄註冊
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("event")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> EventAdd(EventRequest eventRequest)
+        {
+            try
+            {
+                var result = await _staffdomain.EventAddAsync(eventRequest.EventStartDate,eventRequest.EventEndDate,eventRequest.StartTime,eventRequest.EndTime,eventRequest.Title,eventRequest.Detail, eventRequest.LevelStatus);
+
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(EventAdd));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 驗證地理位置
+        /// </summary>
+        /// <param name="ditanceRequest">請求資料</param>
         /// <response code="200">OK</response>
         /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
         /// <response code="403">無此權限</response>
@@ -115,11 +191,11 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuth]
         [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> CheckDistance(DistanceRequest checkRequest)
+        public async Task<IActionResult> CheckDistance(DistanceRequest ditanceRequest)
         {
             try
             {
-                var result = await _checkdomain.CheckDistanceAsync(checkRequest.CompanyId, checkRequest.Longitude, checkRequest.Latitude);
+                var result = await _checkdomain.CheckDistanceAsync(ditanceRequest.CompanyId, ditanceRequest.Longitude, ditanceRequest.Latitude);
 
                 if (result.Success)
                 {
@@ -137,9 +213,45 @@ namespace LineTag.Admin.ApiControllers
                 return ServerError500();
             }
         }
-
         /// <summary>
-        /// 驗證登入資訊
+        /// 備忘錄讀取
+        /// </summary>
+        /// <param name="ditanceRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("eventdetails")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> EventsGet()
+        {
+            try
+            {
+                var result = await _staffdomain.EventsGetAsync();
+
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(EventsGet));
+
+                return ServerError500();
+            }
+        }
+        /// <summary>
+        /// 登入後畫面
         /// </summary>
         /// <param name="loginRequest">請求資料</param>
         /// <response code="200">OK</response>

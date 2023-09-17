@@ -96,18 +96,19 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult> InsertOverTimeAsync(int staffId, int companyId, int hours, string reason)
+        public async Task<CommonResult> InsertOverTimeAsync(DateTime chooseDate,int hours, string reason)
         {
             var result = new CommonResult();
             var overTime = new OverTimeLogDTO();
-            var exsit = await _overTimeLogRepository.GetOverTimeLogAsync(staffId, companyId);
+            var user = _userService.GetCurrentUser();
+            var exsit = await _overTimeLogRepository.GetOverTimeLogAsync(user.Id, user.CompanyId);
             if (exsit != null)
             {
                 result.AddError("今日已報過加班");
                 return result;
             }
-            overTime.StaffId = staffId;
-            overTime.CompanyId = companyId;
+            overTime.StaffId = user.Id;
+            overTime.CompanyId = user.CompanyId;
             overTime.OverHours = hours;
             overTime.IsValidate = 0;
             overTime.OvertimeDate = DateTimeHelper.TaipeiNow.Date;

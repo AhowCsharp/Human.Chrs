@@ -25,12 +25,21 @@ namespace LineTag.Infrastructure.Repositories
         public async Task<IEnumerable<VacationLogDTO>> GetTop5VacationLogsAsync(int staffId, int companyId)
         {
             var data = await _context.VacationLog
-                .Where(x => x.Id == staffId && x.CompanyId == companyId)
+                .Where(x => x.StaffId == staffId && x.CompanyId == companyId)
                 .OrderByDescending(x => x.ApplyDate) // 按照時間降序排序
-                .Take(5) // 選擇前 count 筆資料
+                .Take(3) // 選擇前 count 筆資料
                 .ToListAsync();
 
             return data.Select(_mapper.Map<VacationLogDTO>);
+        }
+
+        public async Task<bool> VerifyVacationLogsAsync(int staffId, int companyId,DateTime start,DateTime end)
+        {
+            var data = await _context.VacationLog
+                .AnyAsync(x => x.StaffId == staffId && x.CompanyId == companyId && x.ActualStartDate <= end
+                      && x.ActualEndDate >= start);
+
+            return data;
         }
     }
 }

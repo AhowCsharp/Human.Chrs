@@ -10,5 +10,7 @@ namespace Human.Chrs.Domain.IRepository
     public interface IVacationLogRepository : IRepository<VacationLogDTO, int>
     {
         Task<IEnumerable<VacationLogDTO>> GetTop5VacationLogsAsync(int staffId, int companyId);
+
+        Task<bool> VerifyVacationLogsAsync(int staffId, int companyId, DateTime start, DateTime end);
     }
 }

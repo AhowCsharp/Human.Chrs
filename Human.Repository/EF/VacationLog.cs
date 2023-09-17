@@ -13,7 +13,7 @@ public partial class VacationLog
 
     public int CompanyId { get; set; }
 
-    public string VacationType { get; set; }
+    public int VacationType { get; set; }
 
     public DateTime ApplyDate { get; set; }
 
@@ -30,4 +30,6 @@ public partial class VacationLog
     public int? ApproverId { get; set; }
 
     public DateTime? AuditDate { get; set; }
+
+    public string Reason { get; set; }
 }

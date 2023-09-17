@@ -23,6 +23,8 @@ public partial class HumanChrsContext : DbContext
 
     public virtual DbSet<CompanyRule> CompanyRule { get; set; }
 
+    public virtual DbSet<EventLogs> EventLogs { get; set; }
+
     public virtual DbSet<OverTimeLog> OverTimeLog { get; set; }
 
     public virtual DbSet<PersonalDetail> PersonalDetail { get; set; }
@@ -99,6 +101,16 @@ public partial class HumanChrsContext : DbContext
             entity.Property(e => e.DepartmentName).HasMaxLength(50);
         });
 
+        modelBuilder.Entity<EventLogs>(entity =>
+        {
+            entity.Property(e => e.Detail).HasMaxLength(50);
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
+            entity.Property(e => e.StartDate).HasColumnType("datetime");
+            entity.Property(e => e.Title)
+                .IsRequired()
+                .HasMaxLength(50);
+        });
+
         modelBuilder.Entity<OverTimeLog>(entity =>
         {
             entity.Property(e => e.Inspector).HasMaxLength(50);
@@ -146,9 +158,6 @@ public partial class HumanChrsContext : DbContext
             entity.Property(e => e.ApplyDate).HasColumnType("datetime");
             entity.Property(e => e.ApproverName).HasMaxLength(10);
             entity.Property(e => e.AuditDate).HasColumnType("datetime");
-            entity.Property(e => e.VacationType)
-                .IsRequired()
-                .HasMaxLength(8);
         });
 
         OnModelCreatingPartial(modelBuilder);

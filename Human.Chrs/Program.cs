@@ -78,6 +78,7 @@ builder.Services.AddScoped<IOverTimeLogRepository, OverTimeLogRepository>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IPersonalDetailRepository, PersonalDetailRepository>();
 builder.Services.AddScoped<IVacationLogRepository, VacationLogRepository>();
+builder.Services.AddScoped<IEventLogsRepository, EventLogsRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 builder.Services.AddHttpClient();

@@ -7,10 +7,14 @@ using System.Threading.Tasks;
 
 namespace Human.Chrs.ViewModel.Request
 {
-    public class OverTimeRequest
+    public class VacationRequest
     {
-        public DateTime ChooseDate { get; set; }
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
         public int Hours { get; set; }
+
+        public int Type { get; set; }
         public string Reason { get; set; }
     }
 }

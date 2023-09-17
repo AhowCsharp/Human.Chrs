@@ -33,29 +33,29 @@ namespace Human.Chrs.Domain.DTO
 
         public int Status { get; set; }
 
-        public int? SpecialRestDays { get; set; }//特修
+        public int SpecialRestDays { get; set; }//特修
 
-        public int? SickDays { get; set; }//病假
+        public int SickDays { get; set; }//病假
 
-        public int? ThingDays { get; set; }//市價
+        public int ThingDays { get; set; }//市價
 
-        public int? ChildbirthDays { get; set; }//育嬰假
+        public int ChildbirthDays { get; set; }//育嬰假
 
-        public int? DeathDays { get; set; }//喪假
+        public int DeathDays { get; set; }//喪假
 
-        public int? MarryDays { get; set; }//婚嫁
+        public int MarryDays { get; set; }//婚嫁
 
-        public int? SpecialRestHours { get; set; }
+        public int SpecialRestHours { get; set; }
 
-        public int? SickHours { get; set; }
+        public int SickHours { get; set; }
 
-        public int? ThingHours { get; set; }
+        public int ThingHours { get; set; }
 
-        public int? ChildbirthHours { get; set; }
+        public int ChildbirthHours { get; set; }
 
-        public int? DeathHours { get; set; }
+        public int DeathHours { get; set; }
 
-        public int? MarryHours { get; set; }
+        public int MarryHours { get; set; }
 
         public int? PersonalDetailId { get; set; }
 
