@@ -10,5 +10,7 @@ namespace Human.Chrs.Domain.IRepository
     public interface ICheckRecordsRepository : IRepository<CheckRecordsDTO, int>
     {
         Task<CheckRecordsDTO> GetCheckRecordAsync(int companyId, int staffId);
+
+        Task<IEnumerable<CheckRecordsDTO>> GetCheckRecordListAsync(int staffId, int companyId, DateTime start, DateTime end);
     }
 }

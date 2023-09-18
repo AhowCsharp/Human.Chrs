@@ -108,7 +108,7 @@ namespace Human.Chrs.Domain
                     staffView.ChekOutTime = checkRecord.CheckOutTime;
                 }
             }
-            else 
+            else
             {
                 staffView.IsCheckIn = false;
                 staffView.IsCheckOut = false;
@@ -127,29 +127,34 @@ namespace Human.Chrs.Domain
                 {
                     case 0:
 
-                            item.VacationTypeName = "特休";
+                        item.VacationTypeName = "特休";
                         break;
+
                     case 1:
 
-                            item.VacationTypeName = "病假";                     
+                        item.VacationTypeName = "病假";
                         break;
+
                     case 2:
 
-                            item.VacationTypeName = "事假";                      
+                        item.VacationTypeName = "事假";
                         break;
+
                     case 3:
 
-
-                            item.VacationTypeName = "生育假或育嬰假";
+                        item.VacationTypeName = "生育假或育嬰假";
                         break;
+
                     case 4:
 
-                            item.VacationTypeName = "喪假";
+                        item.VacationTypeName = "喪假";
                         break;
+
                     case 5:
 
-                            item.VacationTypeName = "婚假";
+                        item.VacationTypeName = "婚假";
                         break;
+
                     default:
                         item.VacationTypeName = "未知假別";
                         break;
@@ -160,7 +165,7 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult<bool>> ApplyVacationAsync(int type,DateTime startDate,DateTime endDate,int hours ,string reason)
+        public async Task<CommonResult<bool>> ApplyVacationAsync(int type, DateTime startDate, DateTime endDate, int hours, string reason)
         {
             var result = new CommonResult<bool>();
             var user = _userService.GetCurrentUser();
@@ -190,7 +195,7 @@ namespace Human.Chrs.Domain
             vacation.Hours = hours;
             vacation.Reason = reason;
             //SpecialRest, //特休
-            //SickDays, //病假 
+            //SickDays, //病假
             //ThingDays, //事假
             //ChildbirthDays, //生育假
             //DeathDays, //喪假
@@ -198,41 +203,47 @@ namespace Human.Chrs.Domain
             switch (type)
             {
                 case 0:
-                    if ((staff.SpecialRestDays * 8 + staff.SpecialRestHours ) > hours && !repeat)
+                    if ((staff.SpecialRestDays * 8 + staff.SpecialRestHours) > hours && !repeat)
                     {
                         canApply = true;
                     }
                     break;
+
                 case 1:
                     if ((staff.SickDays * 8 + staff.SickHours) > hours && !repeat)
                     {
                         canApply = true;
                     }
                     break;
+
                 case 2:
                     if ((staff.ThingDays * 8 + staff.ThingHours) > hours && !repeat)
                     {
                         canApply = true;
                     }
                     break;
+
                 case 3:
                     if ((staff.ChildbirthDays * 8 + staff.ChildbirthHours) > hours && !repeat)
                     {
                         canApply = true;
                     }
-                    break; 
+                    break;
+
                 case 4:
                     if ((staff.DeathDays * 8 + staff.DeathHours) > hours && !repeat)
                     {
                         canApply = true;
                     }
                     break;
+
                 case 5:
                     if ((staff.MarryDays * 8 + staff.MarryHours) > hours && !repeat)
                     {
                         canApply = true;
                     }
                     break;
+
                 default:
                     canApply = false;
                     break;
@@ -248,7 +259,7 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult<bool>> EventAddAsync(DateTime startDate, DateTime endDate, TimeSpan startTime, TimeSpan endTime, string title,string detail,int level)
+        public async Task<CommonResult<bool>> EventAddAsync(DateTime startDate, DateTime endDate, TimeSpan startTime, TimeSpan endTime, string title, string detail, int level)
         {
             var result = new CommonResult<bool>();
             var user = _userService.GetCurrentUser();
@@ -267,7 +278,7 @@ namespace Human.Chrs.Domain
 
             if (endDate < startDate)
             {
-                result.AddError("時間格式蠢蠢欲動");
+                result.AddError("時間格式不正確");
                 return result;
             }
             var dto = new EventLogsDTO();
@@ -333,7 +344,7 @@ namespace Human.Chrs.Domain
                     eventsDTO.Add(newEvent);
                 }
                 else
-                {                   
+                {
                     newEvent.AllDay = false;
                     newEvent.Start = item.StartDate;
                     newEvent.End = item.EndDate;
@@ -344,6 +355,36 @@ namespace Human.Chrs.Domain
                 }
             }
             result.Data = eventsDTO;
+            return result;
+        }
+
+        public async Task<CommonResult<IEnumerable<CheckRecordsDTO>>> GetCheckListAsync(DateTime? startDate, DateTime? endDate)
+        {
+            var result = new CommonResult<IEnumerable<CheckRecordsDTO>>();
+            var user = _userService.GetCurrentUser();
+            var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
+            if (!exist)
+            {
+                result.AddError("沒找到對應的員工");
+                return result;
+            }
+            var company = await _companyRepository.GetAsync(user.CompanyId);
+            if (company == null)
+            {
+                result.AddError("沒找到對應的公司");
+                return result;
+            }
+            if (startDate == null)
+            {
+                startDate = new DateTime(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month, 1);
+            }
+            if (endDate == null)
+            {
+                endDate = new DateTime(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month, DateTime.DaysInMonth(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month));
+            }
+
+            var data = await _checkRecordsRepository.GetCheckRecordListAsync(user.Id, user.CompanyId, startDate.Value, endDate.Value);
+            result.Data = data;
             return result;
         }
     }

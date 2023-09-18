@@ -81,7 +81,7 @@ namespace LineTag.Admin.ApiControllers
         {
             try
             {
-                var result = await _checkdomain.InsertOverTimeAsync(overtimeRequest.ChooseDate,overtimeRequest.Hours, overtimeRequest.Reason);
+                var result = await _checkdomain.InsertOverTimeAsync(overtimeRequest.ChooseDate, overtimeRequest.Hours, overtimeRequest.Reason);
 
                 if (result.Success)
                 {
@@ -157,7 +157,7 @@ namespace LineTag.Admin.ApiControllers
         {
             try
             {
-                var result = await _staffdomain.EventAddAsync(eventRequest.EventStartDate,eventRequest.EventEndDate,eventRequest.StartTime,eventRequest.EndTime,eventRequest.Title,eventRequest.Detail, eventRequest.LevelStatus);
+                var result = await _staffdomain.EventAddAsync(eventRequest.EventStartDate, eventRequest.EventEndDate, eventRequest.StartTime, eventRequest.EndTime, eventRequest.Title, eventRequest.Detail, eventRequest.LevelStatus);
 
                 if (result.Success)
                 {
@@ -213,6 +213,7 @@ namespace LineTag.Admin.ApiControllers
                 return ServerError500();
             }
         }
+
         /// <summary>
         /// 備忘錄讀取
         /// </summary>
@@ -250,6 +251,45 @@ namespace LineTag.Admin.ApiControllers
                 return ServerError500();
             }
         }
+
+        /// <summary>
+        /// 備忘錄讀取
+        /// </summary>
+        /// <param name="ditanceRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("checkdetails")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCheckList(DateTime? start, DateTime? end)
+        {
+            try
+            {
+                var result = await _staffdomain.GetCheckListAsync(start, end);
+
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetCheckList));
+
+                return ServerError500();
+            }
+        }
+
         /// <summary>
         /// 登入後畫面
         /// </summary>
