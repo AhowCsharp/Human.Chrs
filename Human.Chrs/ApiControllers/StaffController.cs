@@ -291,6 +291,44 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 備忘錄讀取
+        /// </summary>
+        /// <param name="ditanceRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("salary")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetSalaryList()
+        {
+            try
+            {
+                var result = await _staffdomain.GetIncomeLogsAsync();
+
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetSalaryList));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 登入後畫面
         /// </summary>
         /// <param name="loginRequest">請求資料</param>

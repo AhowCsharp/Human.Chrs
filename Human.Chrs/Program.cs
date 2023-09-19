@@ -14,8 +14,34 @@ using Human.Repository.Repository;
 using LineTag.Infrastructure.Repositories;
 using Human.Chrs.Domain.Services;
 using Human.Chrs.Domain;
+using Quartz;
+using Human.Chrs.ScheduleJob;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+
+builder.Services.AddQuartz(quartz =>
+{
+    quartz.UseMicrosoftDependencyInjectionJobFactory();
+
+    // 建立 Job
+    var jobKey = new JobKey("UpdateStaffInfo", "UpdateStaffInfoGroup");
+    quartz.AddJob<StaffInfoUpdateJob>(opts =>
+    {
+        opts.WithIdentity(jobKey);
+        opts.StoreDurably();
+    });
+
+    // 建立觸發器，自動執行 Job
+    quartz.AddTrigger(opts =>
+    {
+        opts.ForJob(jobKey);
+        opts.WithIdentity("UpdateStaffInfoTrigger", "UpdateStaffInfoGroup");
+        opts.WithCronSchedule("0 0 1 * * ?");  // 每天凌晨1:00執行
+    });
+});
+
 var env = builder.Environment;
 builder.Services.AddHttpContextAccessor();
 

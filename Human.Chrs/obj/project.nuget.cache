@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "VXOllK1DJN40Cmzm8JqzQ9SqJHACUWAHuyO36+pvQ8xa6JyO/0lV1++gfiEZgRWKrOmBzb2WAX87l5iwAp1k8g==",
+  "dgSpecHash": "FUiiacghNn9IA60xdMi66fPQk5+VQ46F8fY73BSapS7XMAVAsmzOZbW/QUqP4RqE1iMYENQ4jiKLzfWElQVTRw==",
   "success": true,
   "projectFilePath": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\Human.Chrs.csproj",
   "expectedPackageFiles": [
@@ -41,6 +41,8 @@
     "C:\\Users\\j3537\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\7.0.0\\microsoft.extensions.dependencyinjection.7.0.0.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\microsoft.extensions.dependencymodel\\7.0.0\\microsoft.extensions.dependencymodel.7.0.0.nupkg.sha512",
+    "C:\\Users\\j3537\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\6.0.0\\microsoft.extensions.fileproviders.abstractions.6.0.0.nupkg.sha512",
+    "C:\\Users\\j3537\\.nuget\\packages\\microsoft.extensions.hosting.abstractions\\6.0.0\\microsoft.extensions.hosting.abstractions.6.0.0.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\microsoft.extensions.logging\\7.0.0\\microsoft.extensions.logging.7.0.0.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\7.0.0\\microsoft.extensions.logging.abstractions.7.0.0.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\microsoft.extensions.options\\7.0.0\\microsoft.extensions.options.7.0.0.nupkg.sha512",
@@ -71,6 +73,9 @@
     "C:\\Users\\j3537\\.nuget\\packages\\npgsql\\7.0.4\\npgsql.7.0.4.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\7.0.4\\npgsql.entityframeworkcore.postgresql.7.0.4.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\pomelo.entityframeworkcore.mysql\\7.0.0\\pomelo.entityframeworkcore.mysql.7.0.0.nupkg.sha512",
+    "C:\\Users\\j3537\\.nuget\\packages\\quartz\\3.7.0\\quartz.3.7.0.nupkg.sha512",
+    "C:\\Users\\j3537\\.nuget\\packages\\quartz.extensions.dependencyinjection\\3.7.0\\quartz.extensions.dependencyinjection.3.7.0.nupkg.sha512",
+    "C:\\Users\\j3537\\.nuget\\packages\\quartz.extensions.hosting\\3.7.0\\quartz.extensions.hosting.3.7.0.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\restsharp\\110.2.0\\restsharp.110.2.0.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\runtime.native.system.data.sqlclient.sni\\4.7.0\\runtime.native.system.data.sqlclient.sni.4.7.0.nupkg.sha512",
     "C:\\Users\\j3537\\.nuget\\packages\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",

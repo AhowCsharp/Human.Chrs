@@ -19,8 +19,10 @@ namespace Human.Chrs.Domain
         private readonly ICheckRecordsRepository _checkRecordsRepository;
         private readonly IStaffRepository _staffRepository;
         private readonly IOverTimeLogRepository _overTimeLogRepository;
+        private readonly IIncomeLogsRepository _incomeLogsRepository;
         private readonly IVacationLogRepository _vacationLogRepository;
         private readonly IEventLogsRepository _eventLogsRepository;
+        private readonly IPersonalDetailRepository _personalDetailRepository;
         private readonly CheckInAndOutDomain _checkInAndOutDomain;
         private readonly UserService _userService;
         private readonly GeocodingService _geocodingService;
@@ -30,8 +32,10 @@ namespace Human.Chrs.Domain
             IAdminRepository adminRepository,
             ICompanyRuleRepository companyRuleRepository,
             ICheckRecordsRepository checkRecordsRepository,
+            IIncomeLogsRepository incomeLogsRepository,
             IEventLogsRepository eventLogsRepository,
             IStaffRepository staffRepository,
+            IPersonalDetailRepository personalDetailRepository,
             ICompanyRepository companyRepository,
             IVacationLogRepository vacationLogRepository,
             IOverTimeLogRepository overTimeLogRepository,
@@ -43,6 +47,8 @@ namespace Human.Chrs.Domain
             _adminRepository = adminRepository;
             _companyRepository = companyRepository;
             _eventLogsRepository = eventLogsRepository;
+            _personalDetailRepository = personalDetailRepository;
+            _incomeLogsRepository = incomeLogsRepository;
             _staffRepository = staffRepository;
             _companyRepository = companyRepository;
             _companyRuleRepository = companyRuleRepository;
@@ -182,7 +188,12 @@ namespace Human.Chrs.Domain
                 return result;
             }
             var repeat = await _vacationLogRepository.VerifyVacationLogsAsync(user.Id, user.CompanyId, startDate, endDate);
-
+            var staffDetail = await _personalDetailRepository.GetStaffDetailInfoAsync(user.Id, user.CompanyId);
+            if (staffDetail == null)
+            {
+                result.AddError("員工個人詳細資料未填寫完整");
+                return result;
+            }
             bool canApply = false;
             var staff = await _staffRepository.GetAsync(user.Id);
             var vacation = new VacationLogDTO();
@@ -194,51 +205,81 @@ namespace Human.Chrs.Domain
             vacation.ActualEndDate = endDate;
             vacation.Hours = hours;
             vacation.Reason = reason;
-            //SpecialRest, //特休
-            //SickDays, //病假
-            //ThingDays, //事假
-            //ChildbirthDays, //生育假
-            //DeathDays, //喪假
-            //MarryDays, //婚假
             switch (type)
             {
-                case 0:
+                case 0: //特休
                     if ((staff.SpecialRestDays * 8 + staff.SpecialRestHours) > hours && !repeat)
                     {
                         canApply = true;
                     }
                     break;
 
-                case 1:
+                case 1://病假
                     if ((staff.SickDays * 8 + staff.SickHours) > hours && !repeat)
                     {
                         canApply = true;
                     }
                     break;
 
-                case 2:
+                case 2: //事假
                     if ((staff.ThingDays * 8 + staff.ThingHours) > hours && !repeat)
                     {
                         canApply = true;
                     }
                     break;
 
-                case 3:
-                    if ((staff.ChildbirthDays * 8 + staff.ChildbirthHours) > hours && !repeat)
+                case 3://產假
+                    if ((staff.ChildbirthDays * 8 + staff.ChildbirthHours) > hours && !repeat && staffDetail.Gender == "女性")
                     {
                         canApply = true;
                     }
                     break;
 
-                case 4:
+                case 4://喪假
                     if ((staff.DeathDays * 8 + staff.DeathHours) > hours && !repeat)
                     {
                         canApply = true;
                     }
                     break;
 
-                case 5:
+                case 5://婚假
                     if ((staff.MarryDays * 8 + staff.MarryHours) > hours && !repeat)
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 6://公假
+                    canApply = true;
+                    break;
+
+                case 7://工傷病假
+                    canApply = true;
+                    break;
+
+                case 8://生理假
+                    if ((staff.MenstruationDays * 8 + staff.MenstruationHours) > hours && !repeat && staffDetail.Gender == "女性")
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 9://育嬰留職停薪假
+                    if ((staff.TackeCareBabyDays * 8 + staff.TackeCareBabyHours) > hours && !repeat && staffDetail.Gender == "女性")
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 10://安胎
+                    if ((staff.TocolysisDays * 8 + staff.TocolysisHours) > hours && !repeat && staffDetail.Gender == "女性")
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 11://產檢
+                    if ((staff.PrenatalCheckUpDays * 8 + staff.PrenatalCheckUpHours) > hours && !repeat)
                     {
                         canApply = true;
                     }
@@ -384,6 +425,28 @@ namespace Human.Chrs.Domain
             }
 
             var data = await _checkRecordsRepository.GetCheckRecordListAsync(user.Id, user.CompanyId, startDate.Value, endDate.Value);
+            result.Data = data;
+            return result;
+        }
+
+        public async Task<CommonResult<IEnumerable<IncomeLogsDTO>>> GetIncomeLogsAsync()
+        {
+            var result = new CommonResult<IEnumerable<IncomeLogsDTO>>();
+            var user = _userService.GetCurrentUser();
+            var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
+            if (!exist)
+            {
+                result.AddError("沒找到對應的員工");
+                return result;
+            }
+            var company = await _companyRepository.GetAsync(user.CompanyId);
+            if (company == null)
+            {
+                result.AddError("沒找到對應的公司");
+                return result;
+            }
+
+            var data = await _incomeLogsRepository.GetIncomeLogsAsync(user.Id, user.CompanyId);
             result.Data = data;
             return result;
         }

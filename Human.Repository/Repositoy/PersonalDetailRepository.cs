@@ -21,5 +21,12 @@ namespace LineTag.Infrastructure.Repositories
         public PersonalDetailRepository(IMapper mapper, HumanChrsContext context) : base(mapper, context)
         {
         }
+
+        public async Task<PersonalDetailDTO> GetStaffDetailInfoAsync(int staffId, int companyId)
+        {
+            var data = await _context.PersonalDetail.SingleOrDefaultAsync(x => x.StaffId == staffId && x.CompanyId == companyId);
+
+            return _mapper.Map<PersonalDetailDTO>(data);
+        }
     }
 }

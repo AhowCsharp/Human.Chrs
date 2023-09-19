@@ -43,35 +43,46 @@ namespace Human.Chrs.Domain
             _userService = userService;
         }//async Task<CurrentUser>
 
-        public async Task<CommonResult<IEnumerable<StaffDTO>>> InsertNewStaffAsync(StaffDTO dto)
+        public async Task<CommonResult<IEnumerable<StaffDTO>>> InsertNewStaffAsync(StaffDTO newStaff, PersonalDetailDTO detailDTO)
         {
             var result = new CommonResult<IEnumerable<StaffDTO>>();
             var user = _userService.GetCurrentUser();
             var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            int staffId;
             if (verifyAdminToken)
             {
-                dto.ResignationDate = DateTimeHelper.TaipeiNow;
-                dto.Status = 1;
-                dto.SpecialRestDays = 0;
-                dto.SickDays = 0;
-                dto.ThingDays = 0;
-                dto.ChildbirthDays = 0;
-                dto.DeathDays = 0;
-                dto.MarryDays = 0;
-                dto.SpecialRestHours = 0;
-                dto.SickHours = 0;
-                dto.ThingHours = 0;
-                dto.ChildbirthHours = 0;
-                dto.DeathHours = 0;
-                dto.PersonalDetailId = null;
-                //dto.WorkDay = 0;
-                //dto.RestDay = 0;
-                dto.CreateDate = DateTimeHelper.TaipeiNow;
-                dto.Creator = user.StaffName;
-                dto.EditDate = DateTimeHelper.TaipeiNow;
-                dto.Editor = user.StaffName;
+                newStaff.ResignationDate = DateTimeHelper.TaipeiNow;
+                newStaff.Status = 1;
+                newStaff.SpecialRestDays = 0;   //特休
+                newStaff.SickDays = 30;     // 病假
+                newStaff.ThingDays = 14; // 事假
+                newStaff.DeathDays = 8; //喪假
+                newStaff.MarryDays = 8; //婚假
+                newStaff.MenstruationDays = detailDTO.Gender == "女性" ? 1 : 0;  // 生理假 每月一天
+                newStaff.ChildbirthDays = detailDTO.Gender == "女性" ? 56 : 0; // 產假
+                newStaff.TocolysisDays = detailDTO.Gender == "女性" ? 7 : 0; //安胎假
+                newStaff.PrenatalCheckUpDays = 7;  // 陪產檢 陪產假  產檢假
+                newStaff.TackeCareBabyDays = 365 * 2; //留職停薪育嬰假
 
-                await _staffRepository.InsertAsync(dto);
+                newStaff.SpecialRestHours = 0;
+                newStaff.SickHours = 0;
+                newStaff.ThingHours = 0;
+                newStaff.ChildbirthHours = 0;
+                newStaff.DeathHours = 0;
+                newStaff.MenstruationHours = 0;
+                newStaff.ChildbirthHours = 0;
+                newStaff.TocolysisHours = 0;
+                newStaff.PrenatalCheckUpHours = 0;
+                newStaff.TackeCareBabyHours = 0;
+
+                newStaff.PersonalDetailId = null;
+
+                newStaff.CreateDate = DateTimeHelper.TaipeiNow;
+                newStaff.Creator = user.StaffName;
+                newStaff.EditDate = DateTimeHelper.TaipeiNow;
+                newStaff.Editor = user.StaffName;
+
+                staffId = (await _staffRepository.InsertAsync(newStaff)).Id;
             }
             else
             {
@@ -79,6 +90,10 @@ namespace Human.Chrs.Domain
 
                 return result;
             }
+
+            detailDTO.StaffId = staffId;
+            detailDTO.CompanyId = user.CompanyId;
+            await _personalDetailRepository.InsertAsync(detailDTO);
 
             var data = await _staffRepository.GetAllStaffAsync(user.Id, user.CompanyId);
             result.Data = data;

@@ -7,8 +7,8 @@ using System.Security.Principal;
 
 namespace Human.Chrs.Domain.IRepository
 {
-    public interface IPersonalDetailRepository : IRepository<PersonalDetailDTO, int>
+    public interface IIncomeLogsRepository : IRepository<IncomeLogsDTO, int>
     {
-        Task<PersonalDetailDTO> GetStaffDetailInfoAsync(int staffId, int companyId);
+        Task<IEnumerable<IncomeLogsDTO>> GetIncomeLogsAsync(int staffId, int companyId);
     }
 }

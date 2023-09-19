@@ -14,9 +14,11 @@ namespace Human.Repository.AutoMapper
             CreateMap<Staff, StaffDTO>().ReverseMap();
             CreateMap<Admin, AdminDTO>().ReverseMap();
             CreateMap<Company, CompanyDTO>().ReverseMap();
+            CreateMap<IncomeLogs, IncomeLogsDTO>().ReverseMap();
             CreateMap<Application, ApplicationDTO>().ReverseMap();
+            CreateMap<PersonalDetail, PersonalDetailDTO>().ReverseMap();
             CreateMap<CompanyRule, CompanyRuleDTO>().ReverseMap();
-            CreateMap<CheckRecords, CheckRecordsDTO>().ReverseMap(); 
+            CreateMap<CheckRecords, CheckRecordsDTO>().ReverseMap();
             CreateMap<OverTimeLog, OverTimeLogDTO>().ReverseMap();
             CreateMap<VacationLog, VacationLogDTO>().ReverseMap();
             CreateMap<EventLogs, EventLogsDTO>().ReverseMap();

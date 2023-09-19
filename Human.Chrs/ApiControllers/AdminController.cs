@@ -37,12 +37,12 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuthAttribute]
         [ApUserAuthAttribute]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateStaff(NewStaffSaveRequest newStaffSaveRequest)
+        public async Task<IActionResult> CreateStaff(NewStaffSaveRequest newStaffSaveRequest, StaffDetailSaveRequest newStaffDetailSaveRequest)
         {
             //CompanyId StaffAccount StaffPassWord Department EntryDate LevelPosition WorkPosition Email StaffPhoneNumber Auth DepartmentId
             try
             {
-                var result = await _admindomain.InsertNewStaffAsync(newStaffSaveRequest.ToDTO());
+                var result = await _admindomain.InsertNewStaffAsync(newStaffSaveRequest.ToDTO(), newStaffDetailSaveRequest.ToDTO());
                 if (result.Success)
                 {
                     return Ok(result);

@@ -25,11 +25,17 @@ public partial class HumanChrsContext : DbContext
 
     public virtual DbSet<EventLogs> EventLogs { get; set; }
 
+    public virtual DbSet<IncomeLogs> IncomeLogs { get; set; }
+
     public virtual DbSet<OverTimeLog> OverTimeLog { get; set; }
 
     public virtual DbSet<PersonalDetail> PersonalDetail { get; set; }
 
+    public virtual DbSet<SalarySetting> SalarySetting { get; set; }
+
     public virtual DbSet<Staff> Staff { get; set; }
+
+    public virtual DbSet<UpdateStaffInfoLogs> UpdateStaffInfoLogs { get; set; }
 
     public virtual DbSet<VacationLog> VacationLog { get; set; }
 
@@ -111,6 +117,11 @@ public partial class HumanChrsContext : DbContext
                 .HasMaxLength(50);
         });
 
+        modelBuilder.Entity<IncomeLogs>(entity =>
+        {
+            entity.Property(e => e.IssueDate).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<OverTimeLog>(entity =>
         {
             entity.Property(e => e.Inspector).HasMaxLength(50);
@@ -149,6 +160,11 @@ public partial class HumanChrsContext : DbContext
                 .HasMaxLength(50);
             entity.Property(e => e.StaffPassWord).IsRequired();
             entity.Property(e => e.StaffPhoneNumber).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<UpdateStaffInfoLogs>(entity =>
+        {
+            entity.Property(e => e.UpdateTime).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<VacationLog>(entity =>

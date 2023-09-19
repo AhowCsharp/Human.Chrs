@@ -59,10 +59,6 @@ public partial class Staff
 
     public int? EmploymentTypeId { get; set; }
 
-    public string WorkDay { get; set; }
-
-    public string RestDay { get; set; }
-
     public string StaffPhoneNumber { get; set; }
 
     public DateTime? CreateDate { get; set; }
@@ -78,4 +74,32 @@ public partial class Staff
     public int? Auth { get; set; }
 
     public int DepartmentId { get; set; }
+
+    public int WorkHurtDays { get; set; }
+
+    public int WorkHurtHours { get; set; }
+
+    public int WorkThingsDays { get; set; }
+
+    public int WorkThingHours { get; set; }
+
+    public int MenstruationDays { get; set; }
+
+    public int MenstruationHours { get; set; }
+
+    public int TocolysisDays { get; set; }
+
+    public int TocolysisHours { get; set; }
+
+    public int TackeCareBabyDays { get; set; }
+
+    public int TackeCareBabyHours { get; set; }
+
+    public int PrenatalCheckUpDays { get; set; }
+
+    public int PrenatalCheckUpHours { get; set; }
+
+    public int OverTimeHours { get; set; }
+
+    public int StayInCompanyDays { get; set; }
 }
