@@ -102,4 +102,6 @@ public partial class Staff
     public int OverTimeHours { get; set; }
 
     public int StayInCompanyDays { get; set; }
+
+    public string Gender { get; set; }
 }

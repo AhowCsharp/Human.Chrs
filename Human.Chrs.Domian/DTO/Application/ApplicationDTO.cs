@@ -12,7 +12,7 @@ namespace Human.Chrs.Domain.DTO
         /// <summary>
         /// 編號
         /// </summary>
-        public int Id { get; set; }
+        public int id { get; set; }
 
         /// <summary>
         /// 帳號

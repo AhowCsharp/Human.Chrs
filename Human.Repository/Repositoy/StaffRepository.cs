@@ -44,9 +44,9 @@ namespace LineTag.Infrastructure.Repositories
             return _mapper.Map<StaffDTO>(data);
         }
 
-        public async Task<IEnumerable<StaffDTO>> GetAllStaffAsync(int staffId, int companyId)
+        public async Task<IEnumerable<StaffDTO>> GetAllStaffAsync(int companyId)
         {
-            var data = await _context.Staff.Where(x => x.Id == staffId && x.CompanyId == companyId).ToListAsync();
+            var data = await _context.Staff.Where(x => x.CompanyId == companyId).ToListAsync();
 
             return data.Select(_mapper.Map<StaffDTO>);
         }

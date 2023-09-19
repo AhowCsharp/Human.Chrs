@@ -151,6 +151,10 @@ public partial class HumanChrsContext : DbContext
             entity.Property(e => e.Editor).HasMaxLength(50);
             entity.Property(e => e.Email).HasMaxLength(50);
             entity.Property(e => e.EntryDate).HasColumnType("date");
+            entity.Property(e => e.Gender)
+                .IsRequired()
+                .HasMaxLength(8)
+                .HasDefaultValueSql("('??')");
             entity.Property(e => e.LevelPosition).HasMaxLength(50);
             entity.Property(e => e.ResignationDate).HasColumnType("date");
             entity.Property(e => e.StaffAccount).IsRequired();

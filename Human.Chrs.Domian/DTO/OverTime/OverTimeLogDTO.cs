@@ -9,7 +9,7 @@ namespace Human.Chrs.Domain.DTO
 {
     public class OverTimeLogDTO : IDTO
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
         public DateTime OvertimeDate { get; set; }
 

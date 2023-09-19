@@ -15,7 +15,7 @@ namespace Human.Chrs.Domain.IRepository
 
         Task<bool> VerifyExistStaffAsync(int staffId, int companyId);
 
-        Task<IEnumerable<StaffDTO>> GetAllStaffAsync(int staffId, int companyId);
+        Task<IEnumerable<StaffDTO>> GetAllStaffAsync(int companyId);
 
         Task<bool> UpdateWorkDaysAndFindStaffAsync();
     }

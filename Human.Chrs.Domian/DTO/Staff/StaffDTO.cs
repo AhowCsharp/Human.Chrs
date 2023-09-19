@@ -9,7 +9,7 @@ namespace Human.Chrs.Domain.DTO
 {
     public class StaffDTO : IDTO
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
         public string StaffNo { get; set; }
 
@@ -61,10 +61,6 @@ namespace Human.Chrs.Domain.DTO
 
         public int? EmploymentTypeId { get; set; }
 
-        public string WorkDay { get; set; }
-
-        public string RestDay { get; set; }
-
         public string StaffPhoneNumber { get; set; }
 
         public DateTime? CreateDate { get; set; }
@@ -108,5 +104,7 @@ namespace Human.Chrs.Domain.DTO
         public int OverTimeHours { get; set; }
 
         public int StayInCompanyDays { get; set; }
+
+        public string Gender { get; set; }
     }
 }

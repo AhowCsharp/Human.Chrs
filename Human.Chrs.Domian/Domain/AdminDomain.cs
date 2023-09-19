@@ -43,7 +43,7 @@ namespace Human.Chrs.Domain
             _userService = userService;
         }//async Task<CurrentUser>
 
-        public async Task<CommonResult<IEnumerable<StaffDTO>>> InsertNewStaffAsync(StaffDTO newStaff, PersonalDetailDTO detailDTO)
+        public async Task<CommonResult<IEnumerable<StaffDTO>>> InsertNewStaffAsync(StaffDTO newStaff)
         {
             var result = new CommonResult<IEnumerable<StaffDTO>>();
             var user = _userService.GetCurrentUser();
@@ -58,9 +58,9 @@ namespace Human.Chrs.Domain
                 newStaff.ThingDays = 14; // 事假
                 newStaff.DeathDays = 8; //喪假
                 newStaff.MarryDays = 8; //婚假
-                newStaff.MenstruationDays = detailDTO.Gender == "女性" ? 1 : 0;  // 生理假 每月一天
-                newStaff.ChildbirthDays = detailDTO.Gender == "女性" ? 56 : 0; // 產假
-                newStaff.TocolysisDays = detailDTO.Gender == "女性" ? 7 : 0; //安胎假
+                newStaff.MenstruationDays = newStaff.Gender == "女性" ? 1 : 0;  // 生理假 每月一天
+                newStaff.ChildbirthDays = newStaff.Gender == "女性" ? 56 : 0; // 產假
+                newStaff.TocolysisDays = newStaff.Gender == "女性" ? 7 : 0; //安胎假
                 newStaff.PrenatalCheckUpDays = 7;  // 陪產檢 陪產假  產檢假
                 newStaff.TackeCareBabyDays = 365 * 2; //留職停薪育嬰假
 
@@ -82,7 +82,7 @@ namespace Human.Chrs.Domain
                 newStaff.EditDate = DateTimeHelper.TaipeiNow;
                 newStaff.Editor = user.StaffName;
 
-                staffId = (await _staffRepository.InsertAsync(newStaff)).Id;
+                staffId = (await _staffRepository.InsertAsync(newStaff)).id;
             }
             else
             {
@@ -91,11 +91,7 @@ namespace Human.Chrs.Domain
                 return result;
             }
 
-            detailDTO.StaffId = staffId;
-            detailDTO.CompanyId = user.CompanyId;
-            await _personalDetailRepository.InsertAsync(detailDTO);
-
-            var data = await _staffRepository.GetAllStaffAsync(user.Id, user.CompanyId);
+            var data = await _staffRepository.GetAllStaffAsync(user.CompanyId);
             result.Data = data;
 
             return result;
@@ -128,7 +124,7 @@ namespace Human.Chrs.Domain
         {
             var user = _userService.GetCurrentUser();
 
-            var data = await _staffRepository.GetAllStaffAsync(user.Id, user.CompanyId);
+            var data = await _staffRepository.GetAllStaffAsync(user.CompanyId);
 
             return data;
         }

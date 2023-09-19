@@ -2,7 +2,7 @@
 {
     public interface IDTO
     {
-        public int Id { get; set; }
+        public int id { get; set; }
     }
 
     //public interface IDTO<TIIdentity>

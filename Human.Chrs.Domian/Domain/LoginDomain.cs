@@ -44,24 +44,24 @@ namespace Human.Chrs.Domain
             }
             else if (adminUser != null)
             {
-                var useridSalted = CryptHelper.SaltHashPlus(adminUser.Id.ToString());
+                var useridSalted = CryptHelper.SaltHashPlus(adminUser.id.ToString());
                 loginUserInfo.Auth = adminUser.Auth;
-                loginUserInfo.StaffNo = adminUser.Id.ToString();
+                loginUserInfo.StaffNo = adminUser.id.ToString();
                 loginUserInfo.StaffName = adminUser.UserName;
                 loginUserInfo.CompanyId = adminUser.CompanyId;
-                loginUserInfo.UserId = $"{adminUser.Id},{useridSalted}";
+                loginUserInfo.UserId = $"{adminUser.id},{useridSalted}";
                 loginUserInfo.AdminToken = adminUser.AdminToken;
                 loginUserInfo.DepartmentId = adminUser.DepartmentId;
                 companyId = adminUser.CompanyId;
             }
             else if (staff != null)
             {
-                var useridSalted = CryptHelper.SaltHashPlus(staff.Id.ToString());
+                var useridSalted = CryptHelper.SaltHashPlus(staff.id.ToString());
                 loginUserInfo.Auth = staff.Auth;
                 loginUserInfo.StaffNo = staff.StaffNo;
                 loginUserInfo.StaffName = staff.StaffName;
                 loginUserInfo.CompanyId = staff.CompanyId;
-                loginUserInfo.UserId = $"{staff.Id},{useridSalted}";
+                loginUserInfo.UserId = $"{staff.id},{useridSalted}";
                 loginUserInfo.DepartmentId = staff.DepartmentId;
                 companyId = staff.CompanyId;
             }

@@ -94,6 +94,7 @@ builder.Services.AddScoped<AdminDomain>();
 builder.Services.AddScoped<CheckInAndOutDomain>();
 builder.Services.AddScoped<StaffDomain>();
 builder.Services.AddScoped<LoginDomain>();
+builder.Services.AddScoped<ScheduleDomain>();
 
 builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
@@ -105,6 +106,7 @@ builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IPersonalDetailRepository, PersonalDetailRepository>();
 builder.Services.AddScoped<IVacationLogRepository, VacationLogRepository>();
 builder.Services.AddScoped<IEventLogsRepository, EventLogsRepository>();
+builder.Services.AddScoped<IIncomeLogsRepository, IncomeLogsRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 builder.Services.AddHttpClient();

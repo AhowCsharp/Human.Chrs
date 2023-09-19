@@ -9,7 +9,7 @@ namespace Human.Chrs.Domain.DTO
 {
     public class PersonalDetailDTO : IDTO
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
         public int StaffId { get; set; }
 

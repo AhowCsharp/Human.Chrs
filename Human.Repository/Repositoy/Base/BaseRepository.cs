@@ -69,7 +69,7 @@ namespace Human.Repository.Repository.Base
 
         public virtual async Task<TDTO> UpdateAsync(TDTO dto)
         {
-            var existingEntity = await _dbSet.FindAsync(dto.Id);
+            var existingEntity = await _dbSet.FindAsync(dto.id);
             if (existingEntity == null)
             {
                 throw new ArgumentException("Entity with the given ID does not exist");
@@ -89,10 +89,10 @@ namespace Human.Repository.Repository.Base
 
             foreach (var dto in dtos)
             {
-                var existingEntity = await _dbSet.FindAsync(dto.Id);
+                var existingEntity = await _dbSet.FindAsync(dto.id);
                 if (existingEntity == null)
                 {
-                    throw new ArgumentException($"Entity with ID {dto.Id} does not exist");
+                    throw new ArgumentException($"Entity with ID {dto.id} does not exist");
                 }
 
                 _mapper.Map(dto, existingEntity);

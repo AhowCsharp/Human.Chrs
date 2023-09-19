@@ -14,7 +14,7 @@ namespace Human.Chrs.ViewModel.Request
         {
             var dto = new PersonalDetailDTO
             {
-                Id = request.Id,
+                id = request.Id,
                 Name = request.Name,
                 EnglishName = request.EnglishName,
                 BirthDay = request.BirthDay,
