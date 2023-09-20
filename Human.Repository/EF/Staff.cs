@@ -75,14 +75,6 @@ public partial class Staff
 
     public int DepartmentId { get; set; }
 
-    public int WorkHurtDays { get; set; }
-
-    public int WorkHurtHours { get; set; }
-
-    public int WorkThingsDays { get; set; }
-
-    public int WorkThingHours { get; set; }
-
     public int MenstruationDays { get; set; }
 
     public int MenstruationHours { get; set; }

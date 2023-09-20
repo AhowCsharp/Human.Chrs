@@ -248,3 +248,6 @@ C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.Extensions.DependencyInjection.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.Extensions.Hosting.dll
+D:\GitLab\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.dll
+D:\GitLab\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.Extensions.DependencyInjection.dll
+D:\GitLab\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.Extensions.Hosting.dll

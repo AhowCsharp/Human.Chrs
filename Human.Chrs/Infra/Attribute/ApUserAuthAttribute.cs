@@ -37,19 +37,39 @@ namespace Human.Chrs.Infra.Attribute
             try
             {
                 var loginDomain = context.HttpContext.RequestServices.GetService(typeof(LoginDomain)) as LoginDomain;
-                var x_CompanyId = context.HttpContext.Request.Headers["X-Ap-CompanyId"].ToString();
-                var CompanyId = Convert.ToInt32(x_CompanyId);
-                var UserId = context.HttpContext.Request.Headers["X-Ap-UserId"].ToString();
-
-                var verifyResult = await loginDomain.GetUserWithSaltHashAsync(CompanyId, UserId);
-                if (!verifyResult.Success)
+                if (!context.HttpContext.Request.Headers.ContainsKey("X-Ap-AdminToken"))
                 {
-                    var response = new { error = "Unauthorized", code = "未註冊會員" };
-                    context.Result = new ObjectResult(response) { StatusCode = StatusCodes.Status401Unauthorized };
+                    var x_CompanyId = context.HttpContext.Request.Headers["X-Ap-CompanyId"].ToString();
+                    var CompanyId = Convert.ToInt32(x_CompanyId);
+                    var UserId = context.HttpContext.Request.Headers["X-Ap-UserId"].ToString();
+
+                    var verifyResult = await loginDomain.GetUserWithSaltHashAsync(CompanyId, UserId);
+                    if (!verifyResult.Success)
+                    {
+                        var response = new { error = "Unauthorized", code = "未註冊會員" };
+                        context.Result = new ObjectResult(response) { StatusCode = StatusCodes.Status401Unauthorized };
+                    }
+                    else
+                    {
+                        userService.SetCurrentUser(verifyResult.Data);
+                    }
                 }
                 else
                 {
-                    userService.SetCurrentUser(verifyResult.Data);
+                    var x_CompanyId = context.HttpContext.Request.Headers["X-Ap-CompanyId"].ToString();
+                    var CompanyId = Convert.ToInt32(x_CompanyId);
+                    var UserId = context.HttpContext.Request.Headers["X-Ap-UserId"].ToString();
+
+                    var verifyResult = await loginDomain.GetAdminWithSaltHashAsync(CompanyId, UserId);
+                    if (!verifyResult.Success)
+                    {
+                        var response = new { error = "Unauthorized", code = "未註冊管理者" };
+                        context.Result = new ObjectResult(response) { StatusCode = StatusCodes.Status401Unauthorized };
+                    }
+                    else
+                    {
+                        userService.SetCurrentUser(verifyResult.Data);
+                    }
                 }
             }
             catch (Exception ex)

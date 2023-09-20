@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "kjarIHRTRZgh8W4IEPr5WmIYnbaG/DL5HNwgvLqKFkw=",
+  "Hash": "mhwqiXLY7NLbqORtF2g799RBqwkH59vB3lqkGymRc6E=",
   "Source": "Human.Chrs",
   "BasePath": "_content/Human.Chrs",
   "Mode": "Default",
@@ -10,7 +10,7 @@
     {
       "Name": "Human.Chrs\\wwwroot",
       "Source": "Human.Chrs",
-      "ContentRoot": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs\\wwwroot\\",
+      "ContentRoot": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\",
       "BasePath": "_content/Human.Chrs",
       "Pattern": "**"
     }

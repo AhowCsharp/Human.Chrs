@@ -107,6 +107,8 @@ builder.Services.AddScoped<IPersonalDetailRepository, PersonalDetailRepository>(
 builder.Services.AddScoped<IVacationLogRepository, VacationLogRepository>();
 builder.Services.AddScoped<IEventLogsRepository, EventLogsRepository>();
 builder.Services.AddScoped<IIncomeLogsRepository, IncomeLogsRepository>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<ISalarySettingRepository, SalarySettingRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 builder.Services.AddHttpClient();

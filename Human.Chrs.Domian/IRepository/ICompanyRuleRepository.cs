@@ -8,5 +8,7 @@ namespace Human.Chrs.Domain.IRepository
     public interface ICompanyRuleRepository : IRepository<CompanyRuleDTO, int>
     {
         Task<CompanyRuleDTO> GetCompanyRuleAsync(int companyId, int DepartmentId);
+
+        Task<IEnumerable<CompanyRuleDTO>> GetCompanyRulesAsync(int companyId);
     }
 }

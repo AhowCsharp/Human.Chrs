@@ -94,11 +94,41 @@ namespace Human.Chrs.Domain
             }
             LoginDTO? loginUserInfo = new LoginDTO();
             StaffDTO? staff = await _staffRepository.GetUsingStaffAsync(Convert.ToInt32(user_datas[0]), companyId);
-            AdminDTO? adminUser = staff == null ? await _adminRepository.GetAvailableAdminAsync(Convert.ToInt32(user_datas[0]), companyId) : null;
 
-            if (adminUser == null && staff == null)
+            if (staff == null)
             {
-                result.AddError("驗證錯誤 admin 及 staff都尚未授權");
+                result.AddError("驗證錯誤 staff尚未授權");
+                return result;
+            }
+            else
+            {
+                loginUserInfo.Auth = staff.Auth;
+                loginUserInfo.StaffNo = staff.StaffNo;
+                loginUserInfo.StaffName = staff.StaffName;
+                loginUserInfo.DepartmentId = staff.DepartmentId;
+                loginUserInfo.CompanyId = staff.CompanyId;
+            }
+            loginUserInfo.UserId = user_datas[0];
+            result.Data = loginUserInfo;
+
+            return result;
+        }
+
+        public async Task<CommonResult<LoginDTO>> GetAdminWithSaltHashAsync(int companyId, string adminId)
+        {
+            var result = new CommonResult<LoginDTO>();
+            var user_datas = adminId.Split(",");
+
+            if (!CryptHelper.VerifySaltHashPlus(user_datas[1], user_datas[0]))
+            {
+                return null;
+            }
+            LoginDTO? loginUserInfo = new LoginDTO();
+            AdminDTO? adminUser = await _adminRepository.GetAvailableAdminAsync(Convert.ToInt32(user_datas[0]), companyId);
+
+            if (adminUser == null)
+            {
+                result.AddError("驗證錯誤 admin尚未授權");
                 return result;
             }
             else if (adminUser != null)
@@ -110,14 +140,7 @@ namespace Human.Chrs.Domain
                 loginUserInfo.StaffNo = adminUser.StaffNo;
                 loginUserInfo.AdminToken = adminUser.AdminToken;
             }
-            else if (staff != null)
-            {
-                loginUserInfo.Auth = staff.Auth;
-                loginUserInfo.StaffNo = staff.StaffNo;
-                loginUserInfo.StaffName = staff.StaffName;
-                loginUserInfo.DepartmentId = staff.DepartmentId;
-                loginUserInfo.CompanyId = staff.CompanyId;
-            }
+
             loginUserInfo.UserId = user_datas[0];
             result.Data = loginUserInfo;
 

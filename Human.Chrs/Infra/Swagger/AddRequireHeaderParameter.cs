@@ -47,10 +47,29 @@ namespace Human.Chrs.Infra.Swagger
                 {
 #if DEBUG
                     //Example = new Microsoft.OpenApi.Any.OpenApiString("U234a729732732d29f0b1ff1dd9ab4baa,AN34pC0dnUUujrtOLziJrqq8USq6k3/fwEqppe5BajwOFMCrQYHTuHUFbAb/I6/x0A=="), // Loki Tao (working)
-                    Example = new Microsoft.OpenApi.Any.OpenApiString("1,AOzIDKKxvfFR0U4c3TCM0I8hSQFfUedykUFrwRpSKB5OXdM5UhYCqDF8zx1Zl5CjOVyhelXFcKoklf3rVyjN+coil22SgF5YYSwATAiKN5gH"), // 阿棻
+                    // Example = new Microsoft.OpenApi.Any.OpenApiString("1,AOzIDKKxvfFR0U4c3TCM0I8hSQFfUedykUFrwRpSKB5OXdM5UhYCqDF8zx1Zl5CjOVyhelXFcKoklf3rVyjN+coil22SgF5YYSwATAiKN5gH"), // 這是員工
+                    Example = new Microsoft.OpenApi.Any.OpenApiString("1,AIW/1qsAzrz8AIvs1k7UaAXaa9KN/6XFNVqazogoiJRfszvozL/ueXdW3csnifXNPl3ZvHX+WeIRkCz6zewd40LonTr0vcl840ONxmlPjg6e"), // 這是管理者
+
 #endif
                     Name = "X-Ap-UserId",
                     Description = "UserID",
+                    In = ParameterLocation.Header,
+                    Required = false
+                });
+            }
+
+            if (context.ApiDescription.CustomAttributes().Any(x => x.GetType() == typeof(ApUserAuthAttribute)))
+            {
+                operation.Parameters.Add(new OpenApiParameter
+                {
+#if DEBUG
+                    //Example = new Microsoft.OpenApi.Any.OpenApiString("U234a729732732d29f0b1ff1dd9ab4baa,AN34pC0dnUUujrtOLziJrqq8USq6k3/fwEqppe5BajwOFMCrQYHTuHUFbAb/I6/x0A=="), // Loki Tao (working)
+                    // Example = new Microsoft.OpenApi.Any.OpenApiString("1,AOzIDKKxvfFR0U4c3TCM0I8hSQFfUedykUFrwRpSKB5OXdM5UhYCqDF8zx1Zl5CjOVyhelXFcKoklf3rVyjN+coil22SgF5YYSwATAiKN5gH"), // 這是員工
+                    Example = new Microsoft.OpenApi.Any.OpenApiString("kkk5698"), // 這是管理者
+
+#endif
+                    Name = "X-Ap-AdminToken",
+                    Description = "AdminToken",
                     In = ParameterLocation.Header,
                     Required = false
                 });

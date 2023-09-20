@@ -15,6 +15,10 @@ namespace Human.Chrs.ViewModel.Request
 
         public string EnglishName { get; set; }
 
+        public int StaffId { get; set; }
+
+        public int CompanyId { get; set; }
+
         public DateTime BirthDay { get; set; }
 
         public string Gender { get; set; }

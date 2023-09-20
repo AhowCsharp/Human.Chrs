@@ -16,6 +16,8 @@ namespace Human.Chrs.ViewModel.Request
             {
                 id = request.Id,
                 Name = request.Name,
+                StaffId = request.StaffId,
+                CompanyId = request.CompanyId,
                 EnglishName = request.EnglishName,
                 BirthDay = request.BirthDay,
                 Gender = request.Gender,

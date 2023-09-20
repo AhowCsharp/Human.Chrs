@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using Human.Repository.EF;
 using Human.Chrs.Domain.DTO;
 using Human.Chrs.Domain.Helper;
+using System.Data.Entity;
+using System.Collections;
 
 namespace LineTag.Infrastructure.Repositories
 {
@@ -23,10 +25,16 @@ namespace LineTag.Infrastructure.Repositories
         {
         }
 
-        public async Task<CompanyRuleDTO> GetCompanyRuleAsync(int companyId,int DepartmentId)
+        public async Task<CompanyRuleDTO> GetCompanyRuleAsync(int companyId, int DepartmentId)
         {
             var data = await _context.CompanyRule.FirstOrDefaultAsync(x => x.CompanyId == companyId && x.DepartmentId == DepartmentId);
             return _mapper.Map<CompanyRuleDTO>(data);
+        }
+
+        public async Task<IEnumerable<CompanyRuleDTO>> GetCompanyRulesAsync(int companyId)
+        {
+            var data = await _context.CompanyRule.Where(x => x.CompanyId == companyId).ToListAsync();
+            return data.Select(_mapper.Map<CompanyRuleDTO>);
         }
     }
 }
