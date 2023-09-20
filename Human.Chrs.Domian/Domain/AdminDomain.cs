@@ -528,6 +528,9 @@ namespace Human.Chrs.Domain
             salaryView.PrenatalCheckUpDays = (int)(total11Hours / 8);
             salaryView.PrenatalCheckUpHours = (int)(total11Hours % 8);
 
+            salaryView.OverTimeHours = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAsync(staffId, user.CompanyId, firstDayOfLastMonth, lastDayOfLastMonth)).Sum(x => x.OverHours);
+
+
             return result;
         }
     }

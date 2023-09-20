@@ -8,5 +8,7 @@ namespace Human.Chrs.Domain.IRepository
     public interface IOverTimeLogRepository : IRepository<OverTimeLogDTO, int>
     {
         Task<OverTimeLogDTO> GetOverTimeLogAsync(int staffId, int companyId);
+
+        Task<IEnumerable<OverTimeLogDTO>> GetOverTimeLogOfPeriodAsync(int staffId, int companyId, DateTime start, DateTime end);
     }
 }

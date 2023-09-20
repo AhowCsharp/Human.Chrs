@@ -56,11 +56,12 @@ namespace Human.Chrs.Infra.Attribute
                 }
                 else
                 {
+                    var x_AdminToken = context.HttpContext.Request.Headers["X-Ap-AdminToken"].ToString();
                     var x_CompanyId = context.HttpContext.Request.Headers["X-Ap-CompanyId"].ToString();
                     var CompanyId = Convert.ToInt32(x_CompanyId);
                     var UserId = context.HttpContext.Request.Headers["X-Ap-UserId"].ToString();
 
-                    var verifyResult = await loginDomain.GetAdminWithSaltHashAsync(CompanyId, UserId);
+                    var verifyResult = await loginDomain.GetAdminWithSaltHashAsync(CompanyId, UserId, x_AdminToken);
                     if (!verifyResult.Success)
                     {
                         var response = new { error = "Unauthorized", code = "未註冊管理者" };

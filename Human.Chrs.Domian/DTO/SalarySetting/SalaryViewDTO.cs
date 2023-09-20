@@ -67,6 +67,6 @@ namespace Human.Chrs.Domain.DTO
 
         public int PrenatalCheckUpHours { get; set; }
 
-        public int OverTimeHours { get; set; }  //TODO
+        public int OverTimeHours { get; set; } 
     }
 }

@@ -114,7 +114,7 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult<LoginDTO>> GetAdminWithSaltHashAsync(int companyId, string adminId)
+        public async Task<CommonResult<LoginDTO>> GetAdminWithSaltHashAsync(int companyId, string adminId,string adminToken)
         {
             var result = new CommonResult<LoginDTO>();
             var user_datas = adminId.Split(",");
@@ -133,12 +133,21 @@ namespace Human.Chrs.Domain
             }
             else if (adminUser != null)
             {
-                loginUserInfo.Auth = adminUser.Auth;
-                loginUserInfo.StaffName = adminUser.UserName;
-                loginUserInfo.CompanyId = adminUser.CompanyId;
-                loginUserInfo.DepartmentId = adminUser.DepartmentId;
-                loginUserInfo.StaffNo = adminUser.StaffNo;
-                loginUserInfo.AdminToken = adminUser.AdminToken;
+                if (adminUser.AdminToken == adminToken)
+                {
+                    loginUserInfo.Auth = adminUser.Auth;
+                    loginUserInfo.StaffName = adminUser.UserName;
+                    loginUserInfo.CompanyId = adminUser.CompanyId;
+                    loginUserInfo.DepartmentId = adminUser.DepartmentId;
+                    loginUserInfo.StaffNo = adminUser.StaffNo;
+                    loginUserInfo.AdminToken = adminUser.AdminToken;
+                }
+                else
+                {
+                    result.AddError("驗證錯誤 admin授權碼不正確");
+                    return result;
+                }
+
             }
 
             loginUserInfo.UserId = user_datas[0];

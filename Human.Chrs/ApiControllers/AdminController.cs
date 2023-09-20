@@ -293,5 +293,41 @@ namespace LineTag.Admin.ApiControllers
                 return ServerError500();
             }
         }
+
+        /// <summary>
+        /// 審核員工薪資
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("paymoeny")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetStaffSalaryView(int staffId)
+        {
+            try
+            {
+                var result = await _admindomain.GetStaffSalaryViewAsync(staffId);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetStaffSalaryView));
+
+                return ServerError500();
+            }
+        }
     }
 }
