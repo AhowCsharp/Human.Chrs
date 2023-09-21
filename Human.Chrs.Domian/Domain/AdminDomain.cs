@@ -143,6 +143,39 @@ namespace Human.Chrs.Domain
             return result;
         }
 
+        public async Task<CommonResult<SalarySettingDTO>> CreateOrEditSalarySetting(SalarySettingDTO dto)
+        {
+            var result = new CommonResult<SalarySettingDTO>();
+            bool isCreate = dto.id == 0;
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (verifyAdminToken)
+            {
+                if (isCreate)
+                {
+                    dto.EditDate = DateTimeHelper.TaipeiNow;
+                    dto.CreateDate = DateTimeHelper.TaipeiNow;
+                    dto.Creator = user.StaffName;
+                    dto.Editor = user.StaffName;
+                    result.Data = await _salarySettingRepository.InsertAsync(dto);
+                }
+                else
+                {
+                    dto.EditDate = DateTimeHelper.TaipeiNow;
+                    dto.Editor = user.StaffName;
+                    result.Data = await _salarySettingRepository.UpdateAsync(dto);
+                }
+            }
+            else
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+
+            return result;
+        }
+
         public async Task<IEnumerable<StaffDTO>> GetAllStaffAsync()
         {
             var user = _userService.GetCurrentUser();
@@ -229,6 +262,27 @@ namespace Human.Chrs.Domain
             checkRecordView.OutLocationCheckInDays = outLocationCheckInDays;
             checkRecordView.OutLocationCheckOutDays = outLocationCheckOutDays;
             result.Data = checkRecordView;
+            return result;
+        }
+
+        public async Task<CommonResult<AdminDTO>> CreateOrEditAdminAsync(AdminDTO adminDTO)
+        {
+            var result = new CommonResult<AdminDTO>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+                return result;
+            }
+            if (adminDTO.id == 0)
+            {
+                result.Data = await _adminRepository.InsertAsync(adminDTO);
+            }
+            else
+            {
+                result.Data = await _adminRepository.UpdateAsync(adminDTO);
+            }
             return result;
         }
 

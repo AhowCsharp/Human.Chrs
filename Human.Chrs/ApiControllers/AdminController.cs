@@ -61,6 +61,44 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 增修員工薪資設定
+        /// </summary>
+        /// <param name="salarySettingRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("salarysetting")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> CreateOrEditSalarySetting(SalarySettingRequest salarySettingRequest)
+        {
+            //CompanyId StaffAccount StaffPassWord Department EntryDate LevelPosition WorkPosition Email StaffPhoneNumber Auth DepartmentId
+            try
+            {
+                var result = await _admindomain.CreateOrEditSalarySetting(salarySettingRequest.ToDTO());
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(CreateOrEditSalarySetting));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 新增員工詳細資料
         /// </summary>
         /// <param name="request">請求資料</param>
@@ -75,7 +113,7 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuth]
         [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateStaffDetail(StaffDetailSaveRequest request)
+        public async Task<IActionResult> CreateOrEditStaffDetail(StaffDetailSaveRequest request)
         {
             //CompanyId StaffAccount StaffPassWord Department EntryDate LevelPosition WorkPosition Email StaffPhoneNumber Auth DepartmentId
             try
@@ -92,7 +130,7 @@ namespace LineTag.Admin.ApiControllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, nameof(UpdateStaffDetail));
+                _logger.LogError(ex, nameof(CreateOrEditStaffDetail));
 
                 return ServerError500();
             }
@@ -187,7 +225,7 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
-        /// 取得部門規定
+        /// 修改部門規定
         /// </summary>
         /// <response code="200">OK</response>
         /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
@@ -217,6 +255,42 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(GetRulesOfCompany));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 新增或修改管理者
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("manager")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> CreateOrEditAdmin(AdminSaveRequest request)
+        {
+            try
+            {
+                var result = await _admindomain.CreateOrEditAdminAsync(request.ToDTO());
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(CreateOrEditAdmin));
 
                 return ServerError500();
             }

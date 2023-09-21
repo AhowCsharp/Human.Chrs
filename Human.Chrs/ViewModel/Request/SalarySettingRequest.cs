@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Human.Chrs.Domain.SeedWork;
 
-namespace Human.Chrs.Domain.DTO
+namespace Human.Chrs.ViewModel.Request
 {
-    public class SalarySettingDTO : IDTO
+    public partial class SalarySettingRequest
     {
         public int id { get; set; }
 
@@ -20,13 +20,5 @@ namespace Human.Chrs.Domain.DTO
         public int FullCheckInMoney { get; set; }
 
         public int? OtherPercent { get; set; }
-
-        public DateTime EditDate { get; set; }
-
-        public string Editor { get; set; }
-
-        public DateTime CreateDate { get; set; }
-
-        public string Creator { get; set; }
     }
 }
