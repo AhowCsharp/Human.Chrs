@@ -27,7 +27,7 @@ namespace Human.Chrs.ViewModel.Extension
                 StaffPassWord = request.StaffPassWord,
                 Department = request.Department,
                 EntryDate = request.EntryDate,
-                ResignationDate = DateTimeHelper.TaipeiNow,
+                ResignationDate = request.ResignationDate,
                 LevelPosition = request.LevelPosition,
                 WorkPosition = request.WorkPosition,
                 Email = request.Email,

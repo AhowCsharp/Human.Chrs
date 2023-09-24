@@ -38,7 +38,8 @@ builder.Services.AddQuartz(quartz =>
     {
         opts.ForJob(jobKey);
         opts.WithIdentity("UpdateStaffInfoTrigger", "UpdateStaffInfoGroup");
-        opts.WithCronSchedule("0 0 1 * * ?");  // 每天凌晨1:00執行
+        opts.WithCronSchedule("0 15 1 * * ?");
+        // 每天凌晨1:00執行
     });
 });
 

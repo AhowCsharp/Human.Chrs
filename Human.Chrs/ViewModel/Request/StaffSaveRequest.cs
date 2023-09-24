@@ -23,7 +23,7 @@ namespace Human.Chrs.ViewModel.Request
 
         public DateTime EntryDate { get; set; }
 
-        //public DateTime? ResignationDate { get; set; }
+        public DateTime ResignationDate { get; set; }
 
         public string LevelPosition { get; set; }
 
@@ -57,19 +57,9 @@ namespace Human.Chrs.ViewModel.Request
 
         public int MarryHours { get; set; }
 
-        //public int? PersonalDetailId { get; set; }
-
         public int? EmploymentTypeId { get; set; }
 
         public string StaffPhoneNumber { get; set; }
-
-        //public DateTime? CreateDate { get; set; }
-
-        //public string Creator { get; set; }
-
-        //public DateTime? EditDate { get; set; }
-
-        //public string Editor { get; set; }
 
         public string StaffName { get; set; }
 
