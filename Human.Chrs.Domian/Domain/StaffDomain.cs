@@ -337,6 +337,28 @@ namespace Human.Chrs.Domain
             return result;
         }
 
+        public async Task<CommonResult<PersonalDetailDTO>> GetStaffDetailAsync()
+        {
+            var result = new CommonResult<PersonalDetailDTO>();
+            var user = _userService.GetCurrentUser();
+            var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
+            if (!exist)
+            {
+                result.AddError("沒找到對應的員工");
+                return result;
+            }
+            var company = await _companyRepository.GetAsync(user.CompanyId);
+            if (company == null)
+            {
+                result.AddError("沒找到對應的公司");
+                return result;
+            }
+            var detail = await _personalDetailRepository.GetStaffDetailInfoAsync(user.Id, user.CompanyId);
+            result.Data = detail;
+
+            return result;
+        }
+
         public async Task<CommonResult<List<EventDTO>>> EventsGetAsync()
         {
             var result = new CommonResult<List<EventDTO>>();

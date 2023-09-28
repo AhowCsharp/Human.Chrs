@@ -11,27 +11,27 @@ namespace Human.Chrs.ViewModel.Request
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } //
 
-        public string EnglishName { get; set; }
+        public string EnglishName { get; set; } //
 
         public int StaffId { get; set; }
 
         public int CompanyId { get; set; }
 
-        public DateTime BirthDay { get; set; }
+        public DateTime BirthDay { get; set; } //
 
-        public string Gender { get; set; }
+        public string Gender { get; set; } //
 
-        public int IsMarried { get; set; }
+        public int IsMarried { get; set; } //
 
-        public int HasLicense { get; set; }
+        public int HasLicense { get; set; } //
 
-        public double Height { get; set; }
+        public double Height { get; set; } // 
 
-        public int Weight { get; set; }
+        public int Weight { get; set; } //
 
-        public string IdentityNo { get; set; }
+        public string IdentityNo { get; set; } // 
 
         public int? HasCrimeRecord { get; set; }
 
