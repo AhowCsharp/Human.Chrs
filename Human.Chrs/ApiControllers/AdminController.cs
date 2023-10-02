@@ -403,5 +403,41 @@ namespace LineTag.Admin.ApiControllers
                 return ServerError500();
             }
         }
+
+        /// <summary>
+        /// 員工請假列表
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("vacations")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllVacations(DateTime start, DateTime end)
+        {
+            try
+            {
+                var result = await _admindomain.GetAllVacationApplicationAsync(start, end);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetAllVacations));
+
+                return ServerError500();
+            }
+        }
     }
 }

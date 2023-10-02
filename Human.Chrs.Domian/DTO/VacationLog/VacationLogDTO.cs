@@ -36,5 +36,9 @@ namespace Human.Chrs.Domain.DTO
         public string Reason { get; set; }
 
         public string VacationTypeName { get; set; }
+
+        public string StaffName { get; set; }
+
+        public string StaffNo { get; set; }
     }
 }

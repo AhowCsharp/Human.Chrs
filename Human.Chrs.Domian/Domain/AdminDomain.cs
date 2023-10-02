@@ -129,6 +129,7 @@ namespace Human.Chrs.Domain
                 }
                 else
                 {
+                    dto.CompanyId = user.CompanyId;
                     data = await _personalDetailRepository.UpdateAsync(dto);
                 }
             }
@@ -287,6 +288,86 @@ namespace Human.Chrs.Domain
             return result;
         }
 
+        public async Task<CommonResult<IEnumerable<VacationLogDTO>>> GetAllVacationApplicationAsync(DateTime start, DateTime end)
+        {
+            var result = new CommonResult<IEnumerable<VacationLogDTO>>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+                return result;
+            }
+            var allVacations = (await _vacationLogRepository.GetPeriodVacationLogsAsync(user.Id, start, end)).ToList();
+            foreach (var log in allVacations)
+            {
+                var staff = await _staffRepository.GetUsingStaffAsync(log.StaffId, log.CompanyId);
+                if (staff == null)
+                {
+                    result.AddError("找不到該員工 系統錯誤");
+                    return result;
+                }
+                log.StaffName = staff.StaffName;
+                log.StaffNo = staff.StaffNo;
+                switch (log.VacationType)
+                {
+                    case 0:
+                        log.VacationTypeName = "特休";
+                        break;
+
+                    case 1:
+                        log.VacationTypeName = "病假";
+                        break;
+
+                    case 2:
+                        log.VacationTypeName = "事假";
+                        break;
+
+                    case 3:
+                        log.VacationTypeName = "產假";
+                        break;
+
+                    case 4:
+                        log.VacationTypeName = "喪假";
+                        break;
+
+                    case 5:
+                        log.VacationTypeName = "婚假";
+                        break;
+
+                    case 6:
+                        log.VacationTypeName = "公假";
+                        break;
+
+                    case 7:
+                        log.VacationTypeName = "工傷病假";
+                        break;
+
+                    case 8:
+                        log.VacationTypeName = "生理假";
+                        break;
+
+                    case 9:
+                        log.VacationTypeName = "育嬰留職停薪假";
+                        break;
+
+                    case 10:
+                        log.VacationTypeName = "安胎假";
+                        break;
+
+                    case 11:
+                        log.VacationTypeName = "產檢假";
+                        break;
+
+                    default:
+                        result.AddError("出事了 假別出現錯誤");
+                        return result;
+                }
+            }
+            result.Data = allVacations;
+            return result;
+        }
+
         public async Task<CommonResult<VacationLogDTO>> VerifyVacationsAsync(int vacationId, bool isPass)
         {
             var result = new CommonResult<VacationLogDTO>();
@@ -307,7 +388,6 @@ namespace Human.Chrs.Domain
             vacationLog.ApproverName = user.StaffName;
             vacationLog.ApproverId = user.Id;
             vacationLog.AuditDate = DateTimeHelper.TaipeiNow;
-            result.Data = await _vacationLogRepository.UpdateAsync(vacationLog);
             if (isPass)
             {
                 var staff = await _staffRepository.GetAsync(vacationLog.StaffId);
@@ -323,6 +403,12 @@ namespace Human.Chrs.Domain
                             int remainingHours = vacationLog.Hours - staff.SpecialRestHours;
                             int quotient = (int)Math.Ceiling(remainingHours / 8.0);
                             staff.SpecialRestDays -= quotient;
+                            if (staff.SpecialRestDays < 0)
+                            {
+                                vacationLog.IsPass = -1;
+                                vacationLog.ApproverName = "系統自動拒絕";
+                                result.AddError("該假別已超過該員工請假額度");
+                            }
                             staff.SpecialRestHours = (quotient * 8) - remainingHours;
                         }
 
@@ -338,6 +424,12 @@ namespace Human.Chrs.Domain
                             int remainingHours = vacationLog.Hours - staff.SickHours;
                             int quotient = (int)Math.Ceiling(remainingHours / 8.0);
                             staff.SickDays -= quotient;
+                            if (staff.SickDays < 0)
+                            {
+                                vacationLog.IsPass = -1;
+                                vacationLog.ApproverName = "系統自動拒絕";
+                                result.AddError("該假別已超過該員工請假額度");
+                            }
                             staff.SickHours = (quotient * 8) - remainingHours;
                         }
 
@@ -354,6 +446,12 @@ namespace Human.Chrs.Domain
                             int remainingHours = vacationLog.Hours - staff.ThingHours;
                             int quotient = (int)Math.Ceiling(remainingHours / 8.0);
                             staff.ThingDays -= quotient;
+                            if (staff.ThingDays < 0)
+                            {
+                                vacationLog.IsPass = -1;
+                                vacationLog.ApproverName = "系統自動拒絕";
+                                result.AddError("該假別已超過該員工請假額度");
+                            }
                             staff.ThingHours = (quotient * 8) - remainingHours;
                         }
                         break;
@@ -369,6 +467,12 @@ namespace Human.Chrs.Domain
                             int remainingHours = vacationLog.Hours - staff.ChildbirthHours;
                             int quotient = (int)Math.Ceiling(remainingHours / 8.0);
                             staff.ChildbirthDays -= quotient;
+                            if (staff.ChildbirthDays < 0)
+                            {
+                                vacationLog.IsPass = -1;
+                                vacationLog.ApproverName = "系統自動拒絕";
+                                result.AddError("該假別已超過該員工請假額度");
+                            }
                             staff.ChildbirthHours = (quotient * 8) - remainingHours;
                         }
                         break;
@@ -384,6 +488,12 @@ namespace Human.Chrs.Domain
                             int remainingHours = vacationLog.Hours - staff.DeathHours;
                             int quotient = (int)Math.Ceiling(remainingHours / 8.0);
                             staff.DeathDays -= quotient;
+                            if (staff.DeathDays < 0)
+                            {
+                                vacationLog.IsPass = -1;
+                                vacationLog.ApproverName = "系統自動拒絕";
+                                result.AddError("該假別已超過該員工請假額度");
+                            }
                             staff.DeathHours = (quotient * 8) - remainingHours;
                         }
                         break;
@@ -399,6 +509,12 @@ namespace Human.Chrs.Domain
                             int remainingHours = vacationLog.Hours - staff.MarryHours;
                             int quotient = (int)Math.Ceiling(remainingHours / 8.0);
                             staff.MarryDays -= quotient;
+                            if (staff.MarryDays < 0)
+                            {
+                                vacationLog.IsPass = -1;
+                                vacationLog.ApproverName = "系統自動拒絕";
+                                result.AddError("該假別已超過該員工請假額度");
+                            }
                             staff.MarryHours = (quotient * 8) - remainingHours;
                         }
                         break;
@@ -420,6 +536,12 @@ namespace Human.Chrs.Domain
                             int remainingHours = vacationLog.Hours - staff.MenstruationHours;
                             int quotient = (int)Math.Ceiling(remainingHours / 8.0);
                             staff.MenstruationDays -= quotient;
+                            if (staff.MenstruationDays < 0)
+                            {
+                                vacationLog.IsPass = -1;
+                                vacationLog.ApproverName = "系統自動拒絕";
+                                result.AddError("該假別已超過該員工請假額度");
+                            }
                             staff.MenstruationHours = (quotient * 8) - remainingHours;
                         }
                         break;
@@ -435,6 +557,12 @@ namespace Human.Chrs.Domain
                             int remainingHours = vacationLog.Hours - staff.TackeCareBabyHours;
                             int quotient = (int)Math.Ceiling(remainingHours / 8.0);
                             staff.TackeCareBabyDays -= quotient;
+                            if (staff.TackeCareBabyDays < 0)
+                            {
+                                vacationLog.IsPass = -1;
+                                vacationLog.ApproverName = "系統自動拒絕";
+                                result.AddError("該假別已超過該員工請假額度");
+                            }
                             staff.TackeCareBabyHours = (quotient * 8) - remainingHours;
                         }
                         break;
@@ -450,6 +578,12 @@ namespace Human.Chrs.Domain
                             int remainingHours = vacationLog.Hours - staff.TocolysisHours;
                             int quotient = (int)Math.Ceiling(remainingHours / 8.0);
                             staff.TocolysisDays -= quotient;
+                            if (staff.TocolysisDays < 0)
+                            {
+                                vacationLog.IsPass = -1;
+                                vacationLog.ApproverName = "系統自動拒絕";
+                                result.AddError("該假別已超過該員工請假額度");
+                            }
                             staff.TocolysisHours = (quotient * 8) - remainingHours;
                         }
                         break;
@@ -464,14 +598,23 @@ namespace Human.Chrs.Domain
                             int remainingHours = vacationLog.Hours - staff.PrenatalCheckUpHours;
                             int quotient = (int)Math.Ceiling(remainingHours / 8.0);
                             staff.PrenatalCheckUpDays -= quotient;
+                            if (staff.PrenatalCheckUpDays < 0)
+                            {
+                                vacationLog.IsPass = -1;
+                                vacationLog.ApproverName = "系統自動拒絕";
+                                result.AddError("該假別已超過該員工請假額度");
+                            }
                             staff.PrenatalCheckUpHours = (quotient * 8) - remainingHours;
                         }
 
                         break;
                 }
-                await _staffRepository.UpdateAsync(staff);
+                if (result.Success)
+                {
+                    await _staffRepository.UpdateAsync(staff);
+                }
             }
-
+            result.Data = await _vacationLogRepository.UpdateAsync(vacationLog);
             return result;
         }
 
@@ -584,7 +727,6 @@ namespace Human.Chrs.Domain
             salaryView.PrenatalCheckUpHours = (int)(total11Hours % 8);
 
             salaryView.OverTimeHours = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAsync(staffId, user.CompanyId, firstDayOfLastMonth, lastDayOfLastMonth)).Sum(x => x.OverHours);
-
 
             return result;
         }

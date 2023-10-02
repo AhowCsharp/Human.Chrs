@@ -14,5 +14,7 @@ namespace Human.Chrs.Domain.IRepository
         Task<bool> VerifyVacationLogsAsync(int staffId, int companyId, DateTime start, DateTime end);
 
         Task<IEnumerable<VacationLogDTO>> GetPeriodVacationLogsAsync(int staffId, int companyId, DateTime start, DateTime end);
+
+        Task<IEnumerable<VacationLogDTO>> GetPeriodVacationLogsAsync(int companyId, DateTime start, DateTime end);
     }
 }
