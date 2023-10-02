@@ -1,5 +1,6 @@
 ﻿using Human.Chrs.Domain.DTO;
 using Human.Chrs.Domain.SeedWork;
+using Human.Repository.EF;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,8 @@ namespace Human.Chrs.ViewModel.Request
         {
             var dto = new PersonalDetailDTO
             {
-                id = request.Id,
+                id = request.id,
                 Name = request.Name,
-                StaffId = request.StaffId,
-                CompanyId = request.CompanyId,
                 EnglishName = request.EnglishName,
                 BirthDay = request.BirthDay,
                 Gender = request.Gender,
@@ -28,6 +27,7 @@ namespace Human.Chrs.ViewModel.Request
                 IdentityNo = request.IdentityNo,
                 HasCrimeRecord = request.HasCrimeRecord,
                 Memo = request.Memo,
+                StaffId = request.StaffId,
             };
 
             return dto;

@@ -337,9 +337,9 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult<PersonalDetailDTO>> GetStaffDetailAsync()
+        public async Task<CommonResult<PersonalDetailDTO?>> GetStaffDetailAsync(int id)
         {
-            var result = new CommonResult<PersonalDetailDTO>();
+            var result = new CommonResult<PersonalDetailDTO?>();
             var user = _userService.GetCurrentUser();
             var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
             if (!exist)
@@ -353,7 +353,7 @@ namespace Human.Chrs.Domain
                 result.AddError("沒找到對應的公司");
                 return result;
             }
-            var detail = await _personalDetailRepository.GetStaffDetailInfoAsync(user.Id, user.CompanyId);
+            var detail = await _personalDetailRepository.GetStaffDetailInfoAsync(id, user.CompanyId);
             result.Data = detail;
 
             return result;

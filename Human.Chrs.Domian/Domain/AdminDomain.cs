@@ -124,6 +124,7 @@ namespace Human.Chrs.Domain
                 if (isCreate)
                 {
                     dto.IdentityNo = CryptHelper.SaltHashPlus(dto.IdentityNo);
+                    dto.CompanyId = user.CompanyId;
                     data = await _personalDetailRepository.InsertAsync(dto);
                 }
                 else

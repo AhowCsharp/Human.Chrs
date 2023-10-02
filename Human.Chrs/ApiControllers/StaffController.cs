@@ -229,11 +229,11 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuth]
         [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetDetailInfo()
+        public async Task<IActionResult> GetDetailInfo(int id)
         {
             try
             {
-                var result = await _staffdomain.GetStaffDetailAsync();
+                var result = await _staffdomain.GetStaffDetailAsync(id);
 
                 if (result.Success)
                 {

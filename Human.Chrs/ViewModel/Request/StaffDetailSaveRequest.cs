@@ -9,15 +9,13 @@ namespace Human.Chrs.ViewModel.Request
 {
     public partial class StaffDetailSaveRequest
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
         public string Name { get; set; } //
 
+        public int StaffId { get; set; } //
+
         public string EnglishName { get; set; } //
-
-        public int StaffId { get; set; }
-
-        public int CompanyId { get; set; }
 
         public DateTime BirthDay { get; set; } //
 
@@ -33,8 +31,8 @@ namespace Human.Chrs.ViewModel.Request
 
         public string IdentityNo { get; set; } // 
 
-        public int? HasCrimeRecord { get; set; }
+        public int? HasCrimeRecord { get; set; } //
 
-        public string Memo { get; set; }
+        public string Memo { get; set; } //
     }
 }
