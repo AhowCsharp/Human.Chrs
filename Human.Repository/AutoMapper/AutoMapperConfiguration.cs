@@ -23,6 +23,7 @@ namespace Human.Repository.AutoMapper
             CreateMap<VacationLog, VacationLogDTO>().ReverseMap();
             CreateMap<EventLogs, EventLogsDTO>().ReverseMap();
             CreateMap<Department, DepartmentDTO>().ReverseMap();
+            CreateMap<SalarySetting, SalarySettingDTO>().ReverseMap();
         }
 
         //private IEnumerable<NewMessageDTO> GetMessageList(string json)

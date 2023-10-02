@@ -10,5 +10,7 @@ namespace Human.Chrs.Domain.IRepository
     public interface ISalarySettingRepository : IRepository<SalarySettingDTO, int>
     {
         Task<SalarySettingDTO> GetSalarySettingAsync(int staffId, int companyId);
+
+        Task<IEnumerable<SalarySettingDTO>> GetAllSalarySettingAsync(int companyId);
     }
 }

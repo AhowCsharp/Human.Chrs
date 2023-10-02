@@ -28,5 +28,9 @@ namespace Human.Chrs.Domain.DTO
         public DateTime CreateDate { get; set; }
 
         public string Creator { get; set; }
+
+        public string StaffName { get; set; }
+
+        public string StaffNo { get; set; }
     }
 }

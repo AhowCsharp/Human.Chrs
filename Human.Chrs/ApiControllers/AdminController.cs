@@ -382,11 +382,11 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuthAttribute]
         [ApUserAuthAttribute]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetStaffSalaryView(int staffId)
+        public async Task<IActionResult> GetStaffSalaryView(int id)
         {
             try
             {
-                var result = await _admindomain.GetStaffSalaryViewAsync(staffId);
+                var result = await _admindomain.GetStaffSalaryViewAsync(id);
                 if (result.Success)
                 {
                     return Ok(result);
@@ -435,6 +435,42 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(GetAllVacations));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 員工薪資列表
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("salarysettings")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllSalarySetting()
+        {
+            try
+            {
+                var result = await _admindomain.GetAllSalarySettingAsync();
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetAllSalarySetting));
 
                 return ServerError500();
             }

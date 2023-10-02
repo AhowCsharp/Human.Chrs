@@ -101,7 +101,7 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
-        /// 報加班
+        /// 申請休假
         /// </summary>
         /// <param name="vacationRequest">請求資料</param>
         /// <response code="200">OK</response>

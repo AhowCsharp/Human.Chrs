@@ -178,6 +178,38 @@ namespace Human.Chrs.Domain
             return result;
         }
 
+        public async Task<CommonResult<IEnumerable<SalarySettingDTO>>> GetAllSalarySettingAsync()
+        {
+            var result = new CommonResult<IEnumerable<SalarySettingDTO>>();
+
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (verifyAdminToken)
+            {
+                var settings = (await _salarySettingRepository.GetAllSalarySettingAsync(user.CompanyId)).ToList();
+                foreach (var setting in settings)
+                {
+                    var staff = await _staffRepository.GetUsingStaffAsync(setting.StaffId, setting.CompanyId);
+                    if (staff == null)
+                    {
+                        result.AddError("系統錯誤 找不到該員工");
+                        return result;
+                    }
+                    setting.StaffName = staff.StaffName;
+                    setting.StaffNo = staff.StaffNo;
+                }
+                result.Data = settings;
+            }
+            else
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+
+            return result;
+        }
+
         public async Task<IEnumerable<StaffDTO>> GetAllStaffAsync()
         {
             var user = _userService.GetCurrentUser();
@@ -644,7 +676,9 @@ namespace Human.Chrs.Domain
             }
 
             var setting = await _salarySettingRepository.GetSalarySettingAsync(staffId, user.CompanyId);
-
+            var staff = await _staffRepository.GetUsingStaffAsync(staffId, user.CompanyId);
+            setting.StaffName = staff.StaffName;
+            setting.StaffNo = staff.StaffNo;
             salaryView.SalarySetting = setting;
 
             salaryView.TotalCheckInLateDays = staffCheckRecords.Select(x => x.IsCheckInLate == 1).Count();
@@ -659,75 +693,95 @@ namespace Human.Chrs.Domain
             .Sum(x => x.Hours);
             salaryView.SpecialRestDays = (int)(total0Hours / 8);
             salaryView.SpecialRestHours = (int)(total0Hours % 8);
+            salaryView.TotalSpecialRestHours = (int)total0Hours;
 
             double total1Hours = staffVacationlogs
             .Where(x => x.VacationType == 1 && x.IsPass == 1)
             .Sum(x => x.Hours);
             salaryView.SickDays = (int)(total1Hours / 8);
             salaryView.SickHours = (int)(total1Hours % 8);
+            salaryView.TotalSickHours = (int)total1Hours;
 
             double total2Hours = staffVacationlogs
             .Where(x => x.VacationType == 2 && x.IsPass == 1)
             .Sum(x => x.Hours);
             salaryView.ThingDays = (int)(total2Hours / 8);
             salaryView.ThingHours = (int)(total2Hours % 8);
+            salaryView.TotalThingHours = (int)total2Hours;
 
             double total3Hours = staffVacationlogs
             .Where(x => x.VacationType == 3 && x.IsPass == 1)
             .Sum(x => x.Hours);
             salaryView.ChildbirthDays = (int)(total3Hours / 8);
             salaryView.ChildbirthHours = (int)(total3Hours % 8);
+            salaryView.TotalChildbirthHours = (int)total3Hours;
 
             double total4Hours = staffVacationlogs
             .Where(x => x.VacationType == 4 && x.IsPass == 1)
             .Sum(x => x.Hours);
             salaryView.DeathDays = (int)(total4Hours / 8);
             salaryView.DeathHours = (int)(total4Hours % 8);
+            salaryView.TotalDeathHours = (int)total4Hours;
 
             double total5Hours = staffVacationlogs
             .Where(x => x.VacationType == 5 && x.IsPass == 1)
             .Sum(x => x.Hours);
             salaryView.MarryDays = (int)(total5Hours / 8);
             salaryView.MarryHours = (int)(total5Hours % 8);
+            salaryView.TotalMarryHours = (int)total5Hours;
 
             double total6Hours = staffVacationlogs
             .Where(x => x.VacationType == 6 && x.IsPass == 1)
             .Sum(x => x.Hours);
             salaryView.WorkthingDays = (int)(total6Hours / 8);
             salaryView.WorkthingHours = (int)(total6Hours % 8);
+            salaryView.TotalWorkthingHours = (int)total6Hours;
 
             double total7Hours = staffVacationlogs
             .Where(x => x.VacationType == 7 && x.IsPass == 1)
             .Sum(x => x.Hours);
             salaryView.WorkhurtDays = (int)(total7Hours / 8);
             salaryView.WorkhurtHours = (int)(total7Hours % 8);
+            salaryView.TotalWorkhurtHours = (int)total7Hours;
 
             double total8Hours = staffVacationlogs
             .Where(x => x.VacationType == 8 && x.IsPass == 1)
             .Sum(x => x.Hours);
             salaryView.MenstruationDays = (int)(total8Hours / 8);
             salaryView.MenstruationHours = (int)(total8Hours % 8);
+            salaryView.TotalMenstruationHours = (int)total8Hours;
 
             double total9Hours = staffVacationlogs
             .Where(x => x.VacationType == 9 && x.IsPass == 1)
             .Sum(x => x.Hours);
             salaryView.TackeCareBabyDays = (int)(total9Hours / 8);
             salaryView.TackeCareBabyHours = (int)(total9Hours % 8);
+            salaryView.TotalTackeCareBabyHours = (int)total9Hours;
 
             double total10Hours = staffVacationlogs
             .Where(x => x.VacationType == 10 && x.IsPass == 1)
             .Sum(x => x.Hours);
             salaryView.TocolysisDays = (int)(total10Hours / 8);
             salaryView.TocolysisHours = (int)(total10Hours % 8);
+            salaryView.TotalTocolysisHours = (int)total10Hours;
 
             double total11Hours = staffVacationlogs
             .Where(x => x.VacationType == 11 && x.IsPass == 1)
             .Sum(x => x.Hours);
             salaryView.PrenatalCheckUpDays = (int)(total11Hours / 8);
             salaryView.PrenatalCheckUpHours = (int)(total11Hours % 8);
+            salaryView.TotalPrenatalCheckUpHours = (int)total11Hours;
+
+            var perHourSalary = (salaryView.SalarySetting.BasicSalary + salaryView.SalarySetting.FullCheckInMoney) / 30 / 8;
+
 
             salaryView.OverTimeHours = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAsync(staffId, user.CompanyId, firstDayOfLastMonth, lastDayOfLastMonth)).Sum(x => x.OverHours);
+            salaryView.TotalSalaryNoOvertime = salaryView.SalarySetting.BasicSalary + salaryView.SalarySetting.FullCheckInMoney - salaryView.TotalSickHours * perHourSalary / 2 -
+                                               salaryView.TotalThingHours * perHourSalary - salaryView.TotalMenstruationHours * perHourSalary / 2;
+            salaryView.PerHourSalary = perHourSalary;
 
+
+            result.Data = salaryView;
             return result;
         }
     }

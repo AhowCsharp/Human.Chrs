@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using Human.Repository.EF;
 using Human.Chrs.Domain.DTO;
 using Human.Chrs.Domain.Helper;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Collections;
 
 namespace LineTag.Infrastructure.Repositories

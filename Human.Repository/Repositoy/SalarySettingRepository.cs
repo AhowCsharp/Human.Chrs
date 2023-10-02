@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using Human.Repository.EF;
 using Human.Chrs.Domain.DTO;
 using Human.Chrs.Domain.Helper;
+using System.Collections;
+using Microsoft.EntityFrameworkCore;
 
 namespace LineTag.Infrastructure.Repositories
 {
@@ -28,6 +30,13 @@ namespace LineTag.Infrastructure.Repositories
             var data = await _context.SalarySetting.SingleOrDefaultAsync(x => x.StaffId == staffId && x.CompanyId == companyId);
 
             return _mapper.Map<SalarySettingDTO>(data);
+        }
+
+        public async Task<IEnumerable<SalarySettingDTO>> GetAllSalarySettingAsync(int companyId)
+        {
+            var data = await _context.SalarySetting.Where(x => x.CompanyId == companyId).ToListAsync();
+
+            return data.Select(_mapper.Map<SalarySettingDTO>);
         }
     }
 }
