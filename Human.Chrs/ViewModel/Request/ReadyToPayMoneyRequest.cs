@@ -27,9 +27,11 @@ namespace Human.Chrs.ViewModel.Request
 
         public int? MenstruationHours { get; set; }
 
+        public int SalaryOfMonth { get; set; }
+
         public int? ChildbirthHours { get; set; }
 
-        public int? TackeCareBabyHours { get; set; }
+        public int? TakeCareBabyHours { get; set; }
 
         public int? IncomeTax { get; set; }
 
@@ -58,6 +60,8 @@ namespace Human.Chrs.ViewModel.Request
         public int CompanyCostAmount { get; set; }
 
         public int OverTimeHours { get; set; }
+
+        public int OverTimeMoney { get; set; }
 
         public int EarlyOrLateAmount { get; set; }
 

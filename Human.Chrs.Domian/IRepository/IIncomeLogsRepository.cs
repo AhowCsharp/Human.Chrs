@@ -11,6 +11,6 @@ namespace Human.Chrs.Domain.IRepository
     {
         Task<IEnumerable<IncomeLogsDTO>> GetIncomeLogsAsync(int staffId, int companyId);
 
-        Task<bool> IsRepeatPayAsync(int staffId, int companyId, DateTime startofTheMonth, DateTime endofTheMonth);
+        Task<bool> IsRepeatPayAsync(int staffId, int companyId, int salaryOfMonth);
     }
 }

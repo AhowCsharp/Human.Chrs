@@ -28,7 +28,8 @@ namespace Human.Chrs.ViewModel.Extension
                 ThingHours = request.ThingHours,
                 MenstruationHours = request.MenstruationHours,
                 ChildbirthHours = request.ChildbirthHours,
-                TackeCareBabyHours = request.TackeCareBabyHours,
+                TakeCareBabyHours = request.TakeCareBabyHours,
+                SalaryOfMonth = request.SalaryOfMonth,
                 IncomeTax = request.IncomeTax,
                 HealthInsurance = request.HealthInsurance,
                 WorkerInsurance = request.WorkerInsurance,
@@ -45,6 +46,7 @@ namespace Human.Chrs.ViewModel.Extension
                 OverTimeHours = request.OverTimeHours,
                 EarlyOrLateAmount = request.EarlyOrLateAmount,
                 OutLocationAmount = request.OutLocationAmount,
+                OverTimeAmount = request.OverTimeMoney,
             };
 
             return dto;

@@ -825,11 +825,10 @@ namespace Human.Chrs.Domain
                 result.AddError("操作者沒有權杖");
                 return result;
             }
-            DateTime firstDayOfLastMonth = dto.IssueDate.AddMonths(-1);
-            firstDayOfLastMonth = new DateTime(firstDayOfLastMonth.Year, firstDayOfLastMonth.Month, 1);
-            DateTime lastDayOfLastMonth = dto.IssueDate.AddDays(-dto.IssueDate.Day);
+            dto.IssueDate = DateTimeHelper.TaipeiNow;
             dto.CompanyId = user.CompanyId;
-            if (await _incomeLogsRepository.IsRepeatPayAsync(dto.StaffId, user.CompanyId, firstDayOfLastMonth, lastDayOfLastMonth))
+
+            if (await _incomeLogsRepository.IsRepeatPayAsync(dto.StaffId, user.CompanyId, dto.SalaryOfMonth))
             {
                 result.AddError("該月已發放薪資");
                 return result;
@@ -837,10 +836,22 @@ namespace Human.Chrs.Domain
 
             if (isChange)
             {
+                DateTime firstDayOfLastMonth = dto.IssueDate.AddMonths(-1);
+                firstDayOfLastMonth = new DateTime(firstDayOfLastMonth.Year, firstDayOfLastMonth.Month, 1);
+                DateTime lastDayOfLastMonth = dto.IssueDate.AddDays(-dto.IssueDate.Day);
                 var staff = await _staffRepository.GetUsingStaffAsync(dto.StaffId, user.CompanyId);
                 var lastMonthOverTime = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAfterValidateAsync(dto.StaffId, user.CompanyId, firstDayOfLastMonth, lastDayOfLastMonth)).Sum(x => x.OverHours);
+                if (staff == null)
+                {
+                    result.AddError("系統錯誤 找不到該名員工");
+                    return result;
+                }
+                if (staff.OverTimeHours < lastMonthOverTime)
+                {
+                    result.AddError("該員工已無加班時數");
+                    return result;
+                }
                 staff.OverTimeHours -= lastMonthOverTime;
-
                 await _staffRepository.UpdateAsync(staff);
                 await _incomeLogsRepository.InsertAsync(dto);
             }

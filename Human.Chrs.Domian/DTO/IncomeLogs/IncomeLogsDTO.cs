@@ -25,7 +25,11 @@ namespace Human.Chrs.Domain.DTO
 
         public int IncomeAmount { get; set; }
 
+        public int SalaryOfMonth { get; set; }
+
         public int OverTimeHours { get; set; }
+
+        public int OverTimeAmount { get; set; }
 
         //扣款
 
@@ -37,7 +41,7 @@ namespace Human.Chrs.Domain.DTO
 
         public int? ChildbirthHours { get; set; }
 
-        public int? TackeCareBabyHours { get; set; }
+        public int? TakeCareBabyHours { get; set; }
 
         public int? IncomeTax { get; set; }
 

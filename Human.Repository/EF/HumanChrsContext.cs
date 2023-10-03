@@ -20,7 +20,7 @@ public partial class HumanChrsContext : DbContext
     public virtual DbSet<CheckRecords> CheckRecords { get; set; }
 
     public virtual DbSet<Company> Company { get; set; }
-
+    
     public virtual DbSet<CompanyRule> CompanyRule { get; set; }
 
     public virtual DbSet<Department> Department { get; set; }
@@ -130,6 +130,7 @@ public partial class HumanChrsContext : DbContext
         modelBuilder.Entity<IncomeLogs>(entity =>
         {
             entity.Property(e => e.IssueDate).HasColumnType("datetime");
+            entity.Property(e => e.SalaryOfMonth).HasDefaultValueSql("((9))");
         });
 
         modelBuilder.Entity<OverTimeLog>(entity =>

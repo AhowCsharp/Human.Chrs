@@ -34,9 +34,9 @@ namespace LineTag.Infrastructure.Repositories
             return data.Select(_mapper.Map<IncomeLogsDTO>);
         }
 
-        public async Task<bool> IsRepeatPayAsync(int staffId, int companyId, DateTime startofTheMonth, DateTime endofTheMonth)
+        public async Task<bool> IsRepeatPayAsync(int staffId, int companyId, int salaryOfMonth)
         {
-            var isRepeat = await _context.IncomeLogs.AnyAsync(x => x.StaffId == staffId && x.CompanyId == companyId && x.IssueDate >= startofTheMonth && x.IssueDate <= endofTheMonth);
+            var isRepeat = await _context.IncomeLogs.AnyAsync(x => x.StaffId == staffId && x.CompanyId == companyId && x.SalaryOfMonth == salaryOfMonth);
             return isRepeat;
         }
     }
