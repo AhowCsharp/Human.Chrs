@@ -29,8 +29,6 @@ public partial class IncomeLogs
 
     public int? ChildbirthHours { get; set; }
 
-    public int? MiscarriageHours { get; set; }
-
     public int? TackeCareBabyHours { get; set; }
 
     public int? IncomeTax { get; set; }
@@ -62,4 +60,8 @@ public partial class IncomeLogs
     public int CompanyCostAmount { get; set; }
 
     public int OverTimeHours { get; set; }
+
+    public int EarlyOrLateAmount { get; set; }
+
+    public int OutLocationAmount { get; set; }
 }

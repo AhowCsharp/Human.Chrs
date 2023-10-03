@@ -23,19 +23,34 @@ namespace LineTag.Infrastructure.Repositories
         public OverTimeLogRepository(IMapper mapper, HumanChrsContext context) : base(mapper, context)
         {
         }
-        public async Task<OverTimeLogDTO> GetOverTimeLogAsync(int staffId,int companyId)
+
+        public async Task<OverTimeLogDTO> GetOverTimeLogAsync(int staffId, int companyId)
         {
             DateTime today = DateTimeHelper.TaipeiNow.Date; // 取得台北今天的日期，時間設為 00:00:00
             DateTime tomorrow = DateTimeHelper.TaipeiNow.Date.AddDays(1);
             var data = await _context.OverTimeLog.FirstOrDefaultAsync(x => x.StaffId == staffId && x.CompanyId == companyId
-            && x.OvertimeDate == today );
+            && x.OvertimeDate == today);
             return _mapper.Map<OverTimeLogDTO>(data);
         }
 
-        public async Task<IEnumerable<OverTimeLogDTO>> GetOverTimeLogOfPeriodAsync(int staffId, int companyId,DateTime start,DateTime end)
+        public async Task<IEnumerable<OverTimeLogDTO>> GetOverTimeLogOfPeriodAsync(int staffId, int companyId, DateTime start, DateTime end)
         {
             var data = await _context.OverTimeLog.Where(x => x.StaffId == staffId && x.CompanyId == companyId
             && x.OvertimeDate >= start && x.OvertimeDate <= end).ToListAsync();
+            return data.Select(_mapper.Map<OverTimeLogDTO>);
+        }
+
+        public async Task<IEnumerable<OverTimeLogDTO>> GetOverTimeLogOfPeriodAsync(int companyId, DateTime start, DateTime end)
+        {
+            var data = await _context.OverTimeLog.Where(x => x.CompanyId == companyId
+            && x.OvertimeDate >= start && x.OvertimeDate <= end).ToListAsync();
+            return data.Select(_mapper.Map<OverTimeLogDTO>);
+        }
+
+        public async Task<IEnumerable<OverTimeLogDTO>> GetOverTimeLogOfPeriodAfterValidateAsync(int staffId, int companyId, DateTime start, DateTime end)
+        {
+            var data = await _context.OverTimeLog.Where(x => x.StaffId == staffId && x.CompanyId == companyId
+            && x.OvertimeDate >= start && x.OvertimeDate <= end && x.IsValidate == 1).ToListAsync();
             return data.Select(_mapper.Map<OverTimeLogDTO>);
         }
     }

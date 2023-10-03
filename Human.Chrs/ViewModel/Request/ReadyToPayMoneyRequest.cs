@@ -1,19 +1,17 @@
-﻿using System;
+﻿using Human.Chrs.Domain.SeedWork;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Human.Chrs.Domain.SeedWork;
 
-namespace Human.Chrs.Domain.DTO
+namespace Human.Chrs.ViewModel.Request
 {
-    public class IncomeLogsDTO : IDTO
+    public class ReadyToPayMoneyRequest
     {
         public int id { get; set; }
 
         public int StaffId { get; set; }
-
-        public int CompanyId { get; set; }
 
         public DateTime IssueDate { get; set; }
 
@@ -22,12 +20,6 @@ namespace Human.Chrs.Domain.DTO
         public int? FullCheckInMoney { get; set; }
 
         public int? Bonus { get; set; }
-
-        public int IncomeAmount { get; set; }
-
-        public int OverTimeHours { get; set; }
-
-        //扣款
 
         public int? SickHours { get; set; }
 
@@ -49,8 +41,6 @@ namespace Human.Chrs.Domain.DTO
 
         public int SupplementaryPremium { get; set; }
 
-        //公司付款
-
         public int HealthInsuranceFromCompany { get; set; }
 
         public int WorkerInsuranceFromCompany { get; set; }
@@ -58,8 +48,6 @@ namespace Human.Chrs.Domain.DTO
         public int EmployeeRetirementFromCompany { get; set; }
 
         public int AdvanceFundFromCompany { get; set; }
-
-        public int IsMakeSure { get; set; }
 
         public int StaffIncomeAmount { get; set; }
 
@@ -69,8 +57,12 @@ namespace Human.Chrs.Domain.DTO
 
         public int CompanyCostAmount { get; set; }
 
+        public int OverTimeHours { get; set; }
+
         public int EarlyOrLateAmount { get; set; }
 
         public int OutLocationAmount { get; set; }
+
+        public bool ChangeOverTimeToMoney { get; set; }
     }
 }

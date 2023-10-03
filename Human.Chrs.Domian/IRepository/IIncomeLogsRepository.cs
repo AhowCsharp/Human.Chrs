@@ -10,5 +10,7 @@ namespace Human.Chrs.Domain.IRepository
     public interface IIncomeLogsRepository : IRepository<IncomeLogsDTO, int>
     {
         Task<IEnumerable<IncomeLogsDTO>> GetIncomeLogsAsync(int staffId, int companyId);
+
+        Task<bool> IsRepeatPayAsync(int staffId, int companyId, DateTime startofTheMonth, DateTime endofTheMonth);
     }
 }

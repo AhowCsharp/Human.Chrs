@@ -146,7 +146,6 @@ public partial class HumanChrsContext : DbContext
             entity.Property(e => e.Gender)
                 .IsRequired()
                 .HasMaxLength(10);
-            entity.Property(e => e.IdentityNo).HasMaxLength(50);
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50);

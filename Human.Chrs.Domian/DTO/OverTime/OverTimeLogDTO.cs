@@ -28,5 +28,7 @@ namespace Human.Chrs.Domain.DTO
         public DateTime? ValidateDate { get; set; }
 
         public string Reason { get; set; }
+
+        public string StaffName { get; set; }
     }
 }

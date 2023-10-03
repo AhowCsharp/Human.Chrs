@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Human.Repository.EF;
 using Human.Chrs.Domain.DTO;
+using System.Drawing;
 
 namespace LineTag.Infrastructure.Repositories
 {
@@ -31,6 +32,12 @@ namespace LineTag.Infrastructure.Repositories
                 .ToListAsync();
 
             return data.Select(_mapper.Map<IncomeLogsDTO>);
+        }
+
+        public async Task<bool> IsRepeatPayAsync(int staffId, int companyId, DateTime startofTheMonth, DateTime endofTheMonth)
+        {
+            var isRepeat = await _context.IncomeLogs.AnyAsync(x => x.StaffId == staffId && x.CompanyId == companyId && x.IssueDate >= startofTheMonth && x.IssueDate <= endofTheMonth);
+            return isRepeat;
         }
     }
 }

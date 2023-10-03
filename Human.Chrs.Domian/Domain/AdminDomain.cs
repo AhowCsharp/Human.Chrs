@@ -6,6 +6,8 @@ using Human.Chrs.Domain.Helper;
 using Human.Chrs.Domain.CommonModels;
 using System.Collections.Generic;
 using System.Collections;
+using Microsoft.AspNetCore.Components.Forms;
+using NLog.Fluent;
 
 namespace Human.Chrs.Domain
 {
@@ -22,6 +24,7 @@ namespace Human.Chrs.Domain
         private readonly IOverTimeLogRepository _overTimeLogRepository;
         private readonly IPersonalDetailRepository _personalDetailRepository;
         private readonly ISalarySettingRepository _salarySettingRepository;
+        private readonly IIncomeLogsRepository _incomeLogsRepository;
         private readonly UserService _userService;
 
         public AdminDomain(
@@ -36,6 +39,7 @@ namespace Human.Chrs.Domain
             IOverTimeLogRepository overTimeLogRepository,
             ISalarySettingRepository salarySettingRepository,
             IPersonalDetailRepository personalDetailRepository,
+            IIncomeLogsRepository incomeLogsRepository,
             UserService userService)
         {
             _logger = logger;
@@ -49,6 +53,7 @@ namespace Human.Chrs.Domain
             _companyRuleRepository = companyRuleRepository;
             _checkRecordsRepository = checkRecordsRepository;
             _overTimeLogRepository = overTimeLogRepository;
+            _incomeLogsRepository = incomeLogsRepository;
             _personalDetailRepository = personalDetailRepository;
             _userService = userService;
         }//async Task<CurrentUser>
@@ -397,6 +402,33 @@ namespace Human.Chrs.Domain
                 }
             }
             result.Data = allVacations;
+            return result;
+        }
+
+        public async Task<CommonResult<IEnumerable<OverTimeLogDTO>>> GetAllOvertimeAsync(DateTime start, DateTime end)
+        {
+            var result = new CommonResult<IEnumerable<OverTimeLogDTO>>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+                return result;
+            }
+
+            var overtimeList = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAsync(user.CompanyId, start, end)).ToList();
+
+            foreach (var overtime in overtimeList)
+            {
+                var staff = await _staffRepository.GetUsingStaffAsync(overtime.StaffId, overtime.CompanyId);
+                if (staff == null)
+                {
+                    result.AddError("找不到該員工 系統錯誤");
+                    return result;
+                }
+                overtime.StaffName = staff.StaffName;
+            }
+            result.Data = overtimeList;
             return result;
         }
 
@@ -774,14 +806,74 @@ namespace Human.Chrs.Domain
 
             var perHourSalary = (salaryView.SalarySetting.BasicSalary + salaryView.SalarySetting.FullCheckInMoney) / 30 / 8;
 
-
             salaryView.OverTimeHours = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAsync(staffId, user.CompanyId, firstDayOfLastMonth, lastDayOfLastMonth)).Sum(x => x.OverHours);
             salaryView.TotalSalaryNoOvertime = salaryView.SalarySetting.BasicSalary + salaryView.SalarySetting.FullCheckInMoney - salaryView.TotalSickHours * perHourSalary / 2 -
                                                salaryView.TotalThingHours * perHourSalary - salaryView.TotalMenstruationHours * perHourSalary / 2;
             salaryView.PerHourSalary = perHourSalary;
 
-
             result.Data = salaryView;
+            return result;
+        }
+
+        public async Task<CommonResult> ReadyToPayMoneyAsync(IncomeLogsDTO dto, bool isChange)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+                return result;
+            }
+            DateTime firstDayOfLastMonth = dto.IssueDate.AddMonths(-1);
+            firstDayOfLastMonth = new DateTime(firstDayOfLastMonth.Year, firstDayOfLastMonth.Month, 1);
+            DateTime lastDayOfLastMonth = dto.IssueDate.AddDays(-dto.IssueDate.Day);
+            dto.CompanyId = user.CompanyId;
+            if (await _incomeLogsRepository.IsRepeatPayAsync(dto.StaffId, user.CompanyId, firstDayOfLastMonth, lastDayOfLastMonth))
+            {
+                result.AddError("該月已發放薪資");
+                return result;
+            }
+
+            if (isChange)
+            {
+                var staff = await _staffRepository.GetUsingStaffAsync(dto.StaffId, user.CompanyId);
+                var lastMonthOverTime = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAfterValidateAsync(dto.StaffId, user.CompanyId, firstDayOfLastMonth, lastDayOfLastMonth)).Sum(x => x.OverHours);
+                staff.OverTimeHours -= lastMonthOverTime;
+
+                await _staffRepository.UpdateAsync(staff);
+                await _incomeLogsRepository.InsertAsync(dto);
+            }
+            else
+            {
+                await _incomeLogsRepository.InsertAsync(dto);
+            }
+
+            return result;
+        }
+
+        public async Task<CommonResult> VerifyOvertimeApplyAsync(int id, bool isPass)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+                return result;
+            }
+            var overtimeLog = await _overTimeLogRepository.GetAsync(id);
+            if (overtimeLog == null)
+            {
+                result.AddError("找不到該申請紀錄 系統錯誤");
+                return result;
+            }
+            overtimeLog.Inspector = user.StaffName;
+            overtimeLog.InspectorId = user.Id;
+            overtimeLog.ValidateDate = DateTimeHelper.TaipeiNow;
+            overtimeLog.IsValidate = isPass ? 1 : -1;
+            await _overTimeLogRepository.UpdateAsync(overtimeLog);
+
             return result;
         }
     }

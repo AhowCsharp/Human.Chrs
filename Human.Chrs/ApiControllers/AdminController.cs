@@ -369,6 +369,78 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 審核員工請假
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route("overtime")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> VerifyOvertimeApply(VerifyOverTimeRequest request)
+        {
+            try
+            {
+                var result = await _admindomain.VerifyOvertimeApplyAsync(request.OverTimeLogId, request.IsPass);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(VerifyOvertimeApply));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 發放員工薪資
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("paymoney")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ReadyToPayMoney(ReadyToPayMoneyRequest request)
+        {
+            try
+            {
+                var result = await _admindomain.ReadyToPayMoneyAsync(request.ToDTO(), request.ChangeOverTimeToMoney);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(ReadyToPayMoney));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 審核員工薪資
         /// </summary>
         /// <response code="200">OK</response>
@@ -435,6 +507,42 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(GetAllVacations));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 員工請假列表
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("overtime")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllOvertime(DateTime start, DateTime end)
+        {
+            try
+            {
+                var result = await _admindomain.GetAllOvertimeAsync(start, end);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetAllOvertime));
 
                 return ServerError500();
             }
