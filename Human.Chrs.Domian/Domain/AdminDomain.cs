@@ -131,6 +131,9 @@ namespace Human.Chrs.Domain
                     dto.IdentityNo = CryptHelper.SaltHashPlus(dto.IdentityNo);
                     dto.CompanyId = user.CompanyId;
                     data = await _personalDetailRepository.InsertAsync(dto);
+                    var staff = await _staffRepository.GetUsingStaffAsync(dto.StaffId, dto.CompanyId);
+                    staff.PersonalDetailId = data.id;
+                    await _staffRepository.UpdateAsync(staff);
                 }
                 else
                 {

@@ -2,6 +2,7 @@
 using Human.Chrs.Domain;
 using Human.Chrs.Infra.Attribute;
 using Human.Chrs.ViewModel.Request;
+using Human.Repository.EF;
 
 namespace LineTag.Admin.ApiControllers
 {
@@ -229,7 +230,7 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuth]
         [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetDetailInfo(int id)
+        public async Task<IActionResult> GetDetailInfo(int? id)
         {
             try
             {
@@ -291,7 +292,7 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
-        /// 備忘錄讀取
+        /// 員工出勤狀況
         /// </summary>
         /// <param name="ditanceRequest">請求資料</param>
         /// <response code="200">OK</response>
@@ -305,11 +306,11 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuth]
         [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCheckList(DateTime? start, DateTime? end)
+        public async Task<IActionResult> GetCheckList(DateTime? start, DateTime? end,int? staffId)
         {
             try
             {
-                var result = await _staffdomain.GetCheckListAsync(start, end);
+                var result = await _staffdomain.GetCheckListAsync(start, end, staffId);
 
                 if (result.Success)
                 {
@@ -361,6 +362,44 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(GetSalaryList));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 加班記錄列表
+        /// </summary>
+        /// <param name="ditanceRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("overtime")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetovertimeList(int? staffId,DateTime start,DateTime end)
+        {
+            try
+            {
+                var result = await _staffdomain.GetovertimeListAsync(staffId, start, end);
+
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetovertimeList));
 
                 return ServerError500();
             }

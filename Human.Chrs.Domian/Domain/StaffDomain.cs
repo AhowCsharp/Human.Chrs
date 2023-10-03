@@ -337,7 +337,7 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult<PersonalDetailDTO?>> GetStaffDetailAsync(int id)
+        public async Task<CommonResult<PersonalDetailDTO?>> GetStaffDetailAsync(int? staffId)
         {
             var result = new CommonResult<PersonalDetailDTO?>();
             var user = _userService.GetCurrentUser();
@@ -353,8 +353,24 @@ namespace Human.Chrs.Domain
                 result.AddError("沒找到對應的公司");
                 return result;
             }
-            var detail = await _personalDetailRepository.GetStaffDetailInfoAsync(id, user.CompanyId);
-            result.Data = detail;
+            if (staffId.HasValue)
+            {
+                var detail = await _personalDetailRepository.GetStaffDetailInfoAsync(staffId.Value, user.CompanyId);
+                result.Data = detail;
+            }
+            else
+            {
+                var staff = await _staffRepository.GetUsingStaffAsync(user.Id, user.CompanyId);
+                var detail = await _personalDetailRepository.GetStaffDetailInfoAsync(user.Id, user.CompanyId);
+                detail.WorkPosition = staff.WorkPosition;
+                detail.LevelPosition = staff.LevelPosition;
+                detail.Department = staff.Department;
+                detail.PhoneNumber = staff.StaffPhoneNumber;
+                detail.EntryDate = staff.EntryDate;
+                detail.Email = staff.Email;
+                detail.CompanyName = company.CompanyName;
+                result.Data = detail;
+            }
 
             return result;
         }
@@ -421,34 +437,120 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult<IEnumerable<CheckRecordsDTO>>> GetCheckListAsync(DateTime? startDate, DateTime? endDate)
+        public async Task<CommonResult<IEnumerable<CheckRecordsDTO>>> GetCheckListAsync(DateTime? startDate, DateTime? endDate,int? staffId)
         {
             var result = new CommonResult<IEnumerable<CheckRecordsDTO>>();
             var user = _userService.GetCurrentUser();
-            var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
-            if (!exist)
+            if (staffId.HasValue)
             {
-                result.AddError("沒找到對應的員工");
+                var exist = await _staffRepository.VerifyExistStaffAsync(staffId.Value, user.CompanyId);
+                if (!exist)
+                {
+                    result.AddError("沒找到對應的員工");
+                    return result;
+                }
+                var company = await _companyRepository.GetAsync(user.CompanyId);
+                if (company == null)
+                {
+                    result.AddError("沒找到對應的公司");
+                    return result;
+                }
+                if (startDate == null)
+                {
+                    startDate = new DateTime(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month, 1);
+                }
+                if (endDate == null)
+                {
+                    endDate = new DateTime(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month, DateTime.DaysInMonth(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month));
+                }
+
+                var data = await _checkRecordsRepository.GetCheckRecordListAsync(staffId.Value, user.CompanyId, startDate.Value, endDate.Value);
+                result.Data = data;
                 return result;
+
             }
-            var company = await _companyRepository.GetAsync(user.CompanyId);
-            if (company == null)
+            else 
             {
-                result.AddError("沒找到對應的公司");
+                var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
+                if (!exist)
+                {
+                    result.AddError("沒找到對應的員工");
+                    return result;
+                }
+                var company = await _companyRepository.GetAsync(user.CompanyId);
+                if (company == null)
+                {
+                    result.AddError("沒找到對應的公司");
+                    return result;
+                }
+                if (startDate == null)
+                {
+                    startDate = new DateTime(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month, 1);
+                }
+                if (endDate == null)
+                {
+                    endDate = new DateTime(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month, DateTime.DaysInMonth(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month));
+                }
+
+                var data = await _checkRecordsRepository.GetCheckRecordListAsync(user.Id, user.CompanyId, startDate.Value, endDate.Value);
+                result.Data = data;
                 return result;
-            }
-            if (startDate == null)
-            {
-                startDate = new DateTime(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month, 1);
-            }
-            if (endDate == null)
-            {
-                endDate = new DateTime(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month, DateTime.DaysInMonth(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month));
             }
 
-            var data = await _checkRecordsRepository.GetCheckRecordListAsync(user.Id, user.CompanyId, startDate.Value, endDate.Value);
-            result.Data = data;
-            return result;
+        }
+
+        public async Task<CommonResult<IEnumerable<OverTimeLogDTO>>> GetovertimeListAsync(int? staffId,DateTime startDate, DateTime endDate)
+        {
+            var result = new CommonResult<IEnumerable<OverTimeLogDTO>>();
+            var user = _userService.GetCurrentUser();
+            if (staffId.HasValue)
+            {
+                var exist = await _staffRepository.VerifyExistStaffAsync(staffId.Value, user.CompanyId);
+                if (!exist)
+                {
+                    result.AddError("沒找到對應的員工");
+                    return result;
+                }
+                var company = await _companyRepository.GetAsync(user.CompanyId);
+                if (company == null)
+                {
+                    result.AddError("沒找到對應的公司");
+                    return result;
+                }
+                var staff = await _staffRepository.GetUsingStaffAsync(staffId.Value, user.CompanyId);
+                var data = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAfterValidateAsync(staffId.Value, user.CompanyId, startDate, endDate)).ToList();
+                foreach (var item in data)
+                {
+                    item.StaffName = staff.StaffName;
+                }
+                result.Data = data;
+                return result;
+
+            }
+            else
+            {
+                var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
+                if (!exist)
+                {
+                    result.AddError("沒找到對應的員工");
+                    return result;
+                }
+                var company = await _companyRepository.GetAsync(user.CompanyId);
+                if (company == null)
+                {
+                    result.AddError("沒找到對應的公司");
+                    return result;
+                }
+                var staff = await _staffRepository.GetUsingStaffAsync(user.Id, user.CompanyId);
+                var data = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAfterValidateAsync(user.Id, user.CompanyId, startDate, endDate)).ToList();
+                foreach (var item in data)
+                {
+                    item.StaffName = staff.StaffName;
+                }
+                result.Data = data;
+                return result;
+            }
+
         }
 
         public async Task<CommonResult<IEnumerable<IncomeLogsDTO>>> GetIncomeLogsAsync()
