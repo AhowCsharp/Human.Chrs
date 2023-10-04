@@ -98,5 +98,7 @@ namespace Human.Chrs.Domain.DTO
         public int StayInCompanyDays { get; set; }
 
         public string Gender { get; set; }
+
+        public string AvatarUrl { get; set; }
     }
 }

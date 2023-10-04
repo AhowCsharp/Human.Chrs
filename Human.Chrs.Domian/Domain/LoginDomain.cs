@@ -63,6 +63,7 @@ namespace Human.Chrs.Domain
                 loginUserInfo.CompanyId = staff.CompanyId;
                 loginUserInfo.UserId = $"{staff.id},{useridSalted}";
                 loginUserInfo.DepartmentId = staff.DepartmentId;
+                loginUserInfo.AvatarUrl = staff.AvatarUrl;
                 companyId = staff.CompanyId;
             }
             var company = await _companyRepository.GetAsync(companyId);
@@ -114,7 +115,7 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult<LoginDTO>> GetAdminWithSaltHashAsync(int companyId, string adminId,string adminToken)
+        public async Task<CommonResult<LoginDTO>> GetAdminWithSaltHashAsync(int companyId, string adminId, string adminToken)
         {
             var result = new CommonResult<LoginDTO>();
             var user_datas = adminId.Split(",");
@@ -147,7 +148,6 @@ namespace Human.Chrs.Domain
                     result.AddError("驗證錯誤 admin授權碼不正確");
                     return result;
                 }
-
             }
 
             loginUserInfo.UserId = user_datas[0];

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "kjarIHRTRZgh8W4IEPr5WmIYnbaG/DL5HNwgvLqKFkw=",
+  "Hash": "8wbsBvu+Z77G16M27K6W1Kmfz93J5WWJ+SlgX50wdDg=",
   "Source": "Human.Chrs",
   "BasePath": "_content/Human.Chrs",
   "Mode": "Default",
@@ -10,10 +10,62 @@
     {
       "Name": "Human.Chrs\\wwwroot",
       "Source": "Human.Chrs",
-      "ContentRoot": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs\\wwwroot\\",
+      "ContentRoot": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\",
       "BasePath": "_content/Human.Chrs",
       "Pattern": "**"
     }
   ],
-  "Assets": []
+  "Assets": [
+    {
+      "Identity": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\Avatar\\620dc9cd-6eb3-4f49-873b-8c75badd9369.jpg",
+      "SourceId": "Human.Chrs",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\",
+      "BasePath": "_content/Human.Chrs",
+      "RelativePath": "Avatar/620dc9cd-6eb3-4f49-873b-8c75badd9369.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Avatar\\620dc9cd-6eb3-4f49-873b-8c75badd9369.jpg"
+    },
+    {
+      "Identity": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\Avatar\\62aee9e3-a67a-4a1d-a61a-a2bbb881f149.png",
+      "SourceId": "Human.Chrs",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\",
+      "BasePath": "_content/Human.Chrs",
+      "RelativePath": "Avatar/62aee9e3-a67a-4a1d-a61a-a2bbb881f149.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Avatar\\62aee9e3-a67a-4a1d-a61a-a2bbb881f149.png"
+    },
+    {
+      "Identity": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\Avatar\\d2f90c41-7c8f-400d-8a20-1d25f5f6977a.png",
+      "SourceId": "Human.Chrs",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\",
+      "BasePath": "_content/Human.Chrs",
+      "RelativePath": "Avatar/d2f90c41-7c8f-400d-8a20-1d25f5f6977a.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Avatar\\d2f90c41-7c8f-400d-8a20-1d25f5f6977a.png"
+    }
+  ]
 }

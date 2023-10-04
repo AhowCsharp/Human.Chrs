@@ -20,7 +20,7 @@ public partial class HumanChrsContext : DbContext
     public virtual DbSet<CheckRecords> CheckRecords { get; set; }
 
     public virtual DbSet<Company> Company { get; set; }
-    
+
     public virtual DbSet<CompanyRule> CompanyRule { get; set; }
 
     public virtual DbSet<Department> Department { get; set; }

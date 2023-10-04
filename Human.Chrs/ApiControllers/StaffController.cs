@@ -306,7 +306,7 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuth]
         [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCheckList(DateTime? start, DateTime? end,int? staffId)
+        public async Task<IActionResult> GetCheckList(DateTime? start, DateTime? end, int? staffId)
         {
             try
             {
@@ -382,7 +382,7 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuth]
         [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetovertimeList(int? staffId,DateTime start,DateTime end)
+        public async Task<IActionResult> GetovertimeList(int? staffId, DateTime start, DateTime end)
         {
             try
             {
@@ -437,6 +437,47 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(CheckDistance));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 大頭貼更新
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("avatar")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UploadAvatar(IFormFile avatar)
+        {
+            try
+            {
+                if (avatar == null || avatar.Length == 0)
+                {
+                    return BadRequest(new { success = false, message = "No image provided" });
+                }
+                var result = await _staffdomain.UploadAvatarAsync(avatar);
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(UploadAvatar));
 
                 return ServerError500();
             }

@@ -22,5 +22,7 @@ namespace Human.Chrs.Domain.DTO
         public int? Auth { get; set; }
 
         public string? AdminToken { get; set; }
+
+        public string AvatarUrl { get; set; }
     }
 }

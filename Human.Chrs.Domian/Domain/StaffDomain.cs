@@ -7,6 +7,10 @@ using Human.Chrs.Domain.CommonModels;
 using Human.Chrs.Enum;
 using System;
 using System.ComponentModel.Design;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Human.Chrs.Domain
 {
@@ -26,6 +30,7 @@ namespace Human.Chrs.Domain
         private readonly CheckInAndOutDomain _checkInAndOutDomain;
         private readonly UserService _userService;
         private readonly GeocodingService _geocodingService;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
         public StaffDomain(
             ILogger<StaffDomain> logger,
@@ -41,7 +46,8 @@ namespace Human.Chrs.Domain
             IOverTimeLogRepository overTimeLogRepository,
             CheckInAndOutDomain checkInAndOutDomain,
             GeocodingService geocodingService,
-            UserService userService)
+            UserService userService,
+            IWebHostEnvironment hostEnvironment)
         {
             _logger = logger;
             _adminRepository = adminRepository;
@@ -58,6 +64,7 @@ namespace Human.Chrs.Domain
             _checkInAndOutDomain = checkInAndOutDomain;
             _geocodingService = geocodingService;
             _userService = userService;
+            _hostEnvironment = hostEnvironment;
         }
 
         public async Task<CommonResult<StaffViewDTO>> GetStaffViewInfoAsync(double longitude, double latitude)
@@ -166,7 +173,6 @@ namespace Human.Chrs.Domain
                         break;
                 }
             }
-
             result.Data = staffView;
             return result;
         }
@@ -437,7 +443,7 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult<IEnumerable<CheckRecordsDTO>>> GetCheckListAsync(DateTime? startDate, DateTime? endDate,int? staffId)
+        public async Task<CommonResult<IEnumerable<CheckRecordsDTO>>> GetCheckListAsync(DateTime? startDate, DateTime? endDate, int? staffId)
         {
             var result = new CommonResult<IEnumerable<CheckRecordsDTO>>();
             var user = _userService.GetCurrentUser();
@@ -467,9 +473,8 @@ namespace Human.Chrs.Domain
                 var data = await _checkRecordsRepository.GetCheckRecordListAsync(staffId.Value, user.CompanyId, startDate.Value, endDate.Value);
                 result.Data = data;
                 return result;
-
             }
-            else 
+            else
             {
                 var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
                 if (!exist)
@@ -496,10 +501,9 @@ namespace Human.Chrs.Domain
                 result.Data = data;
                 return result;
             }
-
         }
 
-        public async Task<CommonResult<IEnumerable<OverTimeLogDTO>>> GetovertimeListAsync(int? staffId,DateTime startDate, DateTime endDate)
+        public async Task<CommonResult<IEnumerable<OverTimeLogDTO>>> GetovertimeListAsync(int? staffId, DateTime startDate, DateTime endDate)
         {
             var result = new CommonResult<IEnumerable<OverTimeLogDTO>>();
             var user = _userService.GetCurrentUser();
@@ -525,7 +529,6 @@ namespace Human.Chrs.Domain
                 }
                 result.Data = data;
                 return result;
-
             }
             else
             {
@@ -550,7 +553,6 @@ namespace Human.Chrs.Domain
                 result.Data = data;
                 return result;
             }
-
         }
 
         public async Task<CommonResult<IEnumerable<IncomeLogsDTO>>> GetIncomeLogsAsync()
@@ -572,6 +574,102 @@ namespace Human.Chrs.Domain
 
             var data = await _incomeLogsRepository.GetIncomeLogsAsync(user.Id, user.CompanyId);
             result.Data = data;
+            return result;
+        }
+
+        public async Task<CommonResult<string>> UploadAvatarAsync(IFormFile avatar)
+        {
+            var result = new CommonResult<string>();
+            var user = _userService.GetCurrentUser();
+            var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
+            if (!exist)
+            {
+                result.AddError("沒找到對應的員工");
+                return result;
+            }
+            var company = await _companyRepository.GetAsync(user.CompanyId);
+            if (company == null)
+            {
+                result.AddError("沒找到對應的公司");
+                return result;
+            }
+
+            var staff = await _staffRepository.GetUsingStaffAsync(user.Id, user.CompanyId);
+
+            if (!string.IsNullOrEmpty(staff.AvatarUrl))
+            {
+                string[] parts = staff.AvatarUrl.Split('/');
+                if (parts.Length >= 3)
+                {
+                    // 取得不包括擴展名的檔名
+                    string existFileNameWithoutExtension = Path.GetFileNameWithoutExtension(parts[2]);
+                    // 取得完整擴展名
+                    string extensionOld = Path.GetExtension(parts[2]);
+
+                    // 確定在Avatar資料夾的完整路徑
+                    var existingAvatarPath = Path.Combine(_hostEnvironment.WebRootPath, "Avatar", $"{existFileNameWithoutExtension}{extensionOld}");
+
+                    if (File.Exists(existingAvatarPath))
+                    {
+                        try
+                        {
+                            File.Delete(existingAvatarPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            //// 如果出現問題，如文件訪問問題，捕獲異常
+                            //result.AddError(ex.Message);
+                            //return result;
+                        }
+                    }
+                }
+            }
+
+            // 1. Generate UUID and create the save path
+            string extension;
+
+            switch (avatar.ContentType)
+            {
+                case "image/jpeg":
+                    extension = ".jpg";
+                    break;
+
+                case "image/png":
+                    extension = ".png";
+                    break;
+
+                case "image/gif":
+                    extension = ".gif";
+                    break;
+
+                case "image/bmp":
+                    extension = ".bmp";
+                    break;
+
+                default:
+                    result.AddError("不支持的文件格式");
+                    return result;
+            }
+
+            var fileName = $"{Guid.NewGuid()}{extension}";
+            var folderPath = Path.Combine(_hostEnvironment.WebRootPath, "Avatar");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            var savePath = Path.Combine(_hostEnvironment.WebRootPath, "Avatar", fileName); // _hostEnvironment 需要注入IHostEnvironment
+
+            // 2. Save the uploaded file to the specified path
+            using (var fileStream = new FileStream(savePath, FileMode.Create))
+            {
+                await avatar.CopyToAsync(fileStream);
+            }
+
+            // 3. Save the URL to the database
+            var url = $"/avatar/{fileName}";
+            staff.AvatarUrl = url; // 假設您的Staff模型中有一個名為AvatarUrl的屬性
+            await _staffRepository.UpdateAsync(staff);
+            result.Data = url;
             return result;
         }
     }
