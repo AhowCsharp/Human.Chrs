@@ -37,7 +37,7 @@ namespace Human.Chrs.Domain.DTO
 
         public string Memo { get; set; }
 
-        public string WorkPosition { get; set; }
+        public string WorkLocation { get; set; }
 
         public string LevelPosition { get; set; }
 

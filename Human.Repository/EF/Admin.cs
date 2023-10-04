@@ -26,4 +26,8 @@ public partial class Admin
     public int DepartmentId { get; set; }
 
     public string AdminToken { get; set; }
+
+    public string AvatarUrl { get; set; }
+
+    public bool Status { get; set; }
 }

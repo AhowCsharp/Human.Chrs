@@ -28,5 +28,11 @@ namespace Human.Chrs.Domain.DTO
         public int DepartmentId { get; set; }
 
         public string AdminToken { get; set; }
+
+        public string CompanyName { get; set; }
+
+        public string AvatarUrl { get; set; }
+
+        public bool Status { get; set; }
     }
 }

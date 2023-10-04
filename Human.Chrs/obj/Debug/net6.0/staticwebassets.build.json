@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "8wbsBvu+Z77G16M27K6W1Kmfz93J5WWJ+SlgX50wdDg=",
+  "Hash": "TXmaMn80EWst31442niiII6r8PSSk/PIJVOT3dyM3sQ=",
   "Source": "Human.Chrs",
   "BasePath": "_content/Human.Chrs",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "Human.Chrs\\wwwroot",
       "Source": "Human.Chrs",
-      "ContentRoot": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs\\wwwroot\\",
       "BasePath": "_content/Human.Chrs",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\Avatar\\620dc9cd-6eb3-4f49-873b-8c75badd9369.jpg",
+      "Identity": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs\\wwwroot\\Avatar\\620dc9cd-6eb3-4f49-873b-8c75badd9369.jpg",
       "SourceId": "Human.Chrs",
       "SourceType": "Discovered",
-      "ContentRoot": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs\\wwwroot\\",
       "BasePath": "_content/Human.Chrs",
       "RelativePath": "Avatar/620dc9cd-6eb3-4f49-873b-8c75badd9369.jpg",
       "AssetKind": "All",
@@ -34,10 +34,10 @@
       "OriginalItemSpec": "wwwroot\\Avatar\\620dc9cd-6eb3-4f49-873b-8c75badd9369.jpg"
     },
     {
-      "Identity": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\Avatar\\62aee9e3-a67a-4a1d-a61a-a2bbb881f149.png",
+      "Identity": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs\\wwwroot\\Avatar\\62aee9e3-a67a-4a1d-a61a-a2bbb881f149.png",
       "SourceId": "Human.Chrs",
       "SourceType": "Discovered",
-      "ContentRoot": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs\\wwwroot\\",
       "BasePath": "_content/Human.Chrs",
       "RelativePath": "Avatar/62aee9e3-a67a-4a1d-a61a-a2bbb881f149.png",
       "AssetKind": "All",
@@ -51,10 +51,27 @@
       "OriginalItemSpec": "wwwroot\\Avatar\\62aee9e3-a67a-4a1d-a61a-a2bbb881f149.png"
     },
     {
-      "Identity": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\Avatar\\d2f90c41-7c8f-400d-8a20-1d25f5f6977a.png",
+      "Identity": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs\\wwwroot\\Avatar\\a91a5baf-65ff-4024-ab0f-96869842714d.jpg",
       "SourceId": "Human.Chrs",
       "SourceType": "Discovered",
-      "ContentRoot": "D:\\GitLab\\Human.Chrs\\Human.Chrs\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs\\wwwroot\\",
+      "BasePath": "_content/Human.Chrs",
+      "RelativePath": "Avatar/a91a5baf-65ff-4024-ab0f-96869842714d.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Avatar\\a91a5baf-65ff-4024-ab0f-96869842714d.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs\\wwwroot\\Avatar\\d2f90c41-7c8f-400d-8a20-1d25f5f6977a.png",
+      "SourceId": "Human.Chrs",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs\\wwwroot\\",
       "BasePath": "_content/Human.Chrs",
       "RelativePath": "Avatar/d2f90c41-7c8f-400d-8a20-1d25f5f6977a.png",
       "AssetKind": "All",

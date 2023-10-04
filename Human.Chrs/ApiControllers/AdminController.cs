@@ -167,6 +167,36 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 取得當前管理者詳細資訊
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("admindetail")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAdminDetail()
+        {
+            //CompanyId StaffAccount StaffPassWord Department EntryDate LevelPosition WorkPosition Email StaffPhoneNumber Auth DepartmentId
+            try
+            {
+                var result = await _admindomain.GetAdminDetailAsync();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetStaffs));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 取得部門列表
         /// </summary>
         /// <response code="200">OK</response>
@@ -579,6 +609,82 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(GetAllSalarySetting));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 管理者列表
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("alladmins")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllAdmins()
+        {
+            try
+            {
+                var result = await _admindomain.GetAllAdminsAsync();
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetAllAdmins));
+
+                return ServerError500();
+            }
+        }
+        /// <summary>
+        /// 大頭貼更新
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("avatar")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UploadAvatar(IFormFile avatar)
+        {
+            try
+            {
+                if (avatar == null || avatar.Length == 0)
+                {
+                    return BadRequest(new { success = false, message = "No image provided" });
+                }
+                var result = await _admindomain.UploadAvatarAsync(avatar);
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(UploadAvatar));
 
                 return ServerError500();
             }

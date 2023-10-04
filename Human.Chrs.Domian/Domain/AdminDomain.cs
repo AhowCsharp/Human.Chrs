@@ -8,6 +8,11 @@ using System.Collections.Generic;
 using System.Collections;
 using Microsoft.AspNetCore.Components.Forms;
 using NLog.Fluent;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
+using Human.Chrs.Domain.SeedWork;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Human.Chrs.Domain
 {
@@ -26,6 +31,7 @@ namespace Human.Chrs.Domain
         private readonly ISalarySettingRepository _salarySettingRepository;
         private readonly IIncomeLogsRepository _incomeLogsRepository;
         private readonly UserService _userService;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
         public AdminDomain(
             ILogger<AdminDomain> logger,
@@ -40,7 +46,8 @@ namespace Human.Chrs.Domain
             ISalarySettingRepository salarySettingRepository,
             IPersonalDetailRepository personalDetailRepository,
             IIncomeLogsRepository incomeLogsRepository,
-            UserService userService)
+            UserService userService,
+             IWebHostEnvironment hostEnvironment)
         {
             _logger = logger;
             _adminRepository = adminRepository;
@@ -56,6 +63,7 @@ namespace Human.Chrs.Domain
             _incomeLogsRepository = incomeLogsRepository;
             _personalDetailRepository = personalDetailRepository;
             _userService = userService;
+            _hostEnvironment = hostEnvironment;
         }//async Task<CurrentUser>
 
         public async Task<CommonResult<IEnumerable<StaffDTO>>> CreateOrEditStaffAsync(StaffDTO newStaff)
@@ -185,6 +193,121 @@ namespace Human.Chrs.Domain
 
             return result;
         }
+        public async Task<CommonResult<string>> UploadAvatarAsync(IFormFile avatar)
+        {
+            var result = new CommonResult<string>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            var admin = await _adminRepository.GetAvailableAdminAsync(user.Id, user.CompanyId);
+
+            if (!string.IsNullOrEmpty(admin.AvatarUrl))
+            {
+                string[] parts = admin.AvatarUrl.Split('/');
+                if (parts.Length >= 3)
+                {
+                    // 取得不包括擴展名的檔名
+                    string existFileNameWithoutExtension = Path.GetFileNameWithoutExtension(parts[2]);
+                    // 取得完整擴展名
+                    string extensionOld = Path.GetExtension(parts[2]);
+
+                    // 確定在Avatar資料夾的完整路徑
+                    var existingAvatarPath = Path.Combine(_hostEnvironment.WebRootPath, "Avatar", $"{existFileNameWithoutExtension}{extensionOld}");
+
+                    if (File.Exists(existingAvatarPath))
+                    {
+                        try
+                        {
+                            File.Delete(existingAvatarPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            //// 如果出現問題，如文件訪問問題，捕獲異常
+                            //result.AddError(ex.Message);
+                            //return result;
+                        }
+                    }
+                }
+            }
+
+            // 1. Generate UUID and create the save path
+            string extension;
+
+            switch (avatar.ContentType)
+            {
+                case "image/jpeg":
+                    extension = ".jpg";
+                    break;
+
+                case "image/png":
+                    extension = ".png";
+                    break;
+
+                case "image/gif":
+                    extension = ".gif";
+                    break;
+
+                case "image/bmp":
+                    extension = ".bmp";
+                    break;
+
+                default:
+                    result.AddError("不支持的文件格式");
+                    return result;
+            }
+
+            var fileName = $"{Guid.NewGuid()}{extension}";
+            var folderPath = Path.Combine(_hostEnvironment.WebRootPath, "Avatar");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            var savePath = Path.Combine(_hostEnvironment.WebRootPath, "Avatar", fileName); // _hostEnvironment 需要注入IHostEnvironment
+
+            // 2. Save the uploaded file to the specified path
+            using (var fileStream = new FileStream(savePath, FileMode.Create))
+            {
+                await avatar.CopyToAsync(fileStream);
+            }
+
+            // 3. Save the URL to the database
+            var url = $"/avatar/{fileName}";
+            admin.AvatarUrl = url; 
+            await _adminRepository.UpdateAsync(admin);
+            result.Data = url;
+            return result;
+        }
+        public async Task<CommonResult<AdminDTO>> GetAdminDetailAsync()
+        {
+            var result = new CommonResult<AdminDTO>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (verifyAdminToken)
+            {
+                var admin = await _adminRepository.GetAvailableAdminAsync(user.Id, user.CompanyId);
+                if (admin == null)
+                {
+                    result.AddError("找不到該管理者 出事了啊北");
+
+                    return result;
+                }
+                admin.CompanyName = (await _companyRepository.GetAsync(user.CompanyId)).CompanyName;
+                result.Data = admin;
+            }
+            else
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+
+            return result;
+        }
 
         public async Task<CommonResult<IEnumerable<SalarySettingDTO>>> GetAllSalarySettingAsync()
         {
@@ -225,6 +348,30 @@ namespace Human.Chrs.Domain
             var staffs = await _staffRepository.GetAllStaffAsync(user.CompanyId);
 
             return staffs;
+        }
+
+        public async Task<CommonResult<IEnumerable<AdminDTO>>> GetAllAdminsAsync()
+        {
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            var result = new CommonResult<IEnumerable<AdminDTO>>();
+            if (verifyAdminToken)
+            {
+                var admins = (await _adminRepository.GetAllAdminsAsync(user.CompanyId)).ToList();
+                foreach (var admin in admins)
+                {
+                    admin.CompanyName = (await _companyRepository.GetAsync(admin.CompanyId)).CompanyName;
+                }
+                result.Data = admins;
+            }
+            else
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+
+            return result;
         }
 
         public async Task<IEnumerable<DepartmentDTO>> GetDepartmentsOfCompanyAsync()

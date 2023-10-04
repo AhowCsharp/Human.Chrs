@@ -46,12 +46,13 @@ namespace Human.Chrs.Domain
             {
                 var useridSalted = CryptHelper.SaltHashPlus(adminUser.id.ToString());
                 loginUserInfo.Auth = adminUser.Auth;
-                loginUserInfo.StaffNo = adminUser.id.ToString();
+                loginUserInfo.StaffNo = adminUser.StaffNo;
                 loginUserInfo.StaffName = adminUser.UserName;
                 loginUserInfo.CompanyId = adminUser.CompanyId;
                 loginUserInfo.UserId = $"{adminUser.id},{useridSalted}";
                 loginUserInfo.AdminToken = adminUser.AdminToken;
                 loginUserInfo.DepartmentId = adminUser.DepartmentId;
+                loginUserInfo.AvatarUrl = adminUser.AvatarUrl;
                 companyId = adminUser.CompanyId;
             }
             else if (staff != null)

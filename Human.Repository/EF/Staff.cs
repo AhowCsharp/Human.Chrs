@@ -25,7 +25,7 @@ public partial class Staff
 
     public string LevelPosition { get; set; }
 
-    public string WorkPosition { get; set; }
+    public string WorkLocation { get; set; }
 
     public string Email { get; set; }
 

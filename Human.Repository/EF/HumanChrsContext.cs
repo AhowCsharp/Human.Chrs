@@ -51,6 +51,9 @@ public partial class HumanChrsContext : DbContext
             entity.Property(e => e.StaffNo)
                 .IsRequired()
                 .HasMaxLength(50);
+            entity.Property(e => e.Status)
+                .IsRequired()
+                .HasDefaultValueSql("((1))");
             entity.Property(e => e.UserName)
                 .IsRequired()
                 .HasMaxLength(50);

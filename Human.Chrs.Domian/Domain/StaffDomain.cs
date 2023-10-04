@@ -368,7 +368,7 @@ namespace Human.Chrs.Domain
             {
                 var staff = await _staffRepository.GetUsingStaffAsync(user.Id, user.CompanyId);
                 var detail = await _personalDetailRepository.GetStaffDetailInfoAsync(user.Id, user.CompanyId);
-                detail.WorkPosition = staff.WorkPosition;
+                detail.WorkLocation = staff.WorkLocation;
                 detail.LevelPosition = staff.LevelPosition;
                 detail.Department = staff.Department;
                 detail.PhoneNumber = staff.StaffPhoneNumber;

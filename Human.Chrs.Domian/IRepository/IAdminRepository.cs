@@ -13,5 +13,7 @@ namespace Human.Chrs.Domain.IRepository
         Task<AdminDTO> VerifyLoginAdminAsync(string account, string password);
 
         Task<bool> VerifyAdminTokenAsync(CurrentUser admin);
+
+        Task<IEnumerable<AdminDTO>> GetAllAdminsAsync(int companyId);
     }
 }
