@@ -9,6 +9,7 @@ namespace Human.Chrs.Domain.DTO
 {
     public class EventDTO
     {
+        public int id { get; set; }
         public string Title { get; set; }
 
         public string Detail { get; set; }

@@ -268,11 +268,11 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuthAttribute]
         [ApUserAuthAttribute]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> ModifyRulesOfCompany(CompanyRuleRequest request)
+        public async Task<IActionResult> ModifyRulesOfCompany(List<CompanyRuleRequest> requests)
         {
             try
             {
-                var result = await _admindomain.CreateOrUpdateRuleAsync(request.ToDTO());
+                var result = await _admindomain.CreateOrUpdateRuleAsync(requests.Select(x => x.ToDTO()));
                 if (result.Success)
                 {
                     return Ok(result);
@@ -543,7 +543,7 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
-        /// 員工請假列表
+        /// 員工加班列表
         /// </summary>
         /// <response code="200">OK</response>
         /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
@@ -729,7 +729,7 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
-        /// 新增部門
+        /// 批次修改部門
         /// </summary>
         /// <param name="eventRequest">請求資料</param>
         /// <response code="200">OK</response>
@@ -760,6 +760,43 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(UpdateDepartment));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 新增公司規定
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route("newrule")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> CreateRule(CompanyRuleRequest request)
+        {
+            try
+            {
+                var result = await _admindomain.CreateRuleAsync(request.ToDTO());
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(CreateRule));
 
                 return ServerError500();
             }

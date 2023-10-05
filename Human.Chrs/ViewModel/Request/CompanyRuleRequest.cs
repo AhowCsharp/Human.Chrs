@@ -26,8 +26,16 @@ namespace Human.Chrs.ViewModel.Request
 
         public string DepartmentName { get; set; }
 
-        public string AfternoonTime { get; set; }
+        public string? AfternoonTime { get; set; }
 
         public int NeedWorkMinute { get; set; }
+
+        public DateTime? CreateDate { get; set; }
+
+        public string? Creator { get; set; }
+
+        public DateTime? EditDate { get; set; }
+
+        public string? Editor { get; set; }
     }
 }

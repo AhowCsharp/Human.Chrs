@@ -29,7 +29,7 @@ namespace Human.Chrs.ViewModel.Extension
                 EntryDate = request.EntryDate,
                 ResignationDate = request.ResignationDate,
                 LevelPosition = request.LevelPosition,
-                WorkLocation = request.WorkPosition,
+                WorkLocation = request.WorkLocation,
                 Email = request.Email,
                 Status = request.Status,
                 SpecialRestDays = request.SpecialRestDays,

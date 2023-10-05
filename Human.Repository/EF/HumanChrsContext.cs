@@ -109,7 +109,11 @@ public partial class HumanChrsContext : DbContext
         modelBuilder.Entity<CompanyRule>(entity =>
         {
             entity.Property(e => e.AfternoonTime).HasMaxLength(50);
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.Creator).HasMaxLength(255);
             entity.Property(e => e.DepartmentName).HasMaxLength(50);
+            entity.Property(e => e.EditDate).HasColumnType("datetime");
+            entity.Property(e => e.Editor).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Department>(entity =>

@@ -439,7 +439,7 @@ namespace Human.Chrs.Domain
             return departments;
         }
 
-        public async Task<CommonResult<bool>> CreateOrUpdateRuleAsync(CompanyRuleDTO request)
+        public async Task<CommonResult<bool>> CreateOrUpdateRuleAsync(IEnumerable<CompanyRuleDTO> requests)
         {
             var result = new CommonResult<bool>();
             var user = _userService.GetCurrentUser();
@@ -449,23 +449,72 @@ namespace Human.Chrs.Domain
                 result.AddError("操作者沒有權杖");
                 return result;
             }
-            bool isCreate = request.id == 0;
             try
             {
-                if (isCreate)
+                foreach (var re in requests)
                 {
-                    await _companyRuleRepository.InsertAsync(request);
+                    re.EditDate = DateTimeHelper.TaipeiNow;
+                    re.Editor = user.StaffName;
+                    re.DepartmentName = (await _departmentRepository.GetAsync(re.DepartmentId)).DepartmentName;
+                    var newDTO = await _companyRuleRepository.UpdateAsync(re);
+
+                    var department = await _departmentRepository.GetAsync(newDTO.DepartmentId);
+                    if (department == null)
+                    {
+                        result.AddError("找不到該部門");
+                        return result;
+                    }
+                    department.CompanyRuleId = newDTO.id;
+                    await _departmentRepository.UpdateAsync(department);
                 }
-                else
-                {
-                    await _companyRuleRepository.UpdateAsync(request);
-                }
+                                 
                 result.Data = true;
             }
             catch (Exception ex)
             {
                 result.AddError(ex.ToString());
                 result.Data = false;
+            }
+            return result;
+        }
+
+        public async Task<CommonResult> CreateRuleAsync(CompanyRuleDTO dto)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+                return result;
+            }
+            try
+            {
+
+                var exist = await _companyRuleRepository.GetCompanyRuleAsync(dto.CompanyId, dto.DepartmentId);
+                if (exist != null)
+                {
+                    result.AddError("該部門已有規定 不得重複新增");
+                    return result;
+                }
+                dto.Creator = user.StaffName;
+                dto.NeedWorkMinute = dto.NeedWorkMinute * 60;
+                dto.CreateDate = DateTimeHelper.TaipeiNow;
+                dto.DepartmentName = (await _departmentRepository.GetAsync(dto.DepartmentId)).DepartmentName;
+                dto =  await _companyRuleRepository.InsertAsync(dto);
+
+                var department = await _departmentRepository.GetAsync(dto.DepartmentId);
+                if (department == null)
+                {
+                    result.AddError("找不到該部門");
+                    return result;
+                }
+                department.CompanyRuleId = dto.id;
+                await _departmentRepository.UpdateAsync(department);
+            }
+            catch (Exception ex)
+            {
+                result.AddError(ex.ToString());
             }
             return result;
         }
@@ -512,6 +561,13 @@ namespace Human.Chrs.Domain
                 result.AddError("操作者沒有權杖");
                 return result;
             }
+
+            if (user.Auth.Value < 10)
+            {
+                result.AddError("操作者沒有權杖");
+                return result;
+            }
+
             if (adminDTO.id == 0)
             {
                 result.Data = await _adminRepository.InsertAsync(adminDTO);

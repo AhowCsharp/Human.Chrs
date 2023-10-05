@@ -306,7 +306,7 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuth]
         [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCheckList(DateTime? start, DateTime? end, int? staffId)
+        public async Task<IActionResult> GetCheckList(DateTime? start, DateTime? end, int staffId)
         {
             try
             {
@@ -329,8 +329,47 @@ namespace LineTag.Admin.ApiControllers
             }
         }
 
+
         /// <summary>
-        /// 備忘錄讀取
+        /// 個人出勤狀況
+        /// </summary>
+        /// <param name="ditanceRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("personalchecks")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetPersonalChecks(int month)
+        {
+            try
+            {
+                var result = await _staffdomain.GetPersonalChecksAsync(month);
+
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetPersonalChecks));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 薪資單列表
         /// </summary>
         /// <param name="ditanceRequest">請求資料</param>
         /// <response code="200">OK</response>
@@ -362,6 +401,44 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(GetSalaryList));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 薪資單列表
+        /// </summary>
+        /// <param name="ditanceRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("salarydetail")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetSalaryDetail(int id)
+        {
+            try
+            {
+                var result = await _staffdomain.GetSalaryDetailAsync(id);
+
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetSalaryDetail));
 
                 return ServerError500();
             }
@@ -400,6 +477,44 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(GetovertimeList));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 加班記錄列表
+        /// </summary>
+        /// <param name="ditanceRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("monthovertime")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetThisMonthOvertimeList(int month)
+        {
+            try
+            {
+                var result = await _staffdomain.GetThisMonthOvertimeListAsync(month);
+
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetThisMonthOvertimeList));
 
                 return ServerError500();
             }
@@ -478,6 +593,44 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(UploadAvatar));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 大頭貼更新
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("event")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteEvent(int id)
+        {
+            try
+            {
+
+                var result = await _staffdomain.DeleteEventAsync(id);
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(DeleteEvent));
 
                 return ServerError500();
             }
