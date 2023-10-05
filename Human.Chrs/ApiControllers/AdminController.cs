@@ -649,6 +649,7 @@ namespace LineTag.Admin.ApiControllers
                 return ServerError500();
             }
         }
+
         /// <summary>
         /// 大頭貼更新
         /// </summary>
@@ -685,6 +686,80 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(UploadAvatar));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 新增部門
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("newdepartment")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> CreateDepartment(NewDepartmentRequest request)
+        {
+            try
+            {
+                var result = await _admindomain.CreateDepartmentAsync(request.DepartmentName);
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(CreateDepartment));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 新增部門
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route("modifydepartment")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateDepartment(List<UpdateDepartmentRequest> requests)
+        {
+            try
+            {
+                var result = await _admindomain.UpdateDepartmentAsync(requests.Select(x => x.ToDTO()));
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(UpdateDepartment));
 
                 return ServerError500();
             }

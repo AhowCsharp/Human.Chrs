@@ -193,6 +193,7 @@ namespace Human.Chrs.Domain
 
             return result;
         }
+
         public async Task<CommonResult<string>> UploadAvatarAsync(IFormFile avatar)
         {
             var result = new CommonResult<string>();
@@ -277,11 +278,12 @@ namespace Human.Chrs.Domain
 
             // 3. Save the URL to the database
             var url = $"/avatar/{fileName}";
-            admin.AvatarUrl = url; 
+            admin.AvatarUrl = url;
             await _adminRepository.UpdateAsync(admin);
             result.Data = url;
             return result;
         }
+
         public async Task<CommonResult<AdminDTO>> GetAdminDetailAsync()
         {
             var result = new CommonResult<AdminDTO>();
@@ -378,9 +380,55 @@ namespace Human.Chrs.Domain
         {
             var user = _userService.GetCurrentUser();
 
-            var departments = await _departmentRepository.GetDepartmentsOfCompanyAsync(user.CompanyId);
-
+            var departments = (await _departmentRepository.GetDepartmentsOfCompanyAsync(user.CompanyId)).ToList();
+            var com = await _companyRepository.GetAsync(user.CompanyId);
+            foreach (var item in departments)
+            {
+                item.CompanyName = com.CompanyName;
+            }
             return departments;
+        }
+
+        public async Task<CommonResult<IEnumerable<DepartmentDTO>>> CreateDepartmentAsync(string departmentName)
+        {
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            var result = new CommonResult<IEnumerable<DepartmentDTO>>();
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            var newDp = new DepartmentDTO
+            {
+                CompanyId = user.CompanyId,
+                CompanyRuleId = 0,
+                DepartmentName = departmentName,
+            };
+            await _departmentRepository.InsertAsync(newDp);
+            result.Data = await GetDepartmentsOfCompanyAsync();
+            return result;
+        }
+
+        public async Task<CommonResult<IEnumerable<DepartmentDTO>>> UpdateDepartmentAsync(IEnumerable<DepartmentDTO> dtos)
+        {
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            var result = new CommonResult<IEnumerable<DepartmentDTO>>();
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            foreach (var dto in dtos.ToList())
+            {
+                await _departmentRepository.UpdateAsync(dto);
+            }
+
+            result.Data = await GetDepartmentsOfCompanyAsync();
+            return result;
         }
 
         public async Task<IEnumerable<CompanyRuleDTO>> GetRulesOfCompanyAsync()

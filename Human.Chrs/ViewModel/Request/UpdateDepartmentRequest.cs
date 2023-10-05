@@ -1,22 +1,18 @@
-﻿using System;
+﻿using Human.Chrs.Domain.SeedWork;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Human.Chrs.Domain.SeedWork;
 
-namespace Human.Chrs.Domain.DTO
+namespace Human.Chrs.ViewModel.Request
 {
-    public class DepartmentDTO : IDTO
+    public class UpdateDepartmentRequest
     {
         public int id { get; set; }
-
-        public int CompanyId { get; set; }
-
-        public int CompanyRuleId { get; set; }
-
         public string DepartmentName { get; set; }
 
-        public string CompanyName { get; set; }
+        public int CompanyId { get; set; }
+        public int CompanyRuleId { get; set; }
     }
 }
