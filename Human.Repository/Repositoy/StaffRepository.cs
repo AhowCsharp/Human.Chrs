@@ -30,6 +30,13 @@ namespace LineTag.Infrastructure.Repositories
             return _mapper.Map<StaffDTO>(data);
         }
 
+        public async Task<bool> VerifyAccountAsync(string account)
+        {
+            var data = await _context.Staff.AnyAsync(x => x.StaffAccount == account);
+
+            return data;
+        }
+
         public async Task<bool> VerifyExistStaffAsync(int staffId, int companyId)
         {
             var data = await _context.Staff.AnyAsync(x => x.Id == staffId && x.CompanyId == companyId && x.Status == 1);

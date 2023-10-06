@@ -27,7 +27,7 @@ namespace Human.Chrs.ViewModel.Request
 
         public string LevelPosition { get; set; }
 
-        public string WorkLocation { get; set; }
+        public string? WorkLocation { get; set; }
 
         public string Email { get; set; }
 

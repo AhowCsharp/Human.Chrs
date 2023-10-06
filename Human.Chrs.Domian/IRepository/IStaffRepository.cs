@@ -18,5 +18,7 @@ namespace Human.Chrs.Domain.IRepository
         Task<IEnumerable<StaffDTO>> GetAllStaffAsync(int companyId);
 
         Task<bool> UpdateWorkDaysAndFindStaffAsync();
+
+        Task<bool> VerifyAccountAsync(string account);
     }
 }

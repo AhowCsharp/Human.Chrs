@@ -75,40 +75,23 @@ namespace Human.Chrs.Domain
             var user = _userService.GetCurrentUser();
             bool isCreate = newStaff.id == 0;
             var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
-            int staffId;
             if (!verifyAdminToken)
             {
                 result.AddError("操作者沒有權杖");
 
                 return result;
-                //newStaff.ResignationDate = DateTimeHelper.TaipeiNow;
-                //newStaff.Status = 1;
-                //newStaff.SpecialRestDays = 0;   //特休
-                //newStaff.SickDays = 30;     // 病假
-                //newStaff.ThingDays = 14; // 事假
-                //newStaff.DeathDays = 8; //喪假
-                //newStaff.MarryDays = 8; //婚假
-                //newStaff.MenstruationDays = newStaff.Gender == "女性" ? 1 : 0;  // 生理假 每月一天
-                //newStaff.ChildbirthDays = newStaff.Gender == "女性" ? 56 : 0; // 產假
-                //newStaff.TocolysisDays = newStaff.Gender == "女性" ? 7 : 0; //安胎假
-                //newStaff.PrenatalCheckUpDays = 7;  // 陪產檢 陪產假  產檢假
-                //newStaff.TackeCareBabyDays = 365 * 2; //留職停薪育嬰假
-
-                //newStaff.SpecialRestHours = 0;
-                //newStaff.SickHours = 0;
-                //newStaff.ThingHours = 0;
-                //newStaff.ChildbirthHours = 0;
-                //newStaff.DeathHours = 0;
-                //newStaff.MenstruationHours = 0;
-                //newStaff.ChildbirthHours = 0;
-                //newStaff.TocolysisHours = 0;
-                //newStaff.PrenatalCheckUpHours = 0;
-                //newStaff.TackeCareBabyHours = 0;
-
-                //newStaff.PersonalDetailId = null;
             }
+
             if (isCreate)
             {
+                var exsitAccount = await _staffRepository.VerifyAccountAsync(newStaff.StaffAccount);
+                if (exsitAccount)
+                {
+                    result.AddError("帳號重複");
+
+                    return result;
+                }
+                newStaff.WorkLocation = (await _companyRuleRepository.GetCompanyRuleAsync(newStaff.CompanyId, newStaff.DepartmentId)).WorkAddress;
                 newStaff.CreateDate = DateTimeHelper.TaipeiNow;
                 newStaff.Creator = user.StaffName;
                 newStaff.EditDate = DateTimeHelper.TaipeiNow;
@@ -117,9 +100,28 @@ namespace Human.Chrs.Domain
             }
             else
             {
-                newStaff.EditDate = DateTimeHelper.TaipeiNow;
-                newStaff.Editor = user.StaffName;
-                await _staffRepository.UpdateAsync(newStaff);
+                var oldData = await _staffRepository.GetAsync(newStaff.id);
+                if (newStaff.StaffAccount == oldData.StaffAccount)
+                {
+                    newStaff.WorkLocation = (await _companyRuleRepository.GetCompanyRuleAsync(newStaff.CompanyId, newStaff.DepartmentId)).WorkAddress;
+                    newStaff.EditDate = DateTimeHelper.TaipeiNow;
+                    newStaff.Editor = user.StaffName;
+                    await _staffRepository.UpdateAsync(newStaff);
+                }
+                else
+                {
+                    var exsitAccount = await _staffRepository.VerifyAccountAsync(newStaff.StaffAccount);
+                    if (exsitAccount)
+                    {
+                        result.AddError("帳號重複");
+
+                        return result;
+                    }
+                    newStaff.WorkLocation = (await _companyRuleRepository.GetCompanyRuleAsync(newStaff.CompanyId, newStaff.DepartmentId)).WorkAddress;
+                    newStaff.EditDate = DateTimeHelper.TaipeiNow;
+                    newStaff.Editor = user.StaffName;
+                    await _staffRepository.UpdateAsync(newStaff);
+                }
             }
 
             var data = await _staffRepository.GetAllStaffAsync(user.CompanyId);
