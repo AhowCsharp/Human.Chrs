@@ -25,7 +25,7 @@ namespace LineTag.Infrastructure.Repositories
 
         public async Task<AdminDTO> GetAvailableAdminAsync(int id, int companyId)
         {
-            var data = await _context.Admin.SingleOrDefaultAsync(x => x.Id == id && x.CompanyId == companyId && x.Status);
+            var data = await _context.Admin.SingleOrDefaultAsync(x => x.Id == id && x.CompanyId == companyId && x.Status != null && x.Status.Value);
 
             return _mapper.Map<AdminDTO>(data);
         }
@@ -39,7 +39,7 @@ namespace LineTag.Infrastructure.Repositories
 
         public async Task<AdminDTO> VerifyLoginAdminAsync(string account, string password)
         {
-            var data = await _context.Admin.SingleOrDefaultAsync(x => x.Account == account && x.Password == password && x.Status);
+            var data = await _context.Admin.SingleOrDefaultAsync(x => x.Account == account && x.Password == password && x.Status != null && x.Status.Value);
 
             return _mapper.Map<AdminDTO>(data);
         }

@@ -37,5 +37,7 @@ namespace Human.Chrs.ViewModel.Request
         public DateTime? EditDate { get; set; }
 
         public string? Editor { get; set; }
+
+        public string WorkAddress { get; set; }
     }
 }

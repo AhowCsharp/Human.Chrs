@@ -64,6 +64,82 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 補打打卡
+        /// </summary>
+        /// <param name="checkRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("amendcheck")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ApplyAmendCheckRecord(AmendCheckCheckRequest request)
+        {
+            try
+            {
+                var result = await _staffdomain.ApplyAmendCheckRecordAsync(request.CheckDate, request.CheckTime, request.Reason, request.CheckType);
+
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(ApplyAmendCheckRecord));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 補打打卡
+        /// </summary>
+        /// <param name="checkRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("amendchecklist")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAmendCheckRecord()
+        {
+            try
+            {
+                var result = await _staffdomain.GetAmendCheckRecordAsync();
+
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetAmendCheckRecord));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 報加班
         /// </summary>
         /// <param name="overtimeRequest">請求資料</param>
@@ -328,7 +404,6 @@ namespace LineTag.Admin.ApiControllers
                 return ServerError500();
             }
         }
-
 
         /// <summary>
         /// 個人出勤狀況
@@ -617,7 +692,6 @@ namespace LineTag.Admin.ApiControllers
         {
             try
             {
-
                 var result = await _staffdomain.DeleteEventAsync(id);
                 if (result.Success)
                 {

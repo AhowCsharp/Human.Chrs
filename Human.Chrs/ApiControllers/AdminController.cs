@@ -99,6 +99,43 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 增修員工薪資設定
+        /// </summary>
+        /// <param name="salarySettingRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("salarysetting")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteSalarySetting(int id)
+        {
+            try
+            {
+                var result = await _admindomain.DeleteSalarySettingAsunc(id);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(CreateOrEditSalarySetting));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 新增員工詳細資料
         /// </summary>
         /// <param name="request">請求資料</param>
@@ -272,7 +309,7 @@ namespace LineTag.Admin.ApiControllers
         {
             try
             {
-                var result = await _admindomain.CreateOrUpdateRuleAsync(requests.Select(x => x.ToDTO()));
+                var result = await _admindomain.UpdateRulesAsync(requests.Select(x => x.ToDTO()));
                 if (result.Success)
                 {
                     return Ok(result);

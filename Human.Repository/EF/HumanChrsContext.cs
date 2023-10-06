@@ -15,6 +15,8 @@ public partial class HumanChrsContext : DbContext
 
     public virtual DbSet<Admin> Admin { get; set; }
 
+    public virtual DbSet<AmendCheckRecord> AmendCheckRecord { get; set; }
+
     public virtual DbSet<Application> Application { get; set; }
 
     public virtual DbSet<CheckRecords> CheckRecords { get; set; }
@@ -60,6 +62,18 @@ public partial class HumanChrsContext : DbContext
             entity.Property(e => e.WorkPosition)
                 .IsRequired()
                 .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<AmendCheckRecord>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__AmendChe__3214EC0729A58105");
+
+            entity.Property(e => e.Applicant).HasMaxLength(255);
+            entity.Property(e => e.ApplicationDate).HasColumnType("date");
+            entity.Property(e => e.CheckDate).HasColumnType("date");
+            entity.Property(e => e.CheckTime).HasColumnType("datetime");
+            entity.Property(e => e.Inspector).HasMaxLength(50);
+            entity.Property(e => e.ValidateDate).HasColumnType("date");
         });
 
         modelBuilder.Entity<Application>(entity =>

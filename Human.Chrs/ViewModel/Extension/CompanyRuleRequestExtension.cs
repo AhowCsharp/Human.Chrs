@@ -26,7 +26,8 @@ namespace Human.Chrs.ViewModel.Extension
                 CheckOutEndTime = request.CheckOutEndTime,
                 DepartmentName = request.DepartmentName,
                 AfternoonTime = request.AfternoonTime,
-                NeedWorkMinute = request.NeedWorkMinute
+                NeedWorkMinute = request.NeedWorkMinute,
+                WorkAddress = request.WorkAddress,
             };
 
             return dto;

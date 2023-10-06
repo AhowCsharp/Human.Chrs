@@ -52,17 +52,18 @@ namespace Human.Chrs.Domain
                 return result;
             }
             var rule = await _companyRuleRepository.GetCompanyRuleAsync(user.CompanyId, user.DepartmentId);
-            if (rule == null)
+            if (rule == null || !rule.Latitude.HasValue || rule.Longitude.HasValue || string.IsNullOrEmpty(rule.WorkAddress))
             {
                 result.AddError("該公司尚未設置規則");
                 return result;
             }
+
             var checkLog = await _checkRecordsRepository.GetCheckRecordAsync(user.CompanyId, user.Id);
             if (checkLog == null)
             {
                 record.CompanyId = user.CompanyId;
                 record.StaffId = user.Id;
-                record.IsCheckInOutLocation = DistanceHelper.CalculateDistance(company.Latitude, company.Longitude, latitude, longitude) > 200 ? 1 : 0;
+                record.IsCheckInOutLocation = DistanceHelper.CalculateDistance(rule.Latitude.Value, rule.Longitude.Value, latitude, longitude) > 200 ? 1 : 0;
                 record.CheckInTime = DateTimeHelper.TaipeiNow;
                 record.CheckInMemo = memo;
                 record.IsCheckInLate = DateTimeHelper.TaipeiNow.TimeOfDay > rule.CheckInEndTime ? 1 : 0;
@@ -75,7 +76,7 @@ namespace Human.Chrs.Domain
             }
             else if (checkLog.CheckOutTime == null)
             {
-                checkLog.IsCheckOutOutLocation = DistanceHelper.CalculateDistance(company.Latitude, company.Longitude, latitude, longitude) > 200 ? 1 : 0;
+                checkLog.IsCheckOutOutLocation = DistanceHelper.CalculateDistance(rule.Latitude.Value, rule.Longitude.Value, latitude, longitude) > 200 ? 1 : 0;
                 checkLog.CheckOutTime = DateTimeHelper.TaipeiNow;
                 checkLog.CheckOutMemo = memo;
                 checkLog.IsCheckOutEarly = DateTimeHelper.TaipeiNow.TimeOfDay < rule.CheckOutStartTime ? 1 : 0;
@@ -96,7 +97,7 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult> InsertOverTimeAsync(DateTime chooseDate,int hours, string reason)
+        public async Task<CommonResult> InsertOverTimeAsync(DateTime chooseDate, int hours, string reason)
         {
             var result = new CommonResult();
             var overTime = new OverTimeLogDTO();
@@ -126,17 +127,29 @@ namespace Human.Chrs.Domain
                 result.AddError("找不到該公司");
                 return result;
             }
-            double distance = DistanceHelper.CalculateDistance(company.Latitude, company.Longitude, latitude, longitude);
+            var user = _userService.GetCurrentUser();
+            var rule = await _companyRuleRepository.GetCompanyRuleAsync(user.CompanyId, user.DepartmentId);
+            if (rule == null || !rule.Latitude.HasValue || rule.Longitude.HasValue || string.IsNullOrEmpty(rule.WorkAddress))
+            {
+                result.AddError("該公司尚未設置規則");
+                return result;
+            }
+            double distance = DistanceHelper.CalculateDistance(rule.Latitude.Value, rule.Longitude.Value, latitude, longitude);
             bool overDistance = distance > 200;
             result.Data = overDistance;
 
             return result;
         }
 
-        public CommonResult<bool> CheckDistanceAsync(CompanyDTO company, double longitude, double latitude)
+        public CommonResult<bool> CheckDistanceAsync(CompanyRuleDTO rule, double longitude, double latitude)
         {
             var result = new CommonResult<bool>();
-            double distance = DistanceHelper.CalculateDistance(company.Latitude, company.Longitude, latitude, longitude);
+            if (rule.Longitude.HasValue || string.IsNullOrEmpty(rule.WorkAddress))
+            {
+                result.AddError("該公司尚未設置規則");
+                return result;
+            }
+            double distance = DistanceHelper.CalculateDistance(rule.Latitude.Value, rule.Longitude.Value, latitude, longitude);
             bool overDistance = distance > 200;
             result.Data = overDistance;
 

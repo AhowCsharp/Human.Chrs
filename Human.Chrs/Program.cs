@@ -110,6 +110,7 @@ builder.Services.AddScoped<IEventLogsRepository, EventLogsRepository>();
 builder.Services.AddScoped<IIncomeLogsRepository, IncomeLogsRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<ISalarySettingRepository, SalarySettingRepository>();
+builder.Services.AddScoped<IAmendCheckRecordRepository, AmendCheckRecordRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 builder.Services.AddHttpClient();

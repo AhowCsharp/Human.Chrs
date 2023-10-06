@@ -31,6 +31,7 @@ namespace Human.Chrs.Domain
         private readonly ISalarySettingRepository _salarySettingRepository;
         private readonly IIncomeLogsRepository _incomeLogsRepository;
         private readonly UserService _userService;
+        private readonly GeocodingService _geocodingService;
         private readonly IWebHostEnvironment _hostEnvironment;
 
         public AdminDomain(
@@ -47,6 +48,7 @@ namespace Human.Chrs.Domain
             IPersonalDetailRepository personalDetailRepository,
             IIncomeLogsRepository incomeLogsRepository,
             UserService userService,
+            GeocodingService geocodingService,
              IWebHostEnvironment hostEnvironment)
         {
             _logger = logger;
@@ -63,6 +65,7 @@ namespace Human.Chrs.Domain
             _incomeLogsRepository = incomeLogsRepository;
             _personalDetailRepository = personalDetailRepository;
             _userService = userService;
+            _geocodingService = geocodingService;
             _hostEnvironment = hostEnvironment;
         }//async Task<CurrentUser>
 
@@ -169,8 +172,22 @@ namespace Human.Chrs.Domain
             var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
             if (verifyAdminToken)
             {
+                var staff = await _staffRepository.GetUsingStaffAsync(dto.StaffId, user.CompanyId);
+                if (staff.EmploymentTypeId != 1)
+                {
+                    result.AddError("該員工並非全職雇用類別");
+
+                    return result;
+                }
                 if (isCreate)
                 {
+                    var exist = await _salarySettingRepository.GetSalarySettingAsync(dto.StaffId, dto.CompanyId);
+                    if (exist != null)
+                    {
+                        result.AddError("該員工已有薪資設定");
+
+                        return result;
+                    }
                     dto.EditDate = DateTimeHelper.TaipeiNow;
                     dto.CreateDate = DateTimeHelper.TaipeiNow;
                     dto.Creator = user.StaffName;
@@ -179,10 +196,41 @@ namespace Human.Chrs.Domain
                 }
                 else
                 {
-                    dto.EditDate = DateTimeHelper.TaipeiNow;
-                    dto.Editor = user.StaffName;
-                    result.Data = await _salarySettingRepository.UpdateAsync(dto);
+                    var oldData = await _salarySettingRepository.GetAsync(dto.id);
+                    oldData.BasicSalary = dto.BasicSalary;
+                    oldData.FullCheckInMoney = dto.FullCheckInMoney;
+                    oldData.OtherPercent = dto.OtherPercent;
+                    oldData.EditDate = DateTimeHelper.TaipeiNow;
+                    oldData.Editor = user.StaffName;
+                    result.Data = await _salarySettingRepository.UpdateAsync(oldData);
                 }
+            }
+            else
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+
+            return result;
+        }
+
+        public async Task<CommonResult> DeleteSalarySettingAsunc(int id)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (verifyAdminToken)
+            {
+                var dto = await _salarySettingRepository.GetAsync(id);
+                var staff = await _staffRepository.GetUsingStaffAsync(dto.StaffId, dto.CompanyId);
+                if (staff != null)
+                {
+                    result.AddError("請先更改該員工狀態");
+
+                    return result;
+                }
+                await _salarySettingRepository.DeleteAsync(id);
             }
             else
             {
@@ -439,7 +487,7 @@ namespace Human.Chrs.Domain
             return departments;
         }
 
-        public async Task<CommonResult<bool>> CreateOrUpdateRuleAsync(IEnumerable<CompanyRuleDTO> requests)
+        public async Task<CommonResult<bool>> UpdateRulesAsync(IEnumerable<CompanyRuleDTO> requests)
         {
             var result = new CommonResult<bool>();
             var user = _userService.GetCurrentUser();
@@ -453,9 +501,28 @@ namespace Human.Chrs.Domain
             {
                 foreach (var re in requests)
                 {
+                    if (string.IsNullOrEmpty(re.WorkAddress))
+                    {
+                        result.AddError("請輸入正確地址");
+                        return result;
+                    }
+
+                    try
+                    {
+                        var coordinate = _geocodingService.GetCoordinates(re.WorkAddress);
+                        re.Latitude = coordinate.Result.Latitude;
+                        re.Longitude = coordinate.Result.Longitude;
+                    }
+                    catch (Exception ex)
+                    {
+                        result.AddError(ex.Message);
+                        return result;
+                    }
+
                     re.EditDate = DateTimeHelper.TaipeiNow;
                     re.Editor = user.StaffName;
                     re.DepartmentName = (await _departmentRepository.GetAsync(re.DepartmentId)).DepartmentName;
+
                     var newDTO = await _companyRuleRepository.UpdateAsync(re);
 
                     var department = await _departmentRepository.GetAsync(newDTO.DepartmentId);
@@ -467,7 +534,7 @@ namespace Human.Chrs.Domain
                     department.CompanyRuleId = newDTO.id;
                     await _departmentRepository.UpdateAsync(department);
                 }
-                                 
+
                 result.Data = true;
             }
             catch (Exception ex)
@@ -490,18 +557,36 @@ namespace Human.Chrs.Domain
             }
             try
             {
-
                 var exist = await _companyRuleRepository.GetCompanyRuleAsync(dto.CompanyId, dto.DepartmentId);
                 if (exist != null)
                 {
                     result.AddError("該部門已有規定 不得重複新增");
                     return result;
                 }
+
+                if (string.IsNullOrEmpty(dto.WorkAddress))
+                {
+                    result.AddError("請輸入正確地址");
+                    return result;
+                }
+
+                try
+                {
+                    var coordinate = _geocodingService.GetCoordinates(dto.WorkAddress);
+                    dto.Latitude = coordinate.Result.Latitude;
+                    dto.Longitude = coordinate.Result.Longitude;
+                }
+                catch (Exception ex)
+                {
+                    result.AddError(ex.Message);
+                    return result;
+                }
                 dto.Creator = user.StaffName;
                 dto.NeedWorkMinute = dto.NeedWorkMinute * 60;
                 dto.CreateDate = DateTimeHelper.TaipeiNow;
                 dto.DepartmentName = (await _departmentRepository.GetAsync(dto.DepartmentId)).DepartmentName;
-                dto =  await _companyRuleRepository.InsertAsync(dto);
+
+                dto = await _companyRuleRepository.InsertAsync(dto);
 
                 var department = await _departmentRepository.GetAsync(dto.DepartmentId);
                 if (department == null)

@@ -36,5 +36,11 @@ namespace Human.Chrs.Domain.DTO
         public DateTime? EditDate { get; set; }
 
         public string Editor { get; set; }
+
+        public double? Latitude { get; set; }
+
+        public double? Longitude { get; set; }
+
+        public string WorkAddress { get; set; }
     }
 }

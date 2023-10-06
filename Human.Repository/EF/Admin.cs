@@ -29,5 +29,5 @@ public partial class Admin
 
     public string AvatarUrl { get; set; }
 
-    public bool Status { get; set; }
+    public bool? Status { get; set; }
 }
