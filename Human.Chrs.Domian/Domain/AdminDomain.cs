@@ -13,6 +13,15 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Human.Chrs.Domain.SeedWork;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
+using System.Drawing.Printing;
+using NPOI.XSSF.UserModel;
+using NPOI.OpenXmlFormats.Vml.Spreadsheet;
+using NPOI.SS.UserModel;
+using NPOI.POIFS.Crypt.Dsig;
+using NPOI.SS.Util;
+using System.Globalization;
+
 
 namespace Human.Chrs.Domain
 {
@@ -30,6 +39,8 @@ namespace Human.Chrs.Domain
         private readonly IPersonalDetailRepository _personalDetailRepository;
         private readonly ISalarySettingRepository _salarySettingRepository;
         private readonly IIncomeLogsRepository _incomeLogsRepository;
+        private readonly IEventLogsRepository _eventLogsRepository;
+        private readonly IAmendCheckRecordRepository _amendCheckRecordRepository;
         private readonly UserService _userService;
         private readonly GeocodingService _geocodingService;
         private readonly IWebHostEnvironment _hostEnvironment;
@@ -47,6 +58,8 @@ namespace Human.Chrs.Domain
             ISalarySettingRepository salarySettingRepository,
             IPersonalDetailRepository personalDetailRepository,
             IIncomeLogsRepository incomeLogsRepository,
+            IEventLogsRepository eventLogsRepository,
+            IAmendCheckRecordRepository amendCheckRecordRepository,
             UserService userService,
             GeocodingService geocodingService,
              IWebHostEnvironment hostEnvironment)
@@ -64,10 +77,147 @@ namespace Human.Chrs.Domain
             _overTimeLogRepository = overTimeLogRepository;
             _incomeLogsRepository = incomeLogsRepository;
             _personalDetailRepository = personalDetailRepository;
+            _eventLogsRepository = eventLogsRepository;
+            _amendCheckRecordRepository = amendCheckRecordRepository;
             _userService = userService;
             _geocodingService = geocodingService;
             _hostEnvironment = hostEnvironment;
-        }//async Task<CurrentUser>
+        }
+
+        public async Task<CommonResult<List<EventDTO>>> EventsGetAsync()
+        {
+            var result = new CommonResult<List<EventDTO>>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            var eventsDTO = new List<EventDTO>();
+            var events = await _eventLogsRepository.GetCompanyPartimeEventLogsAsync(user.CompanyId);
+            foreach (var eventDTO in events)
+            {
+                var staff = await _staffRepository.GetAsync(eventDTO.StaffId);
+                var newEvent = new EventDTO();
+                if (eventDTO.StartDate == eventDTO.EndDate)
+                {
+                    DateTime newDateTime = new DateTime(
+                        eventDTO.StartDate.Year,
+                        eventDTO.StartDate.Month,
+                        eventDTO.StartDate.Day,
+                        eventDTO.StartTime.Hours,
+                        eventDTO.StartTime.Minutes,
+                        eventDTO.StartTime.Seconds
+                    );
+                    DateTime newEndDateTime = new DateTime(
+                    eventDTO.EndDate.Year,
+                    eventDTO.EndDate.Month,
+                    eventDTO.EndDate.Day,
+                    eventDTO.EndTime.Hours,
+                    eventDTO.EndTime.Minutes,
+                    eventDTO.EndTime.Seconds
+                    );
+                    newEvent.AllDay = false;
+                    newEvent.Start = newDateTime;
+                    newEvent.End = newEndDateTime;
+                    newEvent.Title = eventDTO.Title;
+                    newEvent.Detail = eventDTO.Detail;
+                    newEvent.LevelStatus = eventDTO.LevelStatus;
+                    newEvent.StaffId = staff.id;
+                    newEvent.StaffName = staff.StaffName;
+                    newEvent.id = eventDTO.id;
+                    eventsDTO.Add(newEvent);
+                }
+                else
+                {
+                    newEvent.AllDay = false;
+                    newEvent.Start = eventDTO.StartDate;
+                    newEvent.End = eventDTO.EndDate;
+                    newEvent.Title = eventDTO.Title;
+                    newEvent.Detail = eventDTO.Detail;
+                    newEvent.LevelStatus = eventDTO.LevelStatus;
+                    newEvent.id = eventDTO.id;
+                    newEvent.StaffId = staff.id;
+                    newEvent.StaffName = staff.StaffName;
+                    eventsDTO.Add(newEvent);
+                }
+            }
+            result.Data = eventsDTO;
+            return result;
+        }
+
+        public async Task<CommonResult> ParttimeWorkAdd(int staffId,DateTime startDate, DateTime endDate, TimeSpan startTime, TimeSpan endTime, string title, string detail, int level)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+
+            if (endDate < startDate)
+            {
+                result.AddError("時間格式不正確");
+                return result;
+            }
+
+            var staff = await _staffRepository.GetUsingStaffAsync(staffId, user.CompanyId);
+            var department = await _departmentRepository.GetAsync(staff.DepartmentId);
+            try
+            {
+                var map = await _geocodingService.GetCoordinates(detail);
+                var dto = new EventLogsDTO();
+                dto.StartDate = startDate;
+                dto.EndDate = endDate;
+                dto.EndTime = endTime;
+                dto.Title = title;
+                dto.StartTime = startTime;
+                dto.Detail = detail;
+                dto.StaffId = staffId;
+                dto.CompanyId = user.CompanyId;
+                dto.LevelStatus = level;
+                await _eventLogsRepository.InsertAsync(dto);
+
+                DateTime currentDay = startDate;
+                while (currentDay <= endDate)
+                {
+                    var parttimeRule = new CompanyRuleDTO
+                    {
+                        CompanyId = user.CompanyId,
+                        DepartmentId = staff.DepartmentId,
+                        CheckInStartTime = startTime,
+                        CheckInEndTime = startTime,
+                        CheckOutStartTime = endTime,
+                        CheckOutEndTime = endTime,
+                        DepartmentName = department.DepartmentName,
+                        NeedWorkMinute = (int)(endTime - startTime).TotalMinutes, // 這裡要修正，您可能想要用 endTime - startTime
+                        CreateDate = DateTimeHelper.TaipeiNow,
+                        Creator = user.StaffName,
+                        EditDate = DateTimeHelper.TaipeiNow,
+                        Editor = user.StaffName,
+                        WorkAddress = detail,
+                        Latitude = map.Latitude,
+                        Longitude = map.Longitude,
+                        ParttimeStaffId = staff.id,
+                        ParttimeDate = currentDay
+                    };
+                    await _companyRuleRepository.InsertAsync(parttimeRule);
+
+                    currentDay = currentDay.AddDays(1);
+                }
+            }
+            catch (Exception ex)
+            {
+                result.AddError(ex.Message);
+                return result;
+            }
+            return result;
+        }
 
         public async Task<CommonResult<IEnumerable<StaffDTO>>> CreateOrEditStaffAsync(StaffDTO newStaff)
         {
@@ -91,11 +241,13 @@ namespace Human.Chrs.Domain
 
                     return result;
                 }
+                var department = await _departmentRepository.GetAsync(newStaff.DepartmentId);
                 newStaff.WorkLocation = (await _companyRuleRepository.GetCompanyRuleAsync(newStaff.CompanyId, newStaff.DepartmentId)).WorkAddress;
                 newStaff.CreateDate = DateTimeHelper.TaipeiNow;
                 newStaff.Creator = user.StaffName;
                 newStaff.EditDate = DateTimeHelper.TaipeiNow;
                 newStaff.Editor = user.StaffName;
+                newStaff.Department = department.DepartmentName;
                 await _staffRepository.InsertAsync(newStaff);
             }
             else
@@ -106,6 +258,8 @@ namespace Human.Chrs.Domain
                     newStaff.WorkLocation = (await _companyRuleRepository.GetCompanyRuleAsync(newStaff.CompanyId, newStaff.DepartmentId)).WorkAddress;
                     newStaff.EditDate = DateTimeHelper.TaipeiNow;
                     newStaff.Editor = user.StaffName;
+                    var department = await _departmentRepository.GetAsync(newStaff.DepartmentId);
+                    newStaff.Department = department.DepartmentName;
                     await _staffRepository.UpdateAsync(newStaff);
                 }
                 else
@@ -233,6 +387,34 @@ namespace Human.Chrs.Domain
                     return result;
                 }
                 await _salarySettingRepository.DeleteAsync(id);
+            }
+            else
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+
+            return result;
+        }
+
+        public async Task<CommonResult> RemovestaffAsync(int id)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (verifyAdminToken)
+            {
+                var staff = await _staffRepository.GetAsync(id);
+                if (staff == null)
+                {
+                    result.AddError("出事了 找不到該員工");
+
+                    return result;
+                }
+                var eventLogs = await _eventLogsRepository.GetAllEventLogsAsync(staff.id, staff.CompanyId);
+                await _eventLogsRepository.RemoveEventLogsAsync(eventLogs, user.CompanyId);
+                await _staffRepository.DeleteAsync(id);
             }
             else
             {
@@ -461,6 +643,98 @@ namespace Human.Chrs.Domain
             return result;
         }
 
+        public async Task<CommonResult<IEnumerable<StaffDTO>>> GetPartTimeStaffsAsync(int month)
+        {
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            var result = new CommonResult<IEnumerable<StaffDTO>>();
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            int year = DateTimeHelper.TaipeiNow.Year;  // 当前年份
+            DateTime start = new DateTime(year, month, 1); // 该月的第一天
+            DateTime end = start.AddMonths(1).AddDays(-1); // 该月的最后一天
+
+            var parttimes = (await _staffRepository.GetAllParttimeStaffAsync(user.CompanyId)).ToList();
+            List<StaffDTO> staffsToRemove = new List<StaffDTO>();
+
+            foreach (var staff in parttimes)
+            {
+                int totalMinutes = 0;
+                var checks = await _checkRecordsRepository.GetCheckRecordListAsync(staff.id, user.CompanyId, start, end);
+                foreach (var check in checks)
+                {
+                    if (!check.CheckOutTime.HasValue || !check.CheckInTime.HasValue)
+                    {
+                        break; // 若其中一个没有值，立即退出循环
+                    }
+
+                    TimeSpan difference = check.CheckOutTime.Value - check.CheckInTime.Value;
+                    int workminutes = (int)difference.TotalMinutes;
+                    totalMinutes += workminutes;
+                }
+                int hours = totalMinutes / 60;  // 使用整数除法得到小时数
+                int minutes = totalMinutes % 60; // 使用模数运算符得到余数分钟
+                int overtimemoney = 0;
+                var overtimesList = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAfterValidateAsync(staff.id, user.CompanyId, start, end)).ToList();
+                foreach (var log in overtimesList)
+                {
+                    var overFirstStepMoney = 0;
+                    var overSecStepStepMoney = 0;
+                    if (log.OverHours <= 2)
+                    {
+                        overFirstStepMoney = (int)Math.Round(log.OverHours * staff.ParttimeMoney.Value * 1.33);
+                        overtimemoney += overFirstStepMoney;
+                    }
+                    else if (log.OverHours > 2)
+                    {
+                        overFirstStepMoney = (int)Math.Round(2 * staff.ParttimeMoney.Value * 1.33);
+                        overtimemoney += overFirstStepMoney;
+                        overSecStepStepMoney = (int)Math.Round((log.OverHours-2) * staff.ParttimeMoney.Value * 1.66);
+                        overtimemoney += overSecStepStepMoney;
+                    }
+                }
+                var overtimesHours = overtimesList.Sum(x => x.OverHours);
+                if (hours == 0 && minutes == 0)
+                {
+                    staffsToRemove.Add(staff);
+                    continue;
+                }
+                staff.TotalPartimeHours = hours;
+                staff.TotalPartimeMinutes = minutes;
+                staff.ParttimeOverTimeHours = overtimesHours;
+                staff.ParttimeOverTimeTotalMony = overtimemoney;
+            }
+
+            foreach (var staff in staffsToRemove)
+            {
+                parttimes.Remove(staff);
+            }
+            result.Data = parttimes;
+            return result;
+        }
+
+        public async Task<CommonResult<IEnumerable<AmendCheckRecordDTO>>> GetGetAmendrecordsAsync(DateTime start,DateTime end)
+        {
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            var result = new CommonResult<IEnumerable<AmendCheckRecordDTO>>();
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            var applications = await _amendCheckRecordRepository.GetAllAmendCheckRecordAsync(user.CompanyId, start, end);
+
+
+            result.Data = applications;
+            return result;
+        }
+
         public async Task<CommonResult<IEnumerable<DepartmentDTO>>> UpdateDepartmentAsync(IEnumerable<DepartmentDTO> dtos)
         {
             var user = _userService.GetCurrentUser();
@@ -511,9 +785,9 @@ namespace Human.Chrs.Domain
 
                     try
                     {
-                        var coordinate = _geocodingService.GetCoordinates(re.WorkAddress);
-                        re.Latitude = coordinate.Result.Latitude;
-                        re.Longitude = coordinate.Result.Longitude;
+                        var coordinate = await _geocodingService.GetCoordinates(re.WorkAddress);
+                        re.Latitude = coordinate.Latitude;
+                        re.Longitude = coordinate.Longitude;
                     }
                     catch (Exception ex)
                     {
@@ -574,9 +848,9 @@ namespace Human.Chrs.Domain
 
                 try
                 {
-                    var coordinate = _geocodingService.GetCoordinates(dto.WorkAddress);
-                    dto.Latitude = coordinate.Result.Latitude;
-                    dto.Longitude = coordinate.Result.Longitude;
+                    var coordinate =await  _geocodingService.GetCoordinates(dto.WorkAddress);
+                    dto.Latitude = coordinate.Latitude;
+                    dto.Longitude = coordinate.Longitude;
                 }
                 catch (Exception ex)
                 {
@@ -772,6 +1046,23 @@ namespace Human.Chrs.Domain
             result.Data = overtimeList;
             return result;
         }
+
+
+        public async Task<(List<CheckRecordsDTO> list,StaffDTO? staff)> GetExcelDatasAsync(int staffId, int month)
+        {
+
+            // 1. Validation and User Verification
+            var user = _userService.GetCurrentUser();
+            // 2. Fetch Data
+            int year = DateTimeHelper.TaipeiNow.Year;
+            DateTime start = new DateTime(year, month, 1);
+            DateTime end = start.AddMonths(1).AddDays(-1);
+            var records = (await _checkRecordsRepository.GetCheckRecordListAsync(staffId, user.CompanyId, start, end)).ToList();
+            var staff = await _staffRepository.GetUsingStaffAsync(staffId, user.CompanyId);
+
+            return (records,staff);
+        }
+
 
         public async Task<CommonResult<VacationLogDTO>> VerifyVacationsAsync(int vacationId, bool isPass)
         {
@@ -1036,11 +1327,11 @@ namespace Human.Chrs.Domain
             var salaryView = new SalaryViewDTO();
 
             DateTime today = DateTimeHelper.TaipeiNow;
-            DateTime firstDayOfLastMonth = new DateTime(today.Year, today.Month, 1).AddMonths(-1);
-            DateTime lastDayOfLastMonth = new DateTime(today.Year, today.Month, 1).AddDays(-1);
+            DateTime start = new DateTime(today.Year, today.Month, 1).AddMonths(-1);
+            DateTime end = new DateTime(today.Year, today.Month, 1).AddDays(-1);
 
-            var staffCheckRecords = await _checkRecordsRepository.GetCheckRecordListAsync(user.CompanyId, staffId, firstDayOfLastMonth, lastDayOfLastMonth);
-            var staffVacationlogs = await _vacationLogRepository.GetPeriodVacationLogsAsync(staffId, user.CompanyId, firstDayOfLastMonth, lastDayOfLastMonth);
+            var staffCheckRecords = await _checkRecordsRepository.GetCheckRecordListAsync(user.CompanyId, staffId, start, end);
+            var staffVacationlogs = await _vacationLogRepository.GetPeriodVacationLogsAsync(staffId, user.CompanyId, start, end);
             bool vacationNotAlreadyChecked = staffVacationlogs.Any(x => x.IsPass == 0);
             if (vacationNotAlreadyChecked)
             {
@@ -1145,12 +1436,37 @@ namespace Human.Chrs.Domain
             salaryView.PrenatalCheckUpHours = (int)(total11Hours % 8);
             salaryView.TotalPrenatalCheckUpHours = (int)total11Hours;
 
-            var perHourSalary = (salaryView.SalarySetting.BasicSalary + salaryView.SalarySetting.FullCheckInMoney) / 30 / 8;
+            var tempValue = (salaryView.SalarySetting.BasicSalary + salaryView.SalarySetting.FullCheckInMoney) / 30.0 / 8.0 * 10;
+            var roundedValue = Math.Round(tempValue);
+            var perHourSalary = Convert.ToInt32(roundedValue / 10);
 
-            salaryView.OverTimeHours = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAsync(staffId, user.CompanyId, firstDayOfLastMonth, lastDayOfLastMonth)).Sum(x => x.OverHours);
+           
+
             salaryView.TotalSalaryNoOvertime = salaryView.SalarySetting.BasicSalary + salaryView.SalarySetting.FullCheckInMoney - salaryView.TotalSickHours * perHourSalary / 2 -
                                                salaryView.TotalThingHours * perHourSalary - salaryView.TotalMenstruationHours * perHourSalary / 2;
             salaryView.PerHourSalary = perHourSalary;
+
+            int overtimemoney = 0;
+            var overtimesList = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAfterValidateAsync(staff.id, user.CompanyId, start, end)).ToList();
+            foreach (var log in overtimesList)
+            {
+                var overFirstStepMoney = 0;
+                var overSecStepStepMoney = 0;
+                if (log.OverHours <= 2)
+                {
+                    overFirstStepMoney = (int)Math.Round(log.OverHours * perHourSalary * 1.33);
+                    overtimemoney += overFirstStepMoney;
+                }
+                else if (log.OverHours > 2)
+                {
+                    overFirstStepMoney = (int)Math.Round(2 * perHourSalary * 1.33);
+                    overtimemoney += overFirstStepMoney;
+                    overSecStepStepMoney = (int)Math.Round((log.OverHours - 2) * perHourSalary * 1.66);
+                    overtimemoney += overSecStepStepMoney;
+                }
+            }
+            salaryView.OverTimeHours = overtimesList.Sum(x => x.OverHours);
+            salaryView.OverTimeMoney = overtimemoney;
 
             result.Data = salaryView;
             return result;
@@ -1225,6 +1541,138 @@ namespace Human.Chrs.Domain
             overtimeLog.ValidateDate = DateTimeHelper.TaipeiNow;
             overtimeLog.IsValidate = isPass ? 1 : -1;
             await _overTimeLogRepository.UpdateAsync(overtimeLog);
+
+            return result;
+        }
+
+        public async Task<CommonResult> VerifyAmendrecordAsync(int id, bool isPass)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+                return result;
+            }
+            var amendrecord = await _amendCheckRecordRepository.GetAsync(id);
+            if (amendrecord == null)
+            {
+                result.AddError("找不到該申請紀錄 系統錯誤");
+                return result;
+            }
+
+            if (isPass)
+            {
+                var staff = await _staffRepository.GetUsingStaffAsync(amendrecord.StaffId, amendrecord.CompanyId);
+                var rule = await _companyRuleRepository.GetCompanyRuleAsync(staff.CompanyId, staff.DepartmentId);
+
+                DateTime endOfDay = amendrecord.CheckDate.Date.AddDays(1).AddTicks(-1);
+                var existRecord = await _checkRecordsRepository.GetCheckRecordPeriodAsync(amendrecord.StaffId, amendrecord.CompanyId, amendrecord.CheckDate, endOfDay);
+
+                if (existRecord == null)
+                {
+                    if (amendrecord.CheckType == 0)
+                    {
+                        var record = new CheckRecordsDTO
+                        {
+                            CompanyId = amendrecord.CompanyId,
+                            StaffId = amendrecord.StaffId,
+                            CheckInTime = amendrecord.CheckTime,
+                            CheckOutTime = null,
+                            CheckInMemo = amendrecord.Reason,
+                            CheckOutMemo = String.Empty,
+                            IsCheckInOutLocation = 0,
+                            IsCheckOutOutLocation = 0,
+                            IsCheckOutEarly = 0,
+                            CheckOutEarlyTimes = 0
+                        };
+                        if (amendrecord.CheckTime.TimeOfDay <= rule.CheckInEndTime)
+                        {
+                            record.IsCheckInLate = 0;
+                            record.CheckInLateTimes = 0;
+                        }
+                        else
+                        {
+                            int differenceInMinutes = (int)Math.Round((amendrecord.CheckTime.TimeOfDay - rule.CheckInEndTime).TotalMinutes);
+                            record.IsCheckInLate = 1;
+                            record.CheckInLateTimes = differenceInMinutes;
+                        }
+                        await _checkRecordsRepository.InsertAsync(record);
+                    }
+                    else
+                    {
+                        var record = new CheckRecordsDTO
+                        {
+                            CompanyId = amendrecord.CompanyId,
+                            StaffId = amendrecord.StaffId,
+                            CheckInTime = null,
+                            CheckOutTime = amendrecord.CheckTime,
+                            CheckInMemo = String.Empty,
+                            CheckOutMemo = amendrecord.Reason,
+                            IsCheckInOutLocation = 0,
+                            IsCheckOutOutLocation = 0,
+                            IsCheckInLate = 0,
+                            CheckInLateTimes = 0,
+                        };
+                        if (amendrecord.CheckTime.TimeOfDay > rule.CheckOutStartTime)
+                        {
+                            record.IsCheckOutEarly = 0;
+                            record.CheckOutEarlyTimes = 0;
+                        }
+                        else
+                        {
+                            int differenceInMinutes = (int)Math.Round((rule.CheckInEndTime - amendrecord.CheckTime.TimeOfDay).TotalMinutes);
+                            record.IsCheckOutEarly = 1;
+                            record.CheckOutEarlyTimes = differenceInMinutes;
+                        }
+                        await _checkRecordsRepository.InsertAsync(record);
+                    }
+
+                }
+                else
+                {
+                    if (amendrecord.CheckType == 0)
+                    {
+                        existRecord.CheckInTime = amendrecord.CheckTime;
+                        if (amendrecord.CheckTime.TimeOfDay <= rule.CheckInEndTime)
+                        {
+                            existRecord.IsCheckInLate = 0;
+                            existRecord.CheckInLateTimes = 0;
+                        }
+                        else
+                        {
+                            int differenceInMinutes = (int)Math.Round((amendrecord.CheckTime.TimeOfDay - rule.CheckInEndTime).TotalMinutes);
+                            existRecord.IsCheckInLate = 1;
+                            existRecord.CheckInLateTimes = differenceInMinutes;
+                        }
+                        await _checkRecordsRepository.UpdateAsync(existRecord);
+                    }
+                    else
+                    {
+                        existRecord.CheckOutTime = amendrecord.CheckTime;
+                        if (amendrecord.CheckTime.TimeOfDay > rule.CheckOutStartTime)
+                        {
+                            existRecord.IsCheckOutEarly = 0;
+                            existRecord.CheckOutEarlyTimes = 0;
+                        }
+                        else
+                        {
+                            int differenceInMinutes = (int)Math.Round((rule.CheckInEndTime - amendrecord.CheckTime.TimeOfDay).TotalMinutes);
+                            existRecord.IsCheckOutEarly = 1;
+                            existRecord.CheckOutEarlyTimes = differenceInMinutes;
+                        }
+                        await _checkRecordsRepository.UpdateAsync(existRecord);
+                    }
+
+                }
+            }
+
+
+            amendrecord.Inspector = user.StaffName;
+            amendrecord.ValidateDate = DateTimeHelper.TaipeiNow;
+            amendrecord.IsValidate = isPass ? 1 : -1;
+            await _amendCheckRecordRepository.UpdateAsync(amendrecord);
 
             return result;
         }

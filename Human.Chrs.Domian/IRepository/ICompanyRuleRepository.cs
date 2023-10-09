@@ -10,5 +10,7 @@ namespace Human.Chrs.Domain.IRepository
         Task<CompanyRuleDTO> GetCompanyRuleAsync(int companyId, int DepartmentId);
 
         Task<IEnumerable<CompanyRuleDTO>> GetCompanyRulesAsync(int companyId);
+
+        Task<CompanyRuleDTO> GetParttimeRuleAsync(int companyId, int DepartmentId, int staffId, DateTime start, DateTime end);
     }
 }

@@ -98,4 +98,6 @@ public partial class Staff
     public string Gender { get; set; }
 
     public string AvatarUrl { get; set; }
+
+    public int? ParttimeMoney { get; set; }
 }

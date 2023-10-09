@@ -10,5 +10,9 @@ namespace Human.Chrs.Domain.IRepository
     public interface IEventLogsRepository : IRepository<EventLogsDTO, int>
     {
         Task<IEnumerable<EventLogsDTO>> GetAllEventLogsAsync(int staffId, int companyId);
+
+        Task<bool> RemoveEventLogsAsync(IEnumerable<EventLogsDTO> logsToDelete, int companyId);
+
+        Task<IEnumerable<EventLogsDTO>> GetCompanyPartimeEventLogsAsync(int companyId);
     }
 }

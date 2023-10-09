@@ -128,6 +128,7 @@ public partial class HumanChrsContext : DbContext
             entity.Property(e => e.DepartmentName).HasMaxLength(50);
             entity.Property(e => e.EditDate).HasColumnType("datetime");
             entity.Property(e => e.Editor).HasMaxLength(255);
+            entity.Property(e => e.ParttimeDate).HasColumnType("date");
         });
 
         modelBuilder.Entity<Department>(entity =>

@@ -40,4 +40,8 @@ public partial class CompanyRule
     public double? Longitude { get; set; }
 
     public string WorkAddress { get; set; }
+
+    public int? ParttimeStaffId { get; set; }
+
+    public DateTime? ParttimeDate { get; set; }
 }

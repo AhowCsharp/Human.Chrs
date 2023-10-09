@@ -94,5 +94,7 @@ namespace Human.Chrs.Domain.DTO
 
         public int TotalSalaryNoOvertime { get; set; }
         public int PerHourSalary { get; set; }
+
+        public int OverTimeMoney { get; set; }
     }
 }

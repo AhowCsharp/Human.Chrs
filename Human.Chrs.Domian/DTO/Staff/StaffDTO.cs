@@ -100,5 +100,15 @@ namespace Human.Chrs.Domain.DTO
         public string Gender { get; set; }
 
         public string AvatarUrl { get; set; }
+
+        public int TotalPartimeHours { get; set; }
+
+        public int TotalPartimeMinutes { get; set; }
+
+        public int? ParttimeMoney { get; set; }
+
+        public int? ParttimeOverTimeHours { get; set; }
+
+        public int? ParttimeOverTimeTotalMony { get; set; }
     }
 }

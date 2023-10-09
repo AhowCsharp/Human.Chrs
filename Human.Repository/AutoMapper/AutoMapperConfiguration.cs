@@ -11,11 +11,15 @@ namespace Human.Repository.AutoMapper
     {
         public AutoMapperConfiguration()
         {
-            CreateMap<Staff, StaffDTO>().ReverseMap();
+            CreateMap<Staff, StaffDTO>().ReverseMap(); 
             CreateMap<AmendCheckRecord, AmendCheckRecordDTO>().ReverseMap();
             CreateMap<Admin, AdminDTO>().ReverseMap();
             CreateMap<Company, CompanyDTO>().ReverseMap();
-            CreateMap<IncomeLogs, IncomeLogsDTO>().ReverseMap();
+            CreateMap<IncomeLogsDTO, IncomeLogs>()
+            .ForMember(dest => dest.ParttimeSalary, opt => opt.MapFrom(src => src.ParttimeSalary.HasValue ? src.ParttimeSalary : null));
+            CreateMap<IncomeLogs, IncomeLogsDTO>()
+            .ForMember(dest => dest.ParttimeSalary, opt => opt.MapFrom(src => src.ParttimeSalary.HasValue ? src.ParttimeSalary : null));
+
             CreateMap<Application, ApplicationDTO>().ReverseMap();
             CreateMap<PersonalDetail, PersonalDetailDTO>().ReverseMap();
             CreateMap<CompanyRule, CompanyRuleDTO>().ReverseMap();

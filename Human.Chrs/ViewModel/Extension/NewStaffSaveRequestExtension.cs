@@ -61,6 +61,10 @@ namespace Human.Chrs.ViewModel.Extension
                 StayInCompanyDays = (DateTimeHelper.TaipeiNow - request.EntryDate).Days,
                 Gender = request.Gender
             };
+            if (request.ParttimeMoney.HasValue)
+            {
+                dto.ParttimeMoney = request.ParttimeMoney;
+            }
 
             return dto;
         }

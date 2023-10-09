@@ -23,10 +23,10 @@ namespace LineTag.Infrastructure.Repositories
         {
         }
 
-        public async Task<IEnumerable<AmendCheckRecordDTO>> GetAllAmendCheckRecordAsync(int companyId)
+        public async Task<IEnumerable<AmendCheckRecordDTO>> GetAllAmendCheckRecordAsync(int companyId,DateTime start,DateTime end)
         {
             var data = await _context.AmendCheckRecord
-                .Where(x => x.CompanyId == companyId)
+                .Where(x => x.CompanyId == companyId && x.ApplicationDate >= start && x.ApplicationDate <= end)
                 .OrderByDescending(x => x.CheckDate)
                 .ToListAsync();
 

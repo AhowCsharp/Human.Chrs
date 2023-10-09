@@ -20,5 +20,9 @@ namespace Human.Chrs.Domain.DTO
         public bool AllDay { get; set; }
 
         public int LevelStatus { get; set; }
+
+        public int StaffId { get; set; }
+
+        public string StaffName { get; set; }
     }
 }

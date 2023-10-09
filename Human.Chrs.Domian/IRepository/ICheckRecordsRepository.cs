@@ -12,5 +12,7 @@ namespace Human.Chrs.Domain.IRepository
         Task<CheckRecordsDTO> GetCheckRecordAsync(int companyId, int staffId);
 
         Task<IEnumerable<CheckRecordsDTO>> GetCheckRecordListAsync(int staffId, int companyId, DateTime start, DateTime end);
+
+        Task<CheckRecordsDTO> GetCheckRecordPeriodAsync(int staffId, int companyId, DateTime start, DateTime end);
     }
 }

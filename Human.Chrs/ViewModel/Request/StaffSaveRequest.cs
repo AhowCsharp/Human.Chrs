@@ -88,5 +88,7 @@ namespace Human.Chrs.ViewModel.Request
         public int StayInCompanyDays { get; set; }
 
         public string Gender { get; set; }
+
+        public int? ParttimeMoney { get; set; }
     }
 }

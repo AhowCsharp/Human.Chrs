@@ -39,5 +39,13 @@ namespace LineTag.Infrastructure.Repositories
 
             return data.Select(_mapper.Map<CheckRecordsDTO>);
         }
+
+        public async Task<CheckRecordsDTO> GetCheckRecordPeriodAsync(int staffId, int companyId, DateTime start, DateTime end)
+        {
+            var data = await _context.CheckRecords.FirstOrDefaultAsync(x => x.CompanyId == companyId && x.StaffId == staffId &&
+                        x.CheckInTime >= start && x.CheckInTime <= end);
+
+            return _mapper.Map<CheckRecordsDTO>(data);
+        }
     }
 }

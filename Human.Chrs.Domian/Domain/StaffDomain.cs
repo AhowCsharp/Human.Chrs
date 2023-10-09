@@ -482,6 +482,7 @@ namespace Human.Chrs.Domain
             foreach (var item in events)
             {
                 var newEvent = new EventDTO();
+                var staff = await _staffRepository.GetAsync(item.StaffId);
                 if (item.StartDate == item.EndDate)
                 {
                     DateTime newDateTime = new DateTime(
@@ -507,6 +508,8 @@ namespace Human.Chrs.Domain
                     newEvent.Detail = item.Detail;
                     newEvent.LevelStatus = item.LevelStatus;
                     newEvent.id = item.id;
+                    newEvent.StaffId = staff.id;
+                    newEvent.StaffName = staff.StaffName;
                     eventsDTO.Add(newEvent);
                 }
                 else
@@ -518,6 +521,8 @@ namespace Human.Chrs.Domain
                     newEvent.Detail = item.Detail;
                     newEvent.LevelStatus = item.LevelStatus;
                     newEvent.id = item.id;
+                    newEvent.StaffId = staff.id;
+                    newEvent.StaffName = staff.StaffName;
                     eventsDTO.Add(newEvent);
                 }
             }

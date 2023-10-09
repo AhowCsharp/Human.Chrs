@@ -31,6 +31,8 @@ namespace Human.Chrs.Domain.DTO
 
         public int OverTimeAmount { get; set; }
 
+        public int? ParttimeSalary { get; set; }
+
         //扣款
 
         public int? SickHours { get; set; }
@@ -43,6 +45,8 @@ namespace Human.Chrs.Domain.DTO
 
         public int? TakeCareBabyHours { get; set; }
 
+        public int? TocolysisHours { get; set; }
+        
         public int? IncomeTax { get; set; }
 
         public int HealthInsurance { get; set; }
@@ -76,5 +80,6 @@ namespace Human.Chrs.Domain.DTO
         public int EarlyOrLateAmount { get; set; }
 
         public int OutLocationAmount { get; set; }
+
     }
 }

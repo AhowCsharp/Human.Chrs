@@ -3,6 +3,13 @@ using Human.Chrs.Domain;
 using Human.Chrs.Infra.Attribute;
 using Human.Chrs.ViewModel.Request;
 using Human.Chrs.ViewModel.Extension;
+using Human.Chrs.Domain.CommonModels;
+using Human.Chrs.Domain.Helper;
+using Human.Chrs.Domain.Services;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using System.Globalization;
+using NPOI.SS.Util;
 
 namespace LineTag.Admin.ApiControllers
 {
@@ -13,12 +20,15 @@ namespace LineTag.Admin.ApiControllers
     {
         private readonly ILogger<AdminController> _logger;
         private readonly AdminDomain _admindomain;
+        private readonly UserService _userService;
 
         public AdminController(
             ILogger<AdminController> logger,
+            UserService userService,
             AdminDomain admindomain)
         {
             _logger = logger;
+            _userService = userService;
             _admindomain = admindomain;
         }
 
@@ -204,6 +214,66 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 取得員工列表
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("parttime")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetPartTimeStaffs(int month)
+        {
+            //CompanyId StaffAccount StaffPassWord Department EntryDate LevelPosition WorkPosition Email StaffPhoneNumber Auth DepartmentId
+            try
+            {
+                var result = await _admindomain.GetPartTimeStaffsAsync(month);
+                return Ok(result.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetPartTimeStaffs));
+
+                return ServerError500();
+            }
+        }
+
+
+        /// <summary>
+        /// 取得員工列表
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("amendrecord")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAmendrecords(DateTime start,DateTime end)
+        {
+            try
+            {
+                var result = await _admindomain.GetGetAmendrecordsAsync(start, end);
+                return Ok(result.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetAmendrecords));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 取得當前管理者詳細資訊
         /// </summary>
         /// <response code="200">OK</response>
@@ -286,6 +356,35 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(GetRulesOfCompany));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 刪除員工資料
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("removestaff")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Removestaff(int id)
+        {
+            try
+            {
+                var result = await _admindomain.RemovestaffAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(Removestaff));
 
                 return ServerError500();
             }
@@ -399,6 +498,226 @@ namespace LineTag.Admin.ApiControllers
             }
         }
 
+
+        /// <summary>
+        /// 部分工時排班紀錄
+        /// </summary>
+        /// <param name="ditanceRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("eventdetails")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> EventsGet()
+        {
+            try
+            {
+                var result = await _admindomain.EventsGetAsync();
+
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(EventsGet));
+
+                return ServerError500();
+            }
+        }
+        /// <summary>
+        /// 部分工時人員排班紀錄
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("event")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ParttimeWorkAdd(ParttimeWorkRequest request)
+        {
+            try
+            {
+                var result = await _admindomain.ParttimeWorkAdd(request.StaffId,request.EventStartDate, request.EventEndDate, request.StartTime, request.EndTime, request.Title, request.Detail, request.LevelStatus);
+
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(ParttimeWorkAdd));
+
+                return ServerError500();
+            }
+        }
+
+
+        /// <summary>
+        /// 取得員工出勤狀況Excel
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("downloadexcel")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DownloadsStaffCheckrecordExcel(int staffId, int month)
+        {
+            try
+            {
+                var result = new CommonResult<FileContentResult>();
+                var user = _userService.GetCurrentUser();
+                var data = await _admindomain.GetExcelDatasAsync(staffId, month);
+
+                var workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("Sheet1");
+                ICellStyle headerStyle = workbook.CreateCellStyle();
+                headerStyle.FillForegroundColor = NPOI.HSSF.Util.HSSFColor.White.Index;
+                headerStyle.FillPattern = FillPattern.SolidForeground;
+                headerStyle.BorderTop = BorderStyle.Thin;
+                headerStyle.BorderRight = BorderStyle.Thin;
+                headerStyle.BorderBottom = BorderStyle.Thin;
+                headerStyle.BorderLeft = BorderStyle.Thin;
+                headerStyle.TopBorderColor = NPOI.HSSF.Util.HSSFColor.Black.Index;
+                headerStyle.RightBorderColor = NPOI.HSSF.Util.HSSFColor.Black.Index;
+                headerStyle.BottomBorderColor = NPOI.HSSF.Util.HSSFColor.Black.Index;
+                headerStyle.LeftBorderColor = NPOI.HSSF.Util.HSSFColor.Black.Index;
+                IFont font = workbook.CreateFont();
+                font.IsBold = true;
+                font.Color = NPOI.HSSF.Util.HSSFColor.Blue.Index;
+                headerStyle.SetFont(font);
+
+                //    "員工", "上班打卡時間", "下班打卡時間", "是否超出上班打卡範圍", "是否超出下班打卡範圍",
+                //    "是否遲到", "是否早退", "遲到分鐘數", "早退分鐘數", "上班備註", "下班備註"
+
+                IRow Row1 = sheet.CreateRow(0);
+                ICell Row1Cell1 = Row1.CreateCell(0);
+                Row1Cell1.SetCellValue("員工");
+                Row1Cell1.CellStyle = headerStyle;
+
+                ICell Row1Cell2 = Row1.CreateCell(1);
+                Row1Cell2.SetCellValue("上班打卡時間");
+                Row1Cell2.CellStyle = headerStyle;
+
+                ICell Row1Cell3 = Row1.CreateCell(2);
+                Row1Cell3.SetCellValue("上班打卡時間");
+                Row1Cell3.CellStyle = headerStyle;
+
+                ICell Row1Cell4 = Row1.CreateCell(3);
+                Row1Cell4.SetCellValue("上班打卡時間");
+                Row1Cell4.CellStyle = headerStyle;
+
+                ICell Row1Cell5 = Row1.CreateCell(4);
+                Row1Cell5.SetCellValue("是否超出上班打卡範圍");
+                Row1Cell5.CellStyle = headerStyle;
+
+                ICell Row1Cell6 = Row1.CreateCell(5);
+                Row1Cell6.SetCellValue("是否超出下班打卡範圍");
+                Row1Cell6.CellStyle = headerStyle;
+
+                ICell Row1Cell7 = Row1.CreateCell(6);
+                Row1Cell7.SetCellValue("是否遲到");
+                Row1Cell7.CellStyle = headerStyle;
+
+                ICell Row1Cell8 = Row1.CreateCell(7);
+                Row1Cell8.SetCellValue("是否早退");
+                Row1Cell8.CellStyle = headerStyle;
+
+                ICell Row1Cell9 = Row1.CreateCell(8);
+                Row1Cell9.SetCellValue("遲到分鐘數");
+                Row1Cell9.CellStyle = headerStyle;
+
+                ICell Row1Cell10 = Row1.CreateCell(9);
+                Row1Cell10.SetCellValue("早退分鐘數");
+                Row1Cell10.CellStyle = headerStyle;
+
+                ICell Row1Cell11 = Row1.CreateCell(10);
+                Row1Cell11.SetCellValue("上班備註");
+                Row1Cell11.CellStyle = headerStyle;
+
+                ICell Row1Cell12 = Row1.CreateCell(11);
+                Row1Cell12.SetCellValue("下班備註");
+                Row1Cell12.CellStyle = headerStyle;
+
+                for (int i = 0; i < data.list.Count(); i++)
+                {
+                    var row = sheet.CreateRow(i + 1);
+                    row.CreateCell(0).SetCellValue(data.staff.StaffName);
+                    if (data.list[i].CheckInTime.HasValue)
+                    {
+                        var culture = new CultureInfo("zh-TW"); // 台灣的中文
+                        var dayOfWeek = data.list[i].CheckInTime.Value.ToString("dddd", culture);
+                        row.CreateCell(1).SetCellValue(dayOfWeek);
+                    }
+                    else if (data.list[i].CheckOutTime.HasValue)
+                    {
+                        var culture = new CultureInfo("zh-TW"); // 台灣的中文
+                        var dayOfWeek = data.list[i].CheckOutTime.Value.ToString("dddd", culture);
+                        row.CreateCell(1).SetCellValue(dayOfWeek);
+                    }
+                    else
+                    {
+                        row.CreateCell(1).SetCellValue("未知");
+                    }
+                    row.CreateCell(2).SetCellValue(data.list[i].CheckInTime?.ToString("yyyy-MM-dd HH:mm") ?? "尚未打卡");
+                    row.CreateCell(3).SetCellValue(data.list[i].CheckOutTime?.ToString("yyyy-MM-dd HH:mm") ?? "尚未打卡");
+                    row.CreateCell(4).SetCellValue(data.list[i].IsCheckInOutLocation == 1 ? "是" : "否");
+                    row.CreateCell(5).SetCellValue(data.list[i].IsCheckOutOutLocation == 1 ? "是" : "否");
+                    row.CreateCell(6).SetCellValue(data.list[i].IsCheckInLate == 1 ? "是" : "否");
+                    row.CreateCell(7).SetCellValue(data.list[i].IsCheckOutEarly == 1 ? "是" : "否");
+                    row.CreateCell(8).SetCellValue(data.list[i].CheckInLateTimes.ToString());
+                    row.CreateCell(9).SetCellValue(data.list[i].CheckOutEarlyTimes.ToString());
+                    row.CreateCell(10).SetCellValue(data.list[i].CheckInMemo);
+                    row.CreateCell(11).SetCellValue(data.list[i].CheckOutMemo);
+                }
+                var tempFileName = Path.GetTempFileName() + ".xlsx";
+                using (var fileStream = new FileStream(tempFileName, FileMode.Create, FileAccess.Write))
+                {
+                    workbook.Write(fileStream);
+                }
+
+                var content = System.IO.File.ReadAllBytes(tempFileName);
+                System.IO.File.Delete(tempFileName);  // 刪除臨時檔案
+
+                return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "出勤狀況單.xlsx");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(DownloadsStaffCheckrecordExcel));
+
+                return ServerError500();
+            }
+        }
+
         /// <summary>
         /// 審核員工請假
         /// </summary>
@@ -436,7 +755,7 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
-        /// 審核員工請假
+        /// 審核加班
         /// </summary>
         /// <response code="200">OK</response>
         /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
@@ -466,6 +785,43 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(VerifyOvertimeApply));
+
+                return ServerError500();
+            }
+        }
+
+
+        /// <summary>
+        /// 審核補卡
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route("amendrecord")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> VerifyAmendrecord(VerifyAmendRecordRequest request)
+        {
+            try
+            {
+                var result = await _admindomain.VerifyAmendrecordAsync(request.AmendRecordId, request.IsPass);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(VerifyAmendrecord));
 
                 return ServerError500();
             }

@@ -25,6 +25,12 @@ namespace LineTag.Infrastructure.Repositories
         {
         }
 
+        public async Task<CompanyRuleDTO> GetParttimeRuleAsync(int companyId, int DepartmentId,int staffId,DateTime start,DateTime end)
+        {
+            var data = await _context.CompanyRule.FirstOrDefaultAsync(x => x.CompanyId == companyId && x.DepartmentId == DepartmentId 
+            && x.ParttimeStaffId == staffId && x.ParttimeDate >= start && x.ParttimeDate <= end);
+            return _mapper.Map<CompanyRuleDTO>(data);
+        }
         public async Task<CompanyRuleDTO> GetCompanyRuleAsync(int companyId, int DepartmentId)
         {
             var data = await _context.CompanyRule.FirstOrDefaultAsync(x => x.CompanyId == companyId && x.DepartmentId == DepartmentId);

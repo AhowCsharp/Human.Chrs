@@ -20,5 +20,7 @@ namespace Human.Chrs.Domain.IRepository
         Task<bool> UpdateWorkDaysAndFindStaffAsync();
 
         Task<bool> VerifyAccountAsync(string account);
+
+        Task<IEnumerable<StaffDTO>> GetAllParttimeStaffAsync(int companyId);
     }
 }

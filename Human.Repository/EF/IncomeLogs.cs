@@ -68,4 +68,8 @@ public partial class IncomeLogs
     public int OverTimeAmount { get; set; }
 
     public int SalaryOfMonth { get; set; }
+
+    public int? ParttimeSalary { get; set; }
+
+    public int? TocolysisHours { get; set; }
 }

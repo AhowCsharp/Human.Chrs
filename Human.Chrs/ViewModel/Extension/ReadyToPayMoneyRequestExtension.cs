@@ -27,6 +27,7 @@ namespace Human.Chrs.ViewModel.Extension
                 SickHours = request.SickHours,
                 ThingHours = request.ThingHours,
                 MenstruationHours = request.MenstruationHours,
+                TocolysisHours = request.TocolysisHours,
                 ChildbirthHours = request.ChildbirthHours,
                 TakeCareBabyHours = request.TakeCareBabyHours,
                 SalaryOfMonth = request.SalaryOfMonth,
@@ -48,6 +49,11 @@ namespace Human.Chrs.ViewModel.Extension
                 OutLocationAmount = request.OutLocationAmount,
                 OverTimeAmount = request.OverTimeMoney,
             };
+
+            if(request.ParttimeSalary.HasValue)
+            {
+                dto.ParttimeSalary = request.ParttimeSalary.Value;
+            }
 
             return dto;
         }

@@ -58,6 +58,13 @@ namespace LineTag.Infrastructure.Repositories
             return data.Select(_mapper.Map<StaffDTO>);
         }
 
+        public async Task<IEnumerable<StaffDTO>> GetAllParttimeStaffAsync(int companyId)
+        {
+            var data = await _context.Staff.Where(x => x.CompanyId == companyId && x.EmploymentTypeId == 2).ToListAsync();
+
+            return data.Select(_mapper.Map<StaffDTO>);
+        }
+
         public async Task<bool> UpdateWorkDaysAndFindStaffAsync()
         {
             var log = new UpdateStaffInfoLogs();

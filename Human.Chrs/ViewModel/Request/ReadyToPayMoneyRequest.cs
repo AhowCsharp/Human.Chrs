@@ -1,6 +1,7 @@
 ﻿using Human.Chrs.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,8 @@ namespace Human.Chrs.ViewModel.Request
         public int? ChildbirthHours { get; set; }
 
         public int? TakeCareBabyHours { get; set; }
+
+        public int? TocolysisHours { get; set; }
 
         public int? IncomeTax { get; set; }
 
@@ -68,5 +71,51 @@ namespace Human.Chrs.ViewModel.Request
         public int OutLocationAmount { get; set; }
 
         public bool ChangeOverTimeToMoney { get; set; }
+
+        public int? ParttimeSalary { get; set; }
     }
+
+
+
+    //setSalaryRequest({
+    //StaffId: selectedRow.id,
+    //      BasicSalary: 0,
+    //      FullCheckInMoney: 0,
+    //      OverTimeHours: selectedRow.OverTimeHours,
+    //      Bonus: 0,
+    //      SickHours: 0,
+    //      ThingHours: 0,
+    //      MenstruationHours: 0,
+    //      ChildbirthHours: 0,
+    //      TakeCareBabyHours: 0,
+    //      IncomeTax: 0,
+    //      HealthInsurance: 0,
+    //      WorkerInsurance: 0,
+    //      EmployeeRetirement: 0,
+    //      SupplementaryPremium: 0, //
+    //      HealthInsuranceFromCompany: 0,
+    //      WorkerInsuranceFromCompany: 0,
+    //      EmployeeRetirementFromCompany: 0,
+    //      AdvanceFundFromCompany: 0,
+    //      EarlyOrLateAmount: 0, 
+    //      OutLocationAmount: 0,
+    //      OverTimeMoney: 0,
+    //      SalaryOfMonth: month,
+    //      StaffIncomeAmount: calculateWage(selectedRow.ParttimeMoney, selectedRow.TotalPartimeHours, selectedRow.TotalPartimeMinutes) ,
+    //      StaffActualIncomeAmount: 0,
+    //      StaffDeductionAmount: 0,
+    //      CompanyCostAmount: 0,
+    //      ChangeOverTimeToMoney: true,
+    //    })
+
+
+
+
+
+
+
+
+
+
+
 }

@@ -29,5 +29,31 @@ namespace LineTag.Infrastructure.Repositories
             return data.Select(_mapper.Map<EventLogsDTO>);
         }
 
+        public async Task<IEnumerable<EventLogsDTO>> GetCompanyPartimeEventLogsAsync(int companyId)
+        {
+            var data = await _context.EventLogs.Where(x => x.CompanyId == companyId && x.LevelStatus == 3).ToListAsync();
+
+            return data.Select(_mapper.Map<EventLogsDTO>);
+        }
+
+        public async Task<bool> RemoveEventLogsAsync(IEnumerable<EventLogsDTO> logsToDelete, int companyId)
+        {
+            // 获取要删除的日志的ID列表
+            var idsToDelete = logsToDelete.Select(log => log.id).ToList();
+
+            // 根据ID列表查询数据库中的相应日志
+            var logsInDb = await _context.EventLogs
+                                .Where(x => idsToDelete.Contains(x.Id) && x.CompanyId == companyId)
+                                .ToListAsync();
+
+            // 从_context中移除这些日志
+            _context.EventLogs.RemoveRange(logsInDb);
+
+            // 保存更改到数据库
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+
+
     }
 }

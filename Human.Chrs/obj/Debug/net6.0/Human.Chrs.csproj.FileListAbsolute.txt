@@ -124,16 +124,15 @@ D:\GitLab\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.pdb
 D:\GitLab\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.genruntimeconfig.cache
 D:\GitLab\Human.Chrs\Human.Chrs\obj\Debug\net6.0\ref\Human.Chrs.dll
 D:\GitLab\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.MvcApplicationPartsAssemblyInfo.cs
+D:\GitLab\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.dll
+D:\GitLab\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.Extensions.DependencyInjection.dll
+D:\GitLab\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.Extensions.Hosting.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.csproj.AssemblyReference.cache
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.AssemblyInfoInputs.cache
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.AssemblyInfo.cs
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.csproj.CoreCompileInputs.cache
-C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.dll
-C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\refint\Human.Chrs.dll
-C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.pdb
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\appsettings.Development.json
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\appsettings.json
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Human.Chrs.staticwebassets.runtime.json
@@ -147,15 +146,19 @@ C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Azure.Core.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Azure.Identity.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\BouncyCastle.Cryptography.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\BouncyCastle.Crypto.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\CloneExtensions.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Microsoft.SqlServer.Types.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\EFCore.BulkExtensions.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\EntityFramework.SqlServer.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\EntityFramework.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\EntityFrameworkCore.SqlServer.HierarchyId.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\EntityFrameworkCore.SqlServer.HierarchyId.Abstractions.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Enums.NET.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\LinqKit.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\LinqKit.Core.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\MathNet.Numerics.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\MedallionTopologicalSort.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Microsoft.Data.SqlClient.dll
@@ -184,6 +187,7 @@ C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Microsoft.IO.RecyclableMemoryStream.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Microsoft.OpenApi.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Microsoft.SqlServer.Server.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
@@ -197,8 +201,18 @@ C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\NLog.Web.AspNetCore.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Npgsql.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\NPOI.Core.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\NPOI.OOXML.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\NPOI.OpenXml4Net.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\NPOI.OpenXmlFormats.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Pomelo.EntityFrameworkCore.MySql.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.Extensions.DependencyInjection.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.Extensions.Hosting.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\RestSharp.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\ICSharpCode.SharpZipLib.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\SixLabors.Fonts.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\SixLabors.ImageSharp.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\SQLitePCLRaw.core.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Swashbuckle.AspNetCore.Annotations.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Swashbuckle.AspNetCore.Swagger.dll
@@ -212,7 +226,9 @@ C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\System.Memory.Data.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\System.Runtime.Caching.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\System.Security.Cryptography.Pkcs.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\System.Security.Cryptography.Xml.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\System.Security.Permissions.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\System.Text.Encodings.Web.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\System.Text.Json.dll
@@ -232,6 +248,7 @@ C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.Pkcs.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\runtimes\browser\lib\net6.0\System.Text.Encodings.Web.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
@@ -239,15 +256,13 @@ C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Human.Repository.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Human.Repository.pdb
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Human.Chrs.Domain.pdb
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\staticwebassets.build.json
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\staticwebassets.development.json
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\scopedcss\bundle\Human.Chrs.styles.css
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.csproj.CopyComplete
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\refint\Human.Chrs.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.pdb
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.genruntimeconfig.cache
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\ref\Human.Chrs.dll
-C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.dll
-C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.Extensions.DependencyInjection.dll
-C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.Extensions.Hosting.dll
-D:\GitLab\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.dll
-D:\GitLab\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.Extensions.DependencyInjection.dll
-D:\GitLab\Human.Chrs\Human.Chrs\bin\Debug\net6.0\Quartz.Extensions.Hosting.dll
