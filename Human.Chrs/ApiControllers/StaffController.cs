@@ -102,6 +102,82 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 更改通知讀取狀態
+        /// </summary>
+        /// <param name="checkRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route("readstatus")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> SwitchReadStatus(int notificationId) 
+        {
+            try
+            {
+                var result = await _staffdomain.SwitchReadStatusAsync(notificationId);
+
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(SwitchReadStatus));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 更改通知讀取狀態
+        /// </summary>
+        /// <param name="checkRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route("readallstatus")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> SwitchAllReadStatus(SwitchAllReadStatusRequest request)
+        {
+            try
+            {
+                var result = await _staffdomain.SwitchAllReadStatusAsync(request.NotificationIds);
+
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(SwitchAllReadStatus));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 補打打卡
         /// </summary>
         /// <param name="checkRequest">請求資料</param>

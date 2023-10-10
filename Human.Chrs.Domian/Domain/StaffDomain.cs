@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using System.Xml;
 
 namespace Human.Chrs.Domain
 {
@@ -28,6 +29,8 @@ namespace Human.Chrs.Domain
         private readonly IEventLogsRepository _eventLogsRepository;
         private readonly IPersonalDetailRepository _personalDetailRepository;
         private readonly IAmendCheckRecordRepository _amendCheckRecordRepository;
+        private readonly IReadLogsRepository _readLogsRepository;
+        private readonly INotificationLogsRepository _notificationLogsRepository;
         private readonly CheckInAndOutDomain _checkInAndOutDomain;
         private readonly UserService _userService;
         private readonly GeocodingService _geocodingService;
@@ -45,6 +48,8 @@ namespace Human.Chrs.Domain
             ICompanyRepository companyRepository,
             IVacationLogRepository vacationLogRepository,
             IOverTimeLogRepository overTimeLogRepository,
+            IReadLogsRepository readLogsRepository,
+            INotificationLogsRepository notificationLogsRepository,
             CheckInAndOutDomain checkInAndOutDomain,
             GeocodingService geocodingService,
             UserService userService,
@@ -63,8 +68,10 @@ namespace Human.Chrs.Domain
             _vacationLogRepository = vacationLogRepository;
             _checkRecordsRepository = checkRecordsRepository;
             _overTimeLogRepository = overTimeLogRepository;
+            _readLogsRepository = readLogsRepository;
             _checkInAndOutDomain = checkInAndOutDomain;
             _amendCheckRecordRepository = amendCheckRecordRepository;
+            _notificationLogsRepository = notificationLogsRepository;
             _geocodingService = geocodingService;
             _userService = userService;
             _hostEnvironment = hostEnvironment;
@@ -371,6 +378,11 @@ namespace Human.Chrs.Domain
             {
                 var staff = await _staffRepository.GetUsingStaffAsync(user.Id, user.CompanyId);
                 var detail = await _personalDetailRepository.GetStaffDetailInfoAsync(user.Id, user.CompanyId);
+                if (detail == null)
+                {
+                    result.AddError("尚未設置詳細訊息");
+                    return result;
+                }
                 detail.WorkLocation = staff.WorkLocation;
                 detail.LevelPosition = staff.LevelPosition;
                 detail.Department = staff.Department;
@@ -457,6 +469,106 @@ namespace Human.Chrs.Domain
                 ApplicationDate = DateTimeHelper.TaipeiNow,
             };
             await _amendCheckRecordRepository.InsertAsync(dto);
+
+            return result;
+        }
+
+        public async Task<CommonResult> SwitchReadStatusAsync(int notificationId)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
+            if (!exist)
+            {
+                result.AddError("沒找到對應的員工");
+                return result;
+            }
+            var company = await _companyRepository.GetAsync(user.CompanyId);
+            if (company == null)
+            {
+                result.AddError("沒找到對應的公司");
+                return result;
+            }
+            var dto = new ReadLogsDTO
+            {
+                StaffId = user.Id,
+                CompanyId = user.CompanyId,
+                NotificationLogId = notificationId,
+                ReadDate = DateTimeHelper.TaipeiNow,
+            };
+            var notification = await _notificationLogsRepository.GetAsync(notificationId);
+            if (notification != null)
+            {
+                if (notification.DepartmentId == 0 && notification.StaffId == user.Id)
+                {
+                    notification.IsUnRead = false;
+                    // TODO 更簡潔 之後再處理
+                    notification.ReadStaffIds = string.IsNullOrEmpty(notification.ReadStaffIds)
+                    ? user.Id.ToString()
+                    : notification.ReadStaffIds + "," + user.Id.ToString();
+
+                    await _notificationLogsRepository.UpdateAsync(notification);
+                }
+                else
+                {
+                    notification.ReadStaffIds = string.IsNullOrEmpty(notification.ReadStaffIds)
+                    ? user.Id.ToString()
+                    : notification.ReadStaffIds + "," + user.Id.ToString();
+                    await _notificationLogsRepository.UpdateAsync(notification);
+                }
+            }
+            await _readLogsRepository.InsertAsync(dto);
+            return result;
+        }
+
+        public async Task<CommonResult> SwitchAllReadStatusAsync(List<int> notificationIds)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
+            if (!exist)
+            {
+                result.AddError("沒找到對應的員工");
+                return result;
+            }
+            var company = await _companyRepository.GetAsync(user.CompanyId);
+            if (company == null)
+            {
+                result.AddError("沒找到對應的公司");
+                return result;
+            }
+            foreach (var notificationId in notificationIds)
+            {
+                var dto = new ReadLogsDTO
+                {
+                    StaffId = user.Id,
+                    CompanyId = user.CompanyId,
+                    NotificationLogId = notificationId,
+                    ReadDate = DateTimeHelper.TaipeiNow,
+                };
+                var notification = await _notificationLogsRepository.GetAsync(notificationId);
+                if (notification != null)
+                {
+                    if (notification.DepartmentId == 0 && notification.StaffId == user.Id)
+                    {
+                        notification.IsUnRead = false;
+                        // TODO 更簡潔 之後再處理
+                        notification.ReadStaffIds = string.IsNullOrEmpty(notification.ReadStaffIds)
+                        ? user.Id.ToString()
+                        : notification.ReadStaffIds + "," + user.Id.ToString();
+
+                        await _notificationLogsRepository.UpdateAsync(notification);
+                    }
+                    else
+                    {
+                        notification.ReadStaffIds = string.IsNullOrEmpty(notification.ReadStaffIds)
+                        ? user.Id.ToString()
+                        : notification.ReadStaffIds + "," + user.Id.ToString();
+                        await _notificationLogsRepository.UpdateAsync(notification);
+                    }
+                }
+                await _readLogsRepository.InsertAsync(dto);
+            }
 
             return result;
         }

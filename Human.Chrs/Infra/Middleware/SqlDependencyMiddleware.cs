@@ -1,0 +1,15 @@
+﻿using Human.Repository.SubscribeTableDependencies;
+
+namespace SignalR_SqlTableDependency.MiddlewareExtensions
+{
+    public static class SqlDependencyMiddleware 
+    {
+        public static void UseSqlTableDependency<T>(this IApplicationBuilder applicationBuilder, string connectionString)
+            where T : ISubscribeTableDependency
+        {
+            var serviceProvider = applicationBuilder.ApplicationServices;
+            var service = serviceProvider.GetService<T>();
+            service.SubscribeTableDependency();
+        }
+    }
+}

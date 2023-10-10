@@ -33,9 +33,13 @@ public partial class HumanChrsContext : DbContext
 
     public virtual DbSet<MeetLog> MeetLog { get; set; }
 
+    public virtual DbSet<NotificationLogs> NotificationLogs { get; set; }
+
     public virtual DbSet<OverTimeLog> OverTimeLog { get; set; }
 
     public virtual DbSet<PersonalDetail> PersonalDetail { get; set; }
+
+    public virtual DbSet<ReadLogs> ReadLogs { get; set; }
 
     public virtual DbSet<SalarySetting> SalarySetting { get; set; }
 
@@ -159,11 +163,37 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<MeetLog>(entity =>
         {
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("tr_AfterDelete_MeetLog");
+                    tb.HasTrigger("tr_AfterInsert_MeetLog");
+                });
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Creator).HasMaxLength(50);
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.StartDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<NotificationLogs>(entity =>
+        {
+            entity.ToTable(tb => tb.HasTrigger("tr_dbo_NotificationLogs_ff7f2e6e-63ab-4417-af9a-11a43d19722d_Sender"));
+
+            entity.Property(e => e.Avatar).IsRequired();
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.Creator)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.Title)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.Type)
+                .IsRequired()
+                .HasMaxLength(50);
         });
 
         modelBuilder.Entity<OverTimeLog>(entity =>
@@ -183,6 +213,12 @@ public partial class HumanChrsContext : DbContext
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<ReadLogs>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ReadDate).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<SalarySetting>(entity =>

@@ -56,11 +56,19 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[NotificationLogs]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[OverTimeLog]",
          "ObjectType": 0
       },
       {
          "Name": "[dbo].[PersonalDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ReadLogs]",
          "ObjectType": 0
       },
       {

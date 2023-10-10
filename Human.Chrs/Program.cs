@@ -16,6 +16,10 @@ using Human.Chrs.Domain.Services;
 using Human.Chrs.Domain;
 using Quartz;
 using Human.Chrs.ScheduleJob;
+using Human.Chrs.Domain.Websocket;
+using Human.Chrs.Infra.Middleware;
+using Human.Repository.SubscribeTableDependencies;
+using SignalR_SqlTableDependency.MiddlewareExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +54,24 @@ IConfiguration configuration = builder.Configuration;
 
 builder.Services.Configure<ChrsConfig>(configuration.GetSection("HumanConfig"));
 var connectionString = configuration.GetConnectionString("SqlConnection");
+
+builder.Services.AddSingleton<WebSocketHandler>();
+
+//builder.Services.AddSingleton<SqlNotificationService>(sp =>
+//{
+//    var webSocketHandler = sp.GetRequiredService<WebSocketHandler>();
+//    return new SqlNotificationService(connectionString, webSocketHandler);
+//});
+
+builder.Services.AddSingleton(sp =>
+    new SubscribeNotificationLogsDependency(
+        connectionString,
+        sp.GetRequiredService<IServiceScopeFactory>(),
+        sp.GetRequiredService<WebSocketHandler>()
+    ));
+
+
+
 builder.Services.AddDbContext<HumanChrsContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<IDbConnection, SqlConnection>(serviceProvider =>
@@ -91,6 +113,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<UserService>();
 builder.Services.AddTransient<GeocodingService>();
 
+
 builder.Services.AddScoped<AdminDomain>();
 builder.Services.AddScoped<CheckInAndOutDomain>();
 builder.Services.AddScoped<StaffDomain>();
@@ -112,6 +135,9 @@ builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<ISalarySettingRepository, SalarySettingRepository>();
 builder.Services.AddScoped<IAmendCheckRecordRepository, AmendCheckRecordRepository>();
 builder.Services.AddScoped<IMeetLogRepository, MeetLogRepository>();
+builder.Services.AddScoped<INotificationLogsRepository, NotificationLogsRepository>();
+builder.Services.AddScoped<IReadLogsRepository, ReadLogsRepository>();
+
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 builder.Services.AddHttpClient();
@@ -139,18 +165,27 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1"));
-}
 
+}
+app.UseWebSockets();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
+
+// UseCors is now placed between UseRouting and UseAuthorization for correct ordering.
 app.UseCors("HumanChrs");
+
 app.UseAuthorization();
+app.UseMiddleware<WebSocketsMiddleware>();
 
 app.MapRazorPages();
 
-// 需要加上這段使用 swagger 時才不會404
-app.MapControllers();
+// Modified the Swagger section to avoid 404 and grouped it with the app.UseEndpoints.
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
+
+app.UseSqlTableDependency<SubscribeNotificationLogsDependency>(connectionString);
 
 app.Run();

@@ -11,7 +11,9 @@ namespace Human.Repository.AutoMapper
     {
         public AutoMapperConfiguration()
         {
-            CreateMap<Staff, StaffDTO>().ReverseMap(); 
+            CreateMap<ReadLogs, ReadLogsDTO>().ReverseMap();
+            CreateMap<NotificationLogs, NotificationLogsDTO>().ReverseMap();
+            CreateMap<Staff, StaffDTO>().ReverseMap();
             CreateMap<AmendCheckRecord, AmendCheckRecordDTO>().ReverseMap();
             CreateMap<Admin, AdminDTO>().ReverseMap();
             CreateMap<MeetLog, MeetLogDTO>().ReverseMap();

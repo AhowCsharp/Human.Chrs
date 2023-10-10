@@ -266,3 +266,4 @@ C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.pdb
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\Human.Chrs.genruntimeconfig.cache
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\obj\Debug\net6.0\ref\Human.Chrs.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs\bin\Debug\net6.0\TableDependency.SqlClient.dll
