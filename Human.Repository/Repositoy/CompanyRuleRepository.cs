@@ -39,7 +39,7 @@ namespace LineTag.Infrastructure.Repositories
 
         public async Task<IEnumerable<CompanyRuleDTO>> GetCompanyRulesAsync(int companyId)
         {
-            var data = await _context.CompanyRule.Where(x => x.CompanyId == companyId).ToListAsync();
+            var data = await _context.CompanyRule.Where(x => x.CompanyId == companyId && !x.ParttimeStaffId.HasValue).ToListAsync();
             return data.Select(_mapper.Map<CompanyRuleDTO>);
         }
     }

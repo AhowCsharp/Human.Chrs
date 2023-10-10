@@ -20,5 +20,7 @@ namespace Human.Chrs.ViewModel.Request
         public int FullCheckInMoney { get; set; }
 
         public int? OtherPercent { get; set; }
+
+        public int? FoodSuportMoney { get; set; }
     }
 }

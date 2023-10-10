@@ -21,6 +21,8 @@ namespace Human.Chrs.Domain.DTO
 
         public int? OtherPercent { get; set; }
 
+        public int? FoodSuportMoney { get; set; }
+
         public DateTime EditDate { get; set; }
 
         public string Editor { get; set; }

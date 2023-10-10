@@ -26,4 +26,6 @@ public partial class SalarySetting
     public DateTime CreateDate { get; set; }
 
     public string Creator { get; set; }
+
+    public int? FoodSuportMoney { get; set; }
 }

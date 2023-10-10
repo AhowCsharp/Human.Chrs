@@ -514,9 +514,25 @@ namespace Human.Chrs.Domain
                 }
                 else
                 {
+                    DateTime newDateTime = new DateTime(
+                    item.StartDate.Year,
+                    item.StartDate.Month,
+                    item.StartDate.Day,
+                    item.StartTime.Hours,
+                    item.StartTime.Minutes,
+                    item.StartTime.Seconds
+);
+                    DateTime newEndDateTime = new DateTime(
+                    item.EndDate.Year,
+                    item.EndDate.Month,
+                    item.EndDate.Day,
+                    item.EndTime.Hours,
+                    item.EndTime.Minutes,
+                    item.EndTime.Seconds
+                    );
                     newEvent.AllDay = false;
-                    newEvent.Start = item.StartDate;
-                    newEvent.End = item.EndDate;
+                    newEvent.Start = newDateTime;
+                    newEvent.End = newEndDateTime;
                     newEvent.Title = item.Title;
                     newEvent.Detail = item.Detail;
                     newEvent.LevelStatus = item.LevelStatus;

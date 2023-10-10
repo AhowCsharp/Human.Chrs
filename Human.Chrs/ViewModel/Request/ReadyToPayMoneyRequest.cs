@@ -73,6 +73,8 @@ namespace Human.Chrs.ViewModel.Request
         public bool ChangeOverTimeToMoney { get; set; }
 
         public int? ParttimeSalary { get; set; }
+
+        public int FoodSuportMoney { get; set; }
     }
 
 

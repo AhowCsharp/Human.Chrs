@@ -22,5 +22,7 @@ namespace Human.Chrs.Domain.IRepository
         Task<bool> VerifyAccountAsync(string account);
 
         Task<IEnumerable<StaffDTO>> GetAllParttimeStaffAsync(int companyId);
+
+        Task<IEnumerable<StaffDTO>> GetDepartmentStaffAsync(int companyId, int departrmentId);
     }
 }

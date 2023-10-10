@@ -28,5 +28,7 @@ namespace Human.Chrs.ViewModel.Request
         public int DepartmentId { get; set; }
 
         public string? AdminToken { get; set; }
+
+        public bool Status { get; set; }
     }
 }

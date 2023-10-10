@@ -21,6 +21,7 @@ using NPOI.SS.UserModel;
 using NPOI.POIFS.Crypt.Dsig;
 using NPOI.SS.Util;
 using System.Globalization;
+using NPOI.SS.Formula.Functions;
 
 
 namespace Human.Chrs.Domain
@@ -41,6 +42,7 @@ namespace Human.Chrs.Domain
         private readonly IIncomeLogsRepository _incomeLogsRepository;
         private readonly IEventLogsRepository _eventLogsRepository;
         private readonly IAmendCheckRecordRepository _amendCheckRecordRepository;
+        private readonly IMeetLogRepository _meetLogRepository;
         private readonly UserService _userService;
         private readonly GeocodingService _geocodingService;
         private readonly IWebHostEnvironment _hostEnvironment;
@@ -60,6 +62,7 @@ namespace Human.Chrs.Domain
             IIncomeLogsRepository incomeLogsRepository,
             IEventLogsRepository eventLogsRepository,
             IAmendCheckRecordRepository amendCheckRecordRepository,
+            IMeetLogRepository meetLogRepository,
             UserService userService,
             GeocodingService geocodingService,
              IWebHostEnvironment hostEnvironment)
@@ -79,6 +82,7 @@ namespace Human.Chrs.Domain
             _personalDetailRepository = personalDetailRepository;
             _eventLogsRepository = eventLogsRepository;
             _amendCheckRecordRepository = amendCheckRecordRepository;
+            _meetLogRepository = meetLogRepository;
             _userService = userService;
             _geocodingService = geocodingService;
             _hostEnvironment = hostEnvironment;
@@ -148,6 +152,130 @@ namespace Human.Chrs.Domain
             return result;
         }
 
+        public async Task<CommonResult<List<EventDTO>>> MeetEventsGetAsync()
+        {
+            var result = new CommonResult<List<EventDTO>>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            var eventsDTO = new List<EventDTO>();
+            var events = await _meetLogRepository.GetMeetEventLogsAsync(user.CompanyId);
+            foreach (var eventDTO in events)
+            {
+                var staff = await _staffRepository.GetAsync(eventDTO.StaffId.Value);
+                var newEvent = new EventDTO();
+                if (eventDTO.StartDate == eventDTO.EndDate)
+                {
+                    DateTime newDateTime = new DateTime(
+                        eventDTO.StartDate.Year,
+                        eventDTO.StartDate.Month,
+                        eventDTO.StartDate.Day,
+                        eventDTO.StartTime.Hours,
+                        eventDTO.StartTime.Minutes,
+                        eventDTO.StartTime.Seconds
+                    );
+                    DateTime newEndDateTime = new DateTime(
+                    eventDTO.EndDate.Year,
+                    eventDTO.EndDate.Month,
+                    eventDTO.EndDate.Day,
+                    eventDTO.StartTime.Hours,
+                    eventDTO.StartTime.Minutes,
+                    eventDTO.StartTime.Seconds
+                    );
+                    newEvent.AllDay = false;
+                    newEvent.Start = newDateTime;
+                    newEvent.End = newEndDateTime;
+                    newEvent.Title = eventDTO.Title;
+                    newEvent.Detail = eventDTO.Detail;
+                    newEvent.LevelStatus = 4;
+                    newEvent.StaffId = staff != null ? staff.id: 0;
+                    newEvent.StaffName = staff != null ?  staff.StaffName : String.Empty;
+                    newEvent.id = eventDTO.id;
+                    newEvent.MeetId = eventDTO.id;
+                    eventsDTO.Add(newEvent);
+                }
+                else
+                {
+                    newEvent.AllDay = false;
+                    newEvent.Start = eventDTO.StartDate;
+                    newEvent.End = eventDTO.EndDate;
+                    newEvent.Title = eventDTO.Title;
+                    newEvent.Detail = eventDTO.Detail;
+                    newEvent.LevelStatus = 4;
+                    newEvent.id = eventDTO.id;
+                    newEvent.StaffId = staff != null ? staff.id : 0;
+                    newEvent.StaffName = staff != null ? staff.StaffName : String.Empty;
+                    newEvent.MeetId = eventDTO.id;
+                    eventsDTO.Add(newEvent);
+                }
+            }
+            result.Data = eventsDTO;
+            return result;
+        }
+
+        public async Task<CommonResult<List<EventDTO>>> DeleteMeetAsync(int id)
+        {
+            var result = new CommonResult<List<EventDTO>>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+
+            await _eventLogsRepository.DeleteAllEventsWithMeetIdAsync(id);
+
+            await _meetLogRepository.DeleteAsync(id);
+            var events = (await MeetEventsGetAsync()).Data;
+            result.Data = events;
+
+            return result;
+        }
+
+        public async Task<CommonResult<List<AdminDTO>>> DeleteAdminAsync(int id)
+        {
+            var result = new CommonResult<List<AdminDTO>>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            await _adminRepository.DeleteAsync(id);
+
+            var admins = await GetAllAdminsAsync();
+            result.Data = admins.Data.ToList();
+            return result;
+        }
+
+        public async Task<CommonResult<List<AdminDTO>>> SwitchAdminAsync(int id)
+        {
+            var result = new CommonResult<List<AdminDTO>>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            var admin = await _adminRepository.GetAsync(id);
+            admin.Status = !admin.Status;
+            await _adminRepository.UpdateAsync(admin);
+            var admins = await GetAllAdminsAsync();
+            result.Data = admins.Data.ToList();
+            return result;
+        }
+
         public async Task<CommonResult> ParttimeWorkAdd(int staffId,DateTime startDate, DateTime endDate, TimeSpan startTime, TimeSpan endTime, string title, string detail, int level)
         {
             var result = new CommonResult();
@@ -210,6 +338,130 @@ namespace Human.Chrs.Domain
 
                     currentDay = currentDay.AddDays(1);
                 }
+            }
+            catch (Exception ex)
+            {
+                result.AddError(ex.Message);
+                return result;
+            }
+            return result;
+        }
+
+        public async Task<CommonResult> MeetAdd(EventLogsDTO dto)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+
+            if (dto.EndTime < dto.StartTime)
+            {
+                result.AddError("時間格式不正確");
+                return result;
+            }
+
+            try
+            {
+                
+                var meetDTO = new MeetLogDTO();
+                meetDTO.Creator = user.StaffName;
+                meetDTO.CreateDate = DateTimeHelper.TaipeiNow;
+
+                if (dto.MeetType == 1)
+                {
+                    meetDTO.CompanyId = user.CompanyId;
+                    meetDTO.StaffId = 0;
+                    meetDTO.DepartmentId = 0;
+                    meetDTO.Title = dto.Title;
+                    meetDTO.Detail = dto.Detail;
+                    meetDTO.StartDate = dto.StartDate;
+                    meetDTO.EndDate = dto.EndDate;
+                    meetDTO.StartTime = dto.StartTime;
+                    meetDTO.EndTime = dto.EndTime;
+                    meetDTO = await _meetLogRepository.InsertAsync(meetDTO);
+
+                    var allstaffId = (await _staffRepository.GetAllStaffAsync(user.CompanyId)).Select(x => x.id).ToList();
+                    var events = new List<EventLogsDTO>();
+                    foreach (var staffId in allstaffId)
+                    {
+                        var realEventDTO = new EventLogsDTO();
+                        realEventDTO.StaffId = staffId;
+                        realEventDTO.CompanyId = user.CompanyId;
+                        realEventDTO.MeetId = meetDTO.id;
+
+                        realEventDTO.Title = dto.Title;
+                        realEventDTO.Detail = dto.Detail;
+                        realEventDTO.StartDate = dto.StartDate;
+                        realEventDTO.EndDate = dto.EndDate;
+                        realEventDTO.StartTime = dto.StartTime;
+                        realEventDTO.EndTime = dto.EndTime;
+                        realEventDTO.LevelStatus = dto.LevelStatus;
+                        events.Add(realEventDTO);
+                    }
+                    await _eventLogsRepository.AddManyEventLogsAsync(events);
+                }
+                else if (dto.MeetType == 2)
+                {
+                    meetDTO.CompanyId = user.CompanyId;
+                    meetDTO.StaffId = 0;
+                    meetDTO.DepartmentId = dto.DepartmentId.Value;
+                    meetDTO.Title = dto.Title;
+                    meetDTO.Detail = dto.Detail;
+                    meetDTO.StartDate = dto.StartDate;
+                    meetDTO.EndDate = dto.EndDate;
+                    meetDTO.StartTime = dto.StartTime;
+                    meetDTO.EndTime = dto.EndTime;
+                    meetDTO = await _meetLogRepository.InsertAsync(meetDTO);
+
+                    var allstaffId = (await _staffRepository.GetDepartmentStaffAsync(user.CompanyId,dto.DepartmentId.Value)).Select(x => x.id).ToList();
+                    var events = new List<EventLogsDTO>();
+                    foreach (var staffId in allstaffId)
+                    {
+                        var realEventDTO = new EventLogsDTO();
+                        realEventDTO.StaffId = staffId;
+                        realEventDTO.CompanyId = user.CompanyId;
+                        realEventDTO.MeetId = meetDTO.id;
+
+                        realEventDTO.Title = dto.Title;
+                        realEventDTO.Detail = dto.Detail;
+                        realEventDTO.StartDate = dto.StartDate;
+                        realEventDTO.EndDate = dto.EndDate;
+                        realEventDTO.StartTime = dto.StartTime;
+                        realEventDTO.EndTime = dto.EndTime;
+                        realEventDTO.LevelStatus = dto.LevelStatus;
+                        events.Add(realEventDTO);
+                    }
+                    await _eventLogsRepository.AddManyEventLogsAsync(events);
+                }
+                else if (dto.MeetType == 3)
+                {
+                    meetDTO.CompanyId = user.CompanyId;
+                    meetDTO.StaffId = dto.StaffId;
+                    meetDTO.DepartmentId = 0;
+                    meetDTO.Title = dto.Title;
+                    meetDTO.Detail = dto.Detail;
+                    meetDTO.StartDate = dto.StartDate;
+                    meetDTO.EndDate = dto.EndDate;
+                    meetDTO.StartTime = dto.StartTime;
+                    meetDTO.EndTime = dto.EndTime;
+                    meetDTO = await _meetLogRepository.InsertAsync(meetDTO);
+
+                    var staff = await _staffRepository.GetAsync(dto.StaffId);
+
+                    dto.StaffId = staff.id;
+                    dto.CompanyId = user.CompanyId;
+                    dto.MeetId = meetDTO.id;
+
+                    await _eventLogsRepository.InsertAsync(dto);
+                }
+
+                return result;
+
             }
             catch (Exception ex)
             {
@@ -358,6 +610,7 @@ namespace Human.Chrs.Domain
                     oldData.OtherPercent = dto.OtherPercent;
                     oldData.EditDate = DateTimeHelper.TaipeiNow;
                     oldData.Editor = user.StaffName;
+                    oldData.FoodSuportMoney = dto.FoodSuportMoney;
                     result.Data = await _salarySettingRepository.UpdateAsync(oldData);
                 }
             }
@@ -912,9 +1165,9 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult<AdminDTO>> CreateOrEditAdminAsync(AdminDTO adminDTO)
+        public async Task<CommonResult<List<AdminDTO>>> CreateOrEditAdminAsync(AdminDTO adminDTO)
         {
-            var result = new CommonResult<AdminDTO>();
+            var result = new CommonResult<List<AdminDTO>>();
             var user = _userService.GetCurrentUser();
             var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
             if (!verifyAdminToken)
@@ -931,11 +1184,28 @@ namespace Human.Chrs.Domain
 
             if (adminDTO.id == 0)
             {
-                result.Data = await _adminRepository.InsertAsync(adminDTO);
+                await _adminRepository.InsertAsync(adminDTO);
+                var admins = await GetAllAdminsAsync();
+                result.Data = admins.Data.ToList();
             }
             else
             {
-                result.Data = await _adminRepository.UpdateAsync(adminDTO);
+                if (user.Id != adminDTO.id)
+                {
+                    var editAdmin = await _adminRepository.GetAsync(adminDTO.id);
+                    adminDTO.Password = editAdmin.Password;
+                    adminDTO.AdminToken = editAdmin.AdminToken;
+                    await _adminRepository.UpdateAsync(adminDTO);
+                    var admins = await GetAllAdminsAsync();
+                    result.Data = admins.Data.ToList();
+                }
+                else
+                {
+                    await _adminRepository.UpdateAsync(adminDTO);
+                    var admins = await GetAllAdminsAsync();
+                    result.Data = admins.Data.ToList();
+                }
+
             }
             return result;
         }
@@ -1467,7 +1737,7 @@ namespace Human.Chrs.Domain
             }
             salaryView.OverTimeHours = overtimesList.Sum(x => x.OverHours);
             salaryView.OverTimeMoney = overtimemoney;
-
+            salaryView.FoodSuportMoney = setting.FoodSuportMoney.HasValue? setting.FoodSuportMoney.Value : 0 ;
             result.Data = salaryView;
             return result;
         }

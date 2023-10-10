@@ -96,5 +96,7 @@ namespace Human.Chrs.Domain.DTO
         public int PerHourSalary { get; set; }
 
         public int OverTimeMoney { get; set; }
+         
+        public int FoodSuportMoney { get; set; }
     }
 }

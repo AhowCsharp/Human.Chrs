@@ -5,13 +5,15 @@ using System.Collections.Generic;
 
 namespace Human.Repository.EF;
 
-public partial class EventLogs
+public partial class MeetLog
 {
     public int Id { get; set; }
 
-    public int StaffId { get; set; }
+    public int CompanyId { get; set; }
 
-    public int? CompanyId { get; set; }
+    public int? StaffId { get; set; }
+
+    public int? DepartmentId { get; set; }
 
     public string Title { get; set; }
 
@@ -23,9 +25,9 @@ public partial class EventLogs
 
     public TimeSpan StartTime { get; set; }
 
-    public TimeSpan EndTime { get; set; }
+    public TimeSpan? EndTime { get; set; }
 
-    public int LevelStatus { get; set; }
+    public string Creator { get; set; }
 
-    public int? MeetId { get; set; }
+    public DateTime? CreateDate { get; set; }
 }

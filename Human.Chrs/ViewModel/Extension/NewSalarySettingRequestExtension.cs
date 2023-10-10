@@ -25,7 +25,8 @@ namespace Human.Chrs.ViewModel.Extension
                 CompanyId = request.CompanyId,
                 BasicSalary = request.BasicSalary,
                 FullCheckInMoney = request.FullCheckInMoney,
-                OtherPercent = request.OtherPercent
+                OtherPercent = request.OtherPercent,
+                FoodSuportMoney = request.FoodSuportMoney,
             };
 
             return dto;

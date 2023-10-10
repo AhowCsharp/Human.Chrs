@@ -72,4 +72,6 @@ public partial class IncomeLogs
     public int? ParttimeSalary { get; set; }
 
     public int? TocolysisHours { get; set; }
+
+    public int FoodSuportMoney { get; set; }
 }

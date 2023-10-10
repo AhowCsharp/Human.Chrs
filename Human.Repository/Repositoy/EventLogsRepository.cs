@@ -29,12 +29,35 @@ namespace LineTag.Infrastructure.Repositories
             return data.Select(_mapper.Map<EventLogsDTO>);
         }
 
+        public async Task DeleteAllEventsWithMeetIdAsync(int meetId)
+        {
+            // Find all events with the given meetId
+            var eventsToDelete = _context.EventLogs.Where(x => x.MeetId == meetId);
+
+            // Remove the events from the context
+            _context.EventLogs.RemoveRange(eventsToDelete);
+
+            // Commit changes to the database
+            await _context.SaveChangesAsync();
+        }
+
+
         public async Task<IEnumerable<EventLogsDTO>> GetCompanyPartimeEventLogsAsync(int companyId)
         {
             var data = await _context.EventLogs.Where(x => x.CompanyId == companyId && x.LevelStatus == 3).ToListAsync();
 
             return data.Select(_mapper.Map<EventLogsDTO>);
         }
+
+        public async Task AddManyEventLogsAsync(List<EventLogsDTO> dtos)
+        {
+            var entities = dtos.Select(_mapper.Map<EventLogs>).ToList();
+
+            _context.EventLogs.AddRange(entities);
+
+             await _context.SaveChangesAsync();
+        }
+
 
         public async Task<bool> RemoveEventLogsAsync(IEnumerable<EventLogsDTO> logsToDelete, int companyId)
         {

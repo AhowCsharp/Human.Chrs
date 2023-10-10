@@ -48,6 +48,7 @@ namespace Human.Chrs.ViewModel.Extension
                 EarlyOrLateAmount = request.EarlyOrLateAmount,
                 OutLocationAmount = request.OutLocationAmount,
                 OverTimeAmount = request.OverTimeMoney,
+                FoodSuportMoney = request.FoodSuportMoney,
             };
 
             if(request.ParttimeSalary.HasValue)

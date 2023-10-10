@@ -23,6 +23,8 @@ namespace Human.Chrs.Domain.DTO
 
         public int? Bonus { get; set; }
 
+        public int FoodSuportMoney { get; set; }
+
         public int IncomeAmount { get; set; }
 
         public int SalaryOfMonth { get; set; }

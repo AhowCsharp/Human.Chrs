@@ -7,13 +7,15 @@ using Human.Chrs.Domain.SeedWork;
 
 namespace Human.Chrs.Domain.DTO
 {
-    public class EventLogsDTO : IDTO
+    public class MeetLogDTO : IDTO
     {
         public int id { get; set; }
 
-        public int StaffId { get; set; }
+        public int CompanyId { get; set; }
 
-        public int? CompanyId { get; set; }
+        public int? StaffId { get; set; }
+
+        public int? DepartmentId { get; set; }
 
         public string Title { get; set; }
 
@@ -25,14 +27,11 @@ namespace Human.Chrs.Domain.DTO
 
         public TimeSpan StartTime { get; set; }
 
-        public TimeSpan EndTime { get; set; }
+        public TimeSpan? EndTime { get; set; }
 
-        public int LevelStatus { get; set; }
+        public string Creator { get; set; }
 
-        public int MeetType { get; set; }
+        public DateTime? CreateDate { get; set; }
 
-        public int? MeetId { get; set; }
-
-        public int? DepartmentId { get; set; }
     }
 }

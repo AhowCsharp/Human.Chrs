@@ -14,5 +14,10 @@ namespace Human.Chrs.Domain.IRepository
         Task<bool> RemoveEventLogsAsync(IEnumerable<EventLogsDTO> logsToDelete, int companyId);
 
         Task<IEnumerable<EventLogsDTO>> GetCompanyPartimeEventLogsAsync(int companyId);
+
+        Task AddManyEventLogsAsync(List<EventLogsDTO> dtos);
+
+        Task DeleteAllEventsWithMeetIdAsync(int meetId);
+
     }
 }

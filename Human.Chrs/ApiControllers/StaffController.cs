@@ -674,7 +674,7 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
-        /// 大頭貼更新
+        /// 刪除事件
         /// </summary>
         /// <param name="eventRequest">請求資料</param>
         /// <response code="200">OK</response>

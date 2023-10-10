@@ -31,6 +31,8 @@ public partial class HumanChrsContext : DbContext
 
     public virtual DbSet<IncomeLogs> IncomeLogs { get; set; }
 
+    public virtual DbSet<MeetLog> MeetLog { get; set; }
+
     public virtual DbSet<OverTimeLog> OverTimeLog { get; set; }
 
     public virtual DbSet<PersonalDetail> PersonalDetail { get; set; }
@@ -153,6 +155,15 @@ public partial class HumanChrsContext : DbContext
         {
             entity.Property(e => e.IssueDate).HasColumnType("datetime");
             entity.Property(e => e.SalaryOfMonth).HasDefaultValueSql("((9))");
+        });
+
+        modelBuilder.Entity<MeetLog>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.Creator).HasMaxLength(50);
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
+            entity.Property(e => e.StartDate).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<OverTimeLog>(entity =>

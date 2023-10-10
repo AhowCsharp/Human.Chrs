@@ -8,23 +8,22 @@ using System.Threading.Tasks;
 
 namespace Human.Chrs.ViewModel.Request
 {
-    public static class AdminSaveRequestExtension
+    public static class MeetRequestExtension
     {
-        public static AdminDTO ToDTO(this AdminSaveRequest request)
+        public static EventLogsDTO ToDTO(this MeetRequest request)
         {
-            var dto = new AdminDTO
+            var dto = new EventLogsDTO
             {
-                id = request.id,
-                CompanyId = request.CompanyId,
-                UserName = request.UserName,
-                Account = request.Account,
-                Password = request.Password,
-                Auth = request.Auth,
-                WorkPosition = request.WorkPosition,
-                StaffNo = request.StaffNo,
-                DepartmentId = request.DepartmentId,
-                AdminToken = request.id == 0 ? Guid.NewGuid().ToString() : request.AdminToken,
-                Status = request.Status
+                StaffId = request.StaffId.HasValue? request.StaffId.Value:0,
+                DepartmentId = request.DepartmentId.HasValue? request.DepartmentId.Value:0,
+                Title = request.Title,
+                Detail = request.Detail,
+                StartDate = request.EventStartDate,
+                EndDate = request.EventStartDate,
+                StartTime = request.StartTime,
+                EndTime = request.EndTime,
+                LevelStatus = request.LevelStatus,
+                MeetType = request.MeetType,
             };
             return dto;
         }

@@ -14,6 +14,7 @@ namespace Human.Repository.AutoMapper
             CreateMap<Staff, StaffDTO>().ReverseMap(); 
             CreateMap<AmendCheckRecord, AmendCheckRecordDTO>().ReverseMap();
             CreateMap<Admin, AdminDTO>().ReverseMap();
+            CreateMap<MeetLog, MeetLogDTO>().ReverseMap();
             CreateMap<Company, CompanyDTO>().ReverseMap();
             CreateMap<IncomeLogsDTO, IncomeLogs>()
             .ForMember(dest => dest.ParttimeSalary, opt => opt.MapFrom(src => src.ParttimeSalary.HasValue ? src.ParttimeSalary : null));

@@ -109,7 +109,7 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
-        /// 增修員工薪資設定
+        /// 刪除員工薪資設定
         /// </summary>
         /// <param name="salarySettingRequest">請求資料</param>
         /// <response code="200">OK</response>
@@ -427,6 +427,80 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 刪除管理者
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("manager")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteAdmin(int id)
+        {
+            try
+            {
+                var result = await _admindomain.DeleteAdminAsync(id);
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(DeleteAdmin));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 停權復權管理者
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("manager")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> SwitchAdminAsync(int id)
+        {
+            try
+            {
+                var result = await _admindomain.SwitchAdminAsync(id);
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(DeleteAdmin));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 新增或修改管理者
         /// </summary>
         /// <response code="200">OK</response>
@@ -447,7 +521,7 @@ namespace LineTag.Admin.ApiControllers
                 var result = await _admindomain.CreateOrEditAdminAsync(request.ToDTO());
                 if (result.Success)
                 {
-                    return Ok(result);
+                    return Ok(result.Data);
                 }
                 else
                 {
@@ -537,7 +611,81 @@ namespace LineTag.Admin.ApiControllers
             }
         }
         /// <summary>
-        /// 部分工時人員排班紀錄
+        /// 刪除會議
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("meet")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteMeet(int id)
+        {
+            try
+            {
+                var result = await _admindomain.DeleteMeetAsync(id);
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(DeleteMeet));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 會議紀錄
+        /// </summary>
+        /// <param name="ditanceRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("meetdetails")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> MeetEventsGet()
+        {
+            try
+            {
+                var result = await _admindomain.MeetEventsGetAsync();
+
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(EventsGet));
+
+                return ServerError500();
+            }
+        }
+        /// <summary>
+        /// 部分工時人員排班
         /// </summary>
         /// <param name="eventRequest">請求資料</param>
         /// <response code="200">OK</response>
@@ -574,6 +722,43 @@ namespace LineTag.Admin.ApiControllers
             }
         }
 
+        /// <summary>
+        /// 會議安排
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("meet")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> MeetAdd(MeetRequest request)
+        {
+            try
+            {
+                var result = await _admindomain.MeetAdd(request.ToDTO());
+
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(ParttimeWorkAdd));
+
+                return ServerError500();
+            }
+        }
 
         /// <summary>
         /// 取得員工出勤狀況Excel
@@ -697,6 +882,24 @@ namespace LineTag.Admin.ApiControllers
                     row.CreateCell(9).SetCellValue(data.list[i].CheckOutEarlyTimes.ToString());
                     row.CreateCell(10).SetCellValue(data.list[i].CheckInMemo);
                     row.CreateCell(11).SetCellValue(data.list[i].CheckOutMemo);
+                }
+                int maxColumnWidth = -1;
+
+                // First, auto size all columns to get their ideal width
+                for (int i = 0; i < 400; i++)  // For 30 columns
+                {
+                    sheet.AutoSizeColumn(i);
+                    int width = sheet.GetColumnWidth(i);
+                    if (width > maxColumnWidth)
+                    {
+                        maxColumnWidth = width;
+                    }
+                }
+
+                // Now set all columns to the maximum width
+                for (int i = 0; i < 400; i++)  // For 30 columns
+                {
+                    sheet.SetColumnWidth(i, maxColumnWidth + 600);
                 }
                 var tempFileName = Path.GetTempFileName() + ".xlsx";
                 using (var fileStream = new FileStream(tempFileName, FileMode.Create, FileAccess.Write))
