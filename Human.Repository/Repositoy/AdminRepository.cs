@@ -50,5 +50,12 @@ namespace LineTag.Infrastructure.Repositories
 
             return data;
         }
+
+        public async Task<bool> VerifyWebSocketAdminTokenAsync(string token, int adminId)
+        {
+            var data = await _context.Admin.AnyAsync(x => x.Id == adminId && x.AdminToken == token);
+
+            return data;
+        }
     }
 }

@@ -69,8 +69,12 @@ builder.Services.AddSingleton(sp =>
         sp.GetRequiredService<IServiceScopeFactory>(),
         sp.GetRequiredService<WebSocketHandler>()
     ));
-
-
+builder.Services.AddSingleton(sp =>
+    new SubscribeAdminNotificationLogsDependency(
+        connectionString,
+        sp.GetRequiredService<IServiceScopeFactory>(),
+        sp.GetRequiredService<WebSocketHandler>()
+    ));
 
 builder.Services.AddDbContext<HumanChrsContext>(options => options.UseSqlServer(connectionString));
 
@@ -113,7 +117,6 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<UserService>();
 builder.Services.AddTransient<GeocodingService>();
 
-
 builder.Services.AddScoped<AdminDomain>();
 builder.Services.AddScoped<CheckInAndOutDomain>();
 builder.Services.AddScoped<StaffDomain>();
@@ -137,7 +140,8 @@ builder.Services.AddScoped<IAmendCheckRecordRepository, AmendCheckRecordReposito
 builder.Services.AddScoped<IMeetLogRepository, MeetLogRepository>();
 builder.Services.AddScoped<INotificationLogsRepository, NotificationLogsRepository>();
 builder.Services.AddScoped<IReadLogsRepository, ReadLogsRepository>();
-
+builder.Services.AddScoped<IAdminNotificationLogsRepository, AdminNotificationLogsRepository>();
+builder.Services.AddScoped<IAdminReadLogsRepository, AdminReadLogsRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 builder.Services.AddHttpClient();
@@ -165,7 +169,6 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1"));
-
 }
 app.UseWebSockets();
 app.UseHttpsRedirection();
@@ -186,6 +189,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
-app.UseSqlTableDependency<SubscribeNotificationLogsDependency>(connectionString);
+app.UseSqlTableDependency<SubscribeNotificationLogsDependency>();
+app.UseSqlTableDependency<SubscribeAdminNotificationLogsDependency>();
 
 app.Run();

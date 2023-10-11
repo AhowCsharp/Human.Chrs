@@ -67,6 +67,31 @@ namespace Human.Repository.Repository.Base
             return dto;
         }
 
+        public virtual async Task<List<TDTO>> UpdateRangeAsync(List<TDTO> dtos)
+        {
+            var entities = _mapper.Map<List<TEntity>>(dtos);
+            foreach (var entity in entities)
+            {
+                _context.Entry(entity).State = EntityState.Detached;
+            }
+
+            _dbSet.UpdateRange(entities);
+            await _context.SaveChangesAsync();
+
+            var resultDtos = _mapper.Map<List<TDTO>>(entities);
+            return resultDtos;
+        }
+
+        public virtual async Task<IEnumerable<TDTO>> InsertRangeAsync(IEnumerable<TDTO> dtos)
+        {
+            var entities = _mapper.Map<IEnumerable<TEntity>>(dtos);
+
+            await _dbSet.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<IEnumerable<TDTO>>(entities);
+        }
+
         public virtual async Task<TDTO> UpdateAsync(TDTO dto)
         {
             var existingEntity = await _dbSet.FindAsync(dto.id);

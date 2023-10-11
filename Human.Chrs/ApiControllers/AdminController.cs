@@ -71,6 +71,82 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 更改通知讀取狀態
+        /// </summary>
+        /// <param name="checkRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route("readstatus")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> SwitchReadStatus(int notificationId)
+        {
+            try
+            {
+                var result = await _admindomain.SwitchReadStatusAsync(notificationId);
+
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(SwitchReadStatus));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 更改通知讀取狀態
+        /// </summary>
+        /// <param name="checkRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route("readallstatus")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> SwitchAllReadStatus(SwitchAllReadStatusRequest request)
+        {
+            try
+            {
+                var result = await _admindomain.SwitchAllReadStatusAsync(request.NotificationIds);
+
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(SwitchAllReadStatus));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 增修員工薪資設定
         /// </summary>
         /// <param name="salarySettingRequest">請求資料</param>
@@ -243,7 +319,6 @@ namespace LineTag.Admin.ApiControllers
             }
         }
 
-
         /// <summary>
         /// 取得員工列表
         /// </summary>
@@ -258,7 +333,7 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuthAttribute]
         [ApUserAuthAttribute]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAmendrecords(DateTime start,DateTime end)
+        public async Task<IActionResult> GetAmendrecords(DateTime start, DateTime end)
         {
             try
             {
@@ -572,7 +647,6 @@ namespace LineTag.Admin.ApiControllers
             }
         }
 
-
         /// <summary>
         /// 部分工時排班紀錄
         /// </summary>
@@ -610,6 +684,7 @@ namespace LineTag.Admin.ApiControllers
                 return ServerError500();
             }
         }
+
         /// <summary>
         /// 刪除會議
         /// </summary>
@@ -684,6 +759,7 @@ namespace LineTag.Admin.ApiControllers
                 return ServerError500();
             }
         }
+
         /// <summary>
         /// 部分工時人員排班
         /// </summary>
@@ -703,7 +779,7 @@ namespace LineTag.Admin.ApiControllers
         {
             try
             {
-                var result = await _admindomain.ParttimeWorkAdd(request.StaffId,request.EventStartDate, request.EventEndDate, request.StartTime, request.EndTime, request.Title, request.Detail, request.LevelStatus);
+                var result = await _admindomain.ParttimeWorkAdd(request.StaffId, request.EventStartDate, request.EventEndDate, request.StartTime, request.EndTime, request.Title, request.Detail, request.LevelStatus);
 
                 if (result.Success)
                 {
@@ -911,7 +987,6 @@ namespace LineTag.Admin.ApiControllers
                 System.IO.File.Delete(tempFileName);  // 刪除臨時檔案
 
                 return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "出勤狀況單.xlsx");
-
             }
             catch (Exception ex)
             {
@@ -992,7 +1067,6 @@ namespace LineTag.Admin.ApiControllers
                 return ServerError500();
             }
         }
-
 
         /// <summary>
         /// 審核補卡

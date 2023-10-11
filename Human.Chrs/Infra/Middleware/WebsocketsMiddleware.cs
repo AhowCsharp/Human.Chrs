@@ -22,11 +22,30 @@ namespace Human.Chrs.Infra.Middleware
             if (context.WebSockets.IsWebSocketRequest)
             {
                 var socket = await context.WebSockets.AcceptWebSocketAsync();
-                var staffId = int.Parse(context.Request.Query["staffId"].ToString());
+                var adminToken = context.Request.Query["AdminToken"].ToString();
+                string userKey = null;
 
-                await _webSocketHandler.AddSocket(staffId, socket);
+                if (string.IsNullOrEmpty(adminToken))
+                {
+                    var staffId = int.Parse(context.Request.Query["staffId"].ToString());
+                    userKey = staffId.ToString();
+                    await _webSocketHandler.AddStaffSocket(staffId, socket);
+                }
+                else
+                {
+                    var adminId = int.Parse(context.Request.Query["AdminId"].ToString());
+                    if (await _webSocketHandler.VerifyAdminToken(adminToken, adminId))
+                    {
+                        userKey = adminToken;
+                        await _webSocketHandler.AddAdminSocket(adminToken, adminId, socket);
+                    }
+                    else
+                    {
+                        await socket.CloseAsync(WebSocketCloseStatus.PolicyViolation, "AdminToken verification failed.", CancellationToken.None);
+                    }
+                }
 
-                await Receive(socket, async (result, buffer) =>
+                await Receive(socket, userKey, async (result, buffer, key) =>
                 {
                     if (result.MessageType == WebSocketMessageType.Text)
                     {
@@ -34,7 +53,10 @@ namespace Human.Chrs.Infra.Middleware
                     }
                     else if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        await _webSocketHandler.RemoveSocketAsync(staffId);
+                        if (string.IsNullOrEmpty(adminToken))
+                            await _webSocketHandler.RemoveStaffSocketAsync(int.Parse(key));
+                        else
+                            await _webSocketHandler.RemoveAdminSocketAsync(key);
                     }
                 });
             }
@@ -44,15 +66,14 @@ namespace Human.Chrs.Infra.Middleware
             }
         }
 
-
-        private async Task Receive(WebSocket socket, Action<WebSocketReceiveResult, byte[]> handleMessage)
+        private async Task Receive(WebSocket socket, string userKey, Action<WebSocketReceiveResult, byte[], string> handleMessage)
         {
             var buffer = new byte[1024 * 4];
 
             while (socket.State == WebSocketState.Open)
             {
                 var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                handleMessage(result, buffer);
+                handleMessage(result, buffer, userKey);
             }
         }
     }

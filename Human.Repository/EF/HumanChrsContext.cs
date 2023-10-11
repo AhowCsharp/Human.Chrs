@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using NPOI.SS.Formula.Functions;
 
 namespace Human.Repository.EF;
 
@@ -14,6 +15,10 @@ public partial class HumanChrsContext : DbContext
     }
 
     public virtual DbSet<Admin> Admin { get; set; }
+
+    public virtual DbSet<AdminNotificationLogs> AdminNotificationLogs { get; set; }
+
+    public virtual DbSet<AdminNotificationReadLogs> AdminNotificationReadLogs { get; set; }
 
     public virtual DbSet<AmendCheckRecord> AmendCheckRecord { get; set; }
 
@@ -51,6 +56,17 @@ public partial class HumanChrsContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AdminNotificationLogs>().ToTable(tb => tb.HasTrigger("TriggerName"));
+        modelBuilder.Entity<AdminNotificationReadLogs>().ToTable(tb => tb.HasTrigger("TriggerName"));
+        modelBuilder.Entity<AmendCheckRecord>().ToTable(tb => tb.HasTrigger("TriggerName"));
+        modelBuilder.Entity<IncomeLogs>().ToTable(tb => tb.HasTrigger("TriggerName"));
+        modelBuilder.Entity<MeetLog>().ToTable(tb => tb.HasTrigger("TriggerName"));
+        modelBuilder.Entity<NotificationLogs>().ToTable(tb => tb.HasTrigger("TriggerName"));
+        modelBuilder.Entity<OverTimeLog>().ToTable(tb => tb.HasTrigger("TriggerName"));
+        modelBuilder.Entity<ReadLogs>().ToTable(tb => tb.HasTrigger("TriggerName"));
+        modelBuilder.Entity<VacationLog>().ToTable(tb => tb.HasTrigger("TriggerName"));
+
+
         modelBuilder.Entity<Admin>(entity =>
         {
             entity.Property(e => e.Account).IsRequired();
@@ -70,9 +86,37 @@ public partial class HumanChrsContext : DbContext
                 .HasMaxLength(50);
         });
 
+        modelBuilder.Entity<AdminNotificationLogs>(entity =>
+        {
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.Creator)
+                .IsRequired()
+                .HasMaxLength(20);
+            entity.Property(e => e.EventDetail)
+                .HasMaxLength(10)
+                .IsFixedLength();
+            entity.Property(e => e.EventType)
+                .IsRequired()
+                .HasMaxLength(20);
+            //entity.Property(e => e.ReadAdminIds)
+            //    .IsConcurrencyToken(false);
+        });
+
+
+        modelBuilder.Entity<AdminNotificationReadLogs>(entity =>
+        {
+            entity.Property(e => e.ReadDate).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<AmendCheckRecord>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__AmendChe__3214EC0729A58105");
+
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("tr_AfterInsertOnAmendCheckRecord");
+                    tb.HasTrigger("tr_AfterUpdateOnAmendCheckRecord");
+                });
 
             entity.Property(e => e.Applicant).HasMaxLength(255);
             entity.Property(e => e.ApplicationDate).HasColumnType("date");
@@ -157,6 +201,8 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<IncomeLogs>(entity =>
         {
+            entity.ToTable(tb => tb.HasTrigger("tr_AfterInsertOnIncomeLogs"));
+
             entity.Property(e => e.IssueDate).HasColumnType("datetime");
             entity.Property(e => e.SalaryOfMonth).HasDefaultValueSql("((9))");
         });
@@ -178,8 +224,6 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<NotificationLogs>(entity =>
         {
-            entity.ToTable(tb => tb.HasTrigger("tr_dbo_NotificationLogs_ff7f2e6e-63ab-4417-af9a-11a43d19722d_Sender"));
-
             entity.Property(e => e.Avatar).IsRequired();
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Creator)
@@ -198,6 +242,12 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<OverTimeLog>(entity =>
         {
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("tr_AfterInsertOnOverTimeLog");
+                    tb.HasTrigger("tr_AfterUpdateOnOverTimeLog");
+                });
+
             entity.Property(e => e.Inspector).HasMaxLength(50);
             entity.Property(e => e.OvertimeDate).HasColumnType("date");
             entity.Property(e => e.ValidateDate).HasColumnType("date");
@@ -217,7 +267,6 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<ReadLogs>(entity =>
         {
-            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ReadDate).HasColumnType("datetime");
         });
 
@@ -264,6 +313,12 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<VacationLog>(entity =>
         {
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("tr_AfterInsertOnVacationLog");
+                    tb.HasTrigger("tr_AfterUpdateOnVacationLog");
+                });
+
             entity.Property(e => e.ActualEndDate).HasColumnType("datetime");
             entity.Property(e => e.ActualStartDate).HasColumnType("datetime");
             entity.Property(e => e.ApplyDate).HasColumnType("datetime");

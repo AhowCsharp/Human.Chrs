@@ -10,7 +10,7 @@ namespace Human.Repository.SubscribeTableDependencies
 {
     public class SubscribeNotificationLogsDependency : ISubscribeTableDependency
     {
-        SqlTableDependency<NotificationLogs> tableDependency;
+        private SqlTableDependency<NotificationLogs> tableDependency;
         private string _connectionString;
         private readonly WebSocketHandler _webSocketHandler;
         private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -19,7 +19,7 @@ namespace Human.Repository.SubscribeTableDependencies
         {
             _connectionString = connectionString;
             _serviceScopeFactory = serviceScopeFactory;
-            _webSocketHandler = webSocketHandler;   
+            _webSocketHandler = webSocketHandler;
         }
 
         public void SubscribeTableDependency()
@@ -32,7 +32,6 @@ namespace Human.Repository.SubscribeTableDependencies
 
         private async void TableDependency_OnChanged(object sender, TableDependency.SqlClient.Base.EventArgs.RecordChangedEventArgs<NotificationLogs> e)
         {
-
             if (e.ChangeType != TableDependency.SqlClient.Base.Enums.ChangeType.None)
             {
                 using (var scope = _serviceScopeFactory.CreateScope())
@@ -58,6 +57,10 @@ namespace Human.Repository.SubscribeTableDependencies
                             {
                                 message.IsUnRead = false;
                             }
+                            else
+                            {
+                                message.IsUnRead = true;
+                            }
                         }
                         foreach (var message in messageDepartment)
                         {
@@ -66,8 +69,11 @@ namespace Human.Repository.SubscribeTableDependencies
                             {
                                 message.IsUnRead = false;
                             }
+                            else
+                            {
+                                message.IsUnRead = true;
+                            }
                         }
-
 
                         // 將三个列表组合成一个
                         var combinedMessages = messageAll.Concat(messageDepartment).Concat(messagePersonal).ToList();
@@ -76,9 +82,8 @@ namespace Human.Repository.SubscribeTableDependencies
                         var combinedMessageJson = JsonConvert.SerializeObject(combinedMessages);
 
                         messagesForUsers[staffId] = combinedMessageJson;
-
                     }
-                    await _webSocketHandler.SendMessageToSpecificUsersAsync(messagesForUsers);
+                    await _webSocketHandler.SendMessageToSpecificStaffssAsync(messagesForUsers);
                 }
             }
         }

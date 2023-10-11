@@ -23,7 +23,6 @@ using NPOI.SS.Util;
 using System.Globalization;
 using NPOI.SS.Formula.Functions;
 
-
 namespace Human.Chrs.Domain
 {
     public class AdminDomain
@@ -43,6 +42,8 @@ namespace Human.Chrs.Domain
         private readonly IEventLogsRepository _eventLogsRepository;
         private readonly IAmendCheckRecordRepository _amendCheckRecordRepository;
         private readonly IMeetLogRepository _meetLogRepository;
+        private readonly IAdminNotificationLogsRepository _adminNotificationLogsRepository;
+        private readonly IAdminReadLogsRepository _adminReadLogsRepository;
         private readonly UserService _userService;
         private readonly GeocodingService _geocodingService;
         private readonly IWebHostEnvironment _hostEnvironment;
@@ -62,6 +63,8 @@ namespace Human.Chrs.Domain
             IIncomeLogsRepository incomeLogsRepository,
             IEventLogsRepository eventLogsRepository,
             IAmendCheckRecordRepository amendCheckRecordRepository,
+            IAdminNotificationLogsRepository adminNotificationLogsRepository,
+            IAdminReadLogsRepository adminReadLogsRepository,
             IMeetLogRepository meetLogRepository,
             UserService userService,
             GeocodingService geocodingService,
@@ -82,10 +85,87 @@ namespace Human.Chrs.Domain
             _personalDetailRepository = personalDetailRepository;
             _eventLogsRepository = eventLogsRepository;
             _amendCheckRecordRepository = amendCheckRecordRepository;
+            _adminNotificationLogsRepository = adminNotificationLogsRepository;
+            _adminReadLogsRepository = adminReadLogsRepository;
             _meetLogRepository = meetLogRepository;
             _userService = userService;
             _geocodingService = geocodingService;
             _hostEnvironment = hostEnvironment;
+        }
+
+        public async Task<CommonResult> SwitchReadStatusAsync(int notificationId)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            var dto = new AdminReadLogsDTO
+            {
+                AdminId = user.Id,
+                CompanyId = user.CompanyId,
+                AdminNotificationId = notificationId,
+                ReadDate = DateTimeHelper.TaipeiNow,
+            };
+            var notification = await _adminNotificationLogsRepository.GetAsync(notificationId);
+
+            if (notification != null)
+            {
+                notification.ReadAdminIds = string.IsNullOrEmpty(notification.ReadAdminIds)
+                    ? user.Id.ToString()
+                    : notification.ReadAdminIds + "," + user.Id.ToString();
+                await _adminNotificationLogsRepository.UpdateAsync(notification);
+            }
+            await _adminReadLogsRepository.InsertAsync(dto);
+            return result;
+        }
+
+        public async Task<CommonResult> SwitchAllReadStatusAsync(List<int> notificationIds)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+
+            var dtosToInsert = new List<AdminReadLogsDTO>();
+            //var notificationsToUpdate = new List<AdminNotificationLogsDTO>();
+
+            foreach (var notificationId in notificationIds)
+            {
+                var dto = new AdminReadLogsDTO
+                {
+                    AdminId = user.Id,
+                    CompanyId = user.CompanyId,
+                    AdminNotificationId = notificationId,
+                    ReadDate = DateTimeHelper.TaipeiNow,
+                };
+
+                var notification = await _adminNotificationLogsRepository.GetAsync(notificationId);
+                if (notification != null)
+                {
+                    notification.ReadAdminIds = string.IsNullOrEmpty(notification.ReadAdminIds)
+                        ? user.Id.ToString()
+                        : notification.ReadAdminIds + "," + user.Id.ToString();
+
+                    await _adminNotificationLogsRepository.UpdateAsync(notification);
+                }
+
+                dtosToInsert.Add(dto);
+            }
+            // Batch update and insert
+
+            await _adminReadLogsRepository.InsertRangeAsync(dtosToInsert);
+
+            return result;
         }
 
         public async Task<CommonResult<List<EventDTO>>> EventsGetAsync()
@@ -193,8 +273,8 @@ namespace Human.Chrs.Domain
                     newEvent.Title = eventDTO.Title;
                     newEvent.Detail = eventDTO.Detail;
                     newEvent.LevelStatus = 4;
-                    newEvent.StaffId = staff != null ? staff.id: 0;
-                    newEvent.StaffName = staff != null ?  staff.StaffName : String.Empty;
+                    newEvent.StaffId = staff != null ? staff.id : 0;
+                    newEvent.StaffName = staff != null ? staff.StaffName : String.Empty;
                     newEvent.id = eventDTO.id;
                     newEvent.MeetId = eventDTO.id;
                     eventsDTO.Add(newEvent);
@@ -276,7 +356,7 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult> ParttimeWorkAdd(int staffId,DateTime startDate, DateTime endDate, TimeSpan startTime, TimeSpan endTime, string title, string detail, int level)
+        public async Task<CommonResult> ParttimeWorkAdd(int staffId, DateTime startDate, DateTime endDate, TimeSpan startTime, TimeSpan endTime, string title, string detail, int level)
         {
             var result = new CommonResult();
             var user = _userService.GetCurrentUser();
@@ -367,7 +447,6 @@ namespace Human.Chrs.Domain
 
             try
             {
-                
                 var meetDTO = new MeetLogDTO();
                 meetDTO.Creator = user.StaffName;
                 meetDTO.CreateDate = DateTimeHelper.TaipeiNow;
@@ -418,7 +497,7 @@ namespace Human.Chrs.Domain
                     meetDTO.EndTime = dto.EndTime;
                     meetDTO = await _meetLogRepository.InsertAsync(meetDTO);
 
-                    var allstaffId = (await _staffRepository.GetDepartmentStaffAsync(user.CompanyId,dto.DepartmentId.Value)).Select(x => x.id).ToList();
+                    var allstaffId = (await _staffRepository.GetDepartmentStaffAsync(user.CompanyId, dto.DepartmentId.Value)).Select(x => x.id).ToList();
                     var events = new List<EventLogsDTO>();
                     foreach (var staffId in allstaffId)
                     {
@@ -461,7 +540,6 @@ namespace Human.Chrs.Domain
                 }
 
                 return result;
-
             }
             catch (Exception ex)
             {
@@ -946,7 +1024,7 @@ namespace Human.Chrs.Domain
                     {
                         overFirstStepMoney = (int)Math.Round(2 * staff.ParttimeMoney.Value * 1.33);
                         overtimemoney += overFirstStepMoney;
-                        overSecStepStepMoney = (int)Math.Round((log.OverHours-2) * staff.ParttimeMoney.Value * 1.66);
+                        overSecStepStepMoney = (int)Math.Round((log.OverHours - 2) * staff.ParttimeMoney.Value * 1.66);
                         overtimemoney += overSecStepStepMoney;
                     }
                 }
@@ -970,7 +1048,7 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult<IEnumerable<AmendCheckRecordDTO>>> GetGetAmendrecordsAsync(DateTime start,DateTime end)
+        public async Task<CommonResult<IEnumerable<AmendCheckRecordDTO>>> GetGetAmendrecordsAsync(DateTime start, DateTime end)
         {
             var user = _userService.GetCurrentUser();
             var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
@@ -982,7 +1060,6 @@ namespace Human.Chrs.Domain
                 return result;
             }
             var applications = await _amendCheckRecordRepository.GetAllAmendCheckRecordAsync(user.CompanyId, start, end);
-
 
             result.Data = applications;
             return result;
@@ -1101,7 +1178,7 @@ namespace Human.Chrs.Domain
 
                 try
                 {
-                    var coordinate =await  _geocodingService.GetCoordinates(dto.WorkAddress);
+                    var coordinate = await _geocodingService.GetCoordinates(dto.WorkAddress);
                     dto.Latitude = coordinate.Latitude;
                     dto.Longitude = coordinate.Longitude;
                 }
@@ -1205,7 +1282,6 @@ namespace Human.Chrs.Domain
                     var admins = await GetAllAdminsAsync();
                     result.Data = admins.Data.ToList();
                 }
-
             }
             return result;
         }
@@ -1317,10 +1393,8 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-
-        public async Task<(List<CheckRecordsDTO> list,StaffDTO? staff)> GetExcelDatasAsync(int staffId, int month)
+        public async Task<(List<CheckRecordsDTO> list, StaffDTO? staff)> GetExcelDatasAsync(int staffId, int month)
         {
-
             // 1. Validation and User Verification
             var user = _userService.GetCurrentUser();
             // 2. Fetch Data
@@ -1330,9 +1404,8 @@ namespace Human.Chrs.Domain
             var records = (await _checkRecordsRepository.GetCheckRecordListAsync(staffId, user.CompanyId, start, end)).ToList();
             var staff = await _staffRepository.GetUsingStaffAsync(staffId, user.CompanyId);
 
-            return (records,staff);
+            return (records, staff);
         }
-
 
         public async Task<CommonResult<VacationLogDTO>> VerifyVacationsAsync(int vacationId, bool isPass)
         {
@@ -1710,8 +1783,6 @@ namespace Human.Chrs.Domain
             var roundedValue = Math.Round(tempValue);
             var perHourSalary = Convert.ToInt32(roundedValue / 10);
 
-           
-
             salaryView.TotalSalaryNoOvertime = salaryView.SalarySetting.BasicSalary + salaryView.SalarySetting.FullCheckInMoney - salaryView.TotalSickHours * perHourSalary / 2 -
                                                salaryView.TotalThingHours * perHourSalary - salaryView.TotalMenstruationHours * perHourSalary / 2;
             salaryView.PerHourSalary = perHourSalary;
@@ -1737,7 +1808,7 @@ namespace Human.Chrs.Domain
             }
             salaryView.OverTimeHours = overtimesList.Sum(x => x.OverHours);
             salaryView.OverTimeMoney = overtimemoney;
-            salaryView.FoodSuportMoney = setting.FoodSuportMoney.HasValue? setting.FoodSuportMoney.Value : 0 ;
+            salaryView.FoodSuportMoney = setting.FoodSuportMoney.HasValue ? setting.FoodSuportMoney.Value : 0;
             result.Data = salaryView;
             return result;
         }
@@ -1898,7 +1969,6 @@ namespace Human.Chrs.Domain
                         }
                         await _checkRecordsRepository.InsertAsync(record);
                     }
-
                 }
                 else
                 {
@@ -1934,10 +2004,8 @@ namespace Human.Chrs.Domain
                         }
                         await _checkRecordsRepository.UpdateAsync(existRecord);
                     }
-
                 }
             }
-
 
             amendrecord.Inspector = user.StaffName;
             amendrecord.ValidateDate = DateTimeHelper.TaipeiNow;
