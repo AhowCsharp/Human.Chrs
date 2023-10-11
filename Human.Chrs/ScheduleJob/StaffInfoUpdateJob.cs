@@ -15,9 +15,11 @@ namespace Human.Chrs.ScheduleJob
             _scheduleDomain = scheduleDomain;
         }
 
-        public Task Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
-            return _scheduleDomain.UpdateStaffInfoAsync();
+            await _scheduleDomain.DeleteNotificationAsync();
+            await _scheduleDomain.UpdateStaffInfoAsync();
         }
+
     }
 }

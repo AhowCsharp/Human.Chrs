@@ -76,7 +76,7 @@ namespace Human.Repository.SubscribeTableDependencies
                         }
 
                         // 將三个列表组合成一个
-                        var combinedMessages = messageAll.Concat(messageDepartment).Concat(messagePersonal).ToList();
+                        var combinedMessages = messageAll.Concat(messageDepartment).Concat(messagePersonal).ToList().OrderByDescending(x => x.CreateDate);
 
                         // 转换为 JSON
                         var combinedMessageJson = JsonConvert.SerializeObject(combinedMessages);

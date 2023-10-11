@@ -110,5 +110,7 @@ namespace Human.Chrs.Domain.DTO
         public int? ParttimeOverTimeHours { get; set; }
 
         public int? ParttimeOverTimeTotalMony { get; set; }
+
+        public string Language { get; set; }
     }
 }

@@ -59,7 +59,8 @@ namespace Human.Chrs.ViewModel.Extension
                 PrenatalCheckUpHours = request.PrenatalCheckUpHours,
                 OverTimeHours = request.OverTimeHours,
                 StayInCompanyDays = (DateTimeHelper.TaipeiNow - request.EntryDate).Days,
-                Gender = request.Gender
+                Gender = request.Gender,
+                Language = request.Language,
             };
             if (request.ParttimeMoney.HasValue)
             {

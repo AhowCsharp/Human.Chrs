@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using NPOI.SS.Formula.Functions;
 
 namespace Human.Repository.EF;
 
@@ -56,17 +55,6 @@ public partial class HumanChrsContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AdminNotificationLogs>().ToTable(tb => tb.HasTrigger("TriggerName"));
-        modelBuilder.Entity<AdminNotificationReadLogs>().ToTable(tb => tb.HasTrigger("TriggerName"));
-        modelBuilder.Entity<AmendCheckRecord>().ToTable(tb => tb.HasTrigger("TriggerName"));
-        modelBuilder.Entity<IncomeLogs>().ToTable(tb => tb.HasTrigger("TriggerName"));
-        modelBuilder.Entity<MeetLog>().ToTable(tb => tb.HasTrigger("TriggerName"));
-        modelBuilder.Entity<NotificationLogs>().ToTable(tb => tb.HasTrigger("TriggerName"));
-        modelBuilder.Entity<OverTimeLog>().ToTable(tb => tb.HasTrigger("TriggerName"));
-        modelBuilder.Entity<ReadLogs>().ToTable(tb => tb.HasTrigger("TriggerName"));
-        modelBuilder.Entity<VacationLog>().ToTable(tb => tb.HasTrigger("TriggerName"));
-
-
         modelBuilder.Entity<Admin>(entity =>
         {
             entity.Property(e => e.Account).IsRequired();
@@ -88,6 +76,8 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<AdminNotificationLogs>(entity =>
         {
+            entity.ToTable(tb => tb.HasTrigger("tr_dbo_AdminNotificationLogs_b43c69f4-73ee-4a02-a533-5e21735a8f06_Sender"));
+
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Creator)
                 .IsRequired()
@@ -98,10 +88,7 @@ public partial class HumanChrsContext : DbContext
             entity.Property(e => e.EventType)
                 .IsRequired()
                 .HasMaxLength(20);
-            //entity.Property(e => e.ReadAdminIds)
-            //    .IsConcurrencyToken(false);
         });
-
 
         modelBuilder.Entity<AdminNotificationReadLogs>(entity =>
         {
@@ -224,6 +211,8 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<NotificationLogs>(entity =>
         {
+            entity.ToTable(tb => tb.HasTrigger("tr_dbo_NotificationLogs_33271e8c-3ac6-4c41-9b83-8957dce7ed7a_Sender"));
+
             entity.Property(e => e.Avatar).IsRequired();
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Creator)
@@ -295,6 +284,11 @@ public partial class HumanChrsContext : DbContext
                 .IsRequired()
                 .HasMaxLength(8)
                 .HasDefaultValueSql("('??')");
+            entity.Property(e => e.Language)
+                .IsRequired()
+                .HasMaxLength(5)
+                .IsUnicode(false)
+                .HasDefaultValueSql("('TW')");
             entity.Property(e => e.LevelPosition).HasMaxLength(50);
             entity.Property(e => e.ResignationDate).HasColumnType("date");
             entity.Property(e => e.StaffAccount).IsRequired();

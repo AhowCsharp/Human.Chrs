@@ -44,7 +44,7 @@ namespace Human.Repository.SubscribeTableDependencies
                     var changedEntity = e.Entity;
                     var allAdmins = await adminRepository.GetAllAdminsAsync(changedEntity.CompanyId);
 
-                    var allMessage = (await adminNotificationLogsRepository.GetAdminCompanyNotificationLogsAsync(changedEntity.CompanyId)).ToList();
+                    var allMessage = (await adminNotificationLogsRepository.GetAdminCompanyNotificationLogsAsync(changedEntity.CompanyId)).ToList().OrderByDescending(x => x.CreateDate);
                     var messagesForAdmins = new Dictionary<string, string>();
                     foreach (var admin in allAdmins)
                     {

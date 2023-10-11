@@ -82,7 +82,6 @@ namespace Human.Chrs.Domain.Websocket
                     var readLogsRepository = scope.ServiceProvider.GetRequiredService<IReadLogsRepository>();
 
                     var staff = await staffRepository.GetAsync(staffId);
-                    var messageBefore = await notificationLogsRepository.GetAllNotificationLogsAsync(staff.CompanyId);
                     var messageAll = (await notificationLogsRepository.GetCompanyNotificationLogsAsync(staff.CompanyId)).ToList();
                     var messageDepartment = (await notificationLogsRepository.GetDepartmentNotificationLogsAsync(staff.CompanyId, staff.DepartmentId)).ToList();
                     var messagePersonal = await notificationLogsRepository.GetStaffNotificationLogsAsync(staff.CompanyId, staffId);
@@ -112,7 +111,7 @@ namespace Human.Chrs.Domain.Websocket
                         }
                     }
 
-                    var combinedMessages = messageAll.Concat(messageDepartment).Concat(messagePersonal).Concat(messageBefore).OrderBy(x => x.IsUnRead).ToList();
+                    var combinedMessages = messageAll.Concat(messageDepartment).Concat(messagePersonal).OrderByDescending(x => x.CreateDate).ToList();
                     var combinedMessageJson = JsonConvert.SerializeObject(combinedMessages);
                     var buffer = Encoding.UTF8.GetBytes(combinedMessageJson);
                     await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);

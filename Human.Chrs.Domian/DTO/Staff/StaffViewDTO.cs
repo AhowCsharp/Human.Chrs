@@ -44,5 +44,7 @@ namespace Human.Chrs.Domain.DTO
         public int CheckOutEndMinute { get; set; }
 
         public string AvatarUrl { get; set; }
+
+        public string Language { get; set; }
     }
 }

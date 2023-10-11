@@ -109,6 +109,8 @@ namespace Human.Chrs.Domain
                 result.AddError("未找到貴司登記的上班規定");
                 return result;
             }
+            var staff =  await _staffRepository.GetAsync(user.Id);
+            staffView.Language = staff.Language;
             staffView.IsOverLocation = (_checkInAndOutDomain.CheckDistanceAsync(rule, longitude, latitude)).Data;
             staffView.CheckInRange = rule.CheckInStartTime.ToString(@"hh\:mm") + "~" + rule.CheckInEndTime.ToString(@"hh\:mm");
             staffView.CheckOutRange = rule.CheckOutStartTime.ToString(@"hh\:mm") + "~" + rule.CheckOutEndTime.ToString(@"hh\:mm");

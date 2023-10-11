@@ -100,4 +100,6 @@ public partial class Staff
     public string AvatarUrl { get; set; }
 
     public int? ParttimeMoney { get; set; }
+
+    public string Language { get; set; }
 }

@@ -23,6 +23,10 @@ namespace Human.Chrs.Domain
         private readonly IVacationLogRepository _vacationLogRepository;
         private readonly IEventLogsRepository _eventLogsRepository;
         private readonly IPersonalDetailRepository _personalDetailRepository;
+        private readonly IReadLogsRepository _readLogsRepository;
+        private readonly IAdminReadLogsRepository _adminReadLogsRepository;
+        private readonly IAdminNotificationLogsRepository _adminNotificationLogsRepository;
+        private readonly INotificationLogsRepository _notificationLogsRepository;
         private readonly CheckInAndOutDomain _checkInAndOutDomain;
         private readonly UserService _userService;
         private readonly GeocodingService _geocodingService;
@@ -39,6 +43,10 @@ namespace Human.Chrs.Domain
             ICompanyRepository companyRepository,
             IVacationLogRepository vacationLogRepository,
             IOverTimeLogRepository overTimeLogRepository,
+            IAdminNotificationLogsRepository adminNotificationLogsRepository,
+            IAdminReadLogsRepository adminReadLogsRepository,
+            INotificationLogsRepository notificationLogsRepository,
+            IReadLogsRepository readLogsRepository,
             CheckInAndOutDomain checkInAndOutDomain,
             GeocodingService geocodingService,
             UserService userService)
@@ -55,6 +63,10 @@ namespace Human.Chrs.Domain
             _vacationLogRepository = vacationLogRepository;
             _checkRecordsRepository = checkRecordsRepository;
             _overTimeLogRepository = overTimeLogRepository;
+            _adminNotificationLogsRepository = adminNotificationLogsRepository;
+            _adminReadLogsRepository = adminReadLogsRepository;
+            _notificationLogsRepository = notificationLogsRepository;
+            _readLogsRepository = readLogsRepository;
             _checkInAndOutDomain = checkInAndOutDomain;
             _geocodingService = geocodingService;
             _userService = userService;
@@ -64,6 +76,11 @@ namespace Human.Chrs.Domain
         {
             bool isSuccessFul = await _staffRepository.UpdateWorkDaysAndFindStaffAsync();
             return isSuccessFul;
+        }
+
+        public async Task DeleteNotificationAsync()
+        {
+            await _notificationLogsRepository.DeletePersonalNotificationBeforeSevenDaysAsync();
         }
     }
 }

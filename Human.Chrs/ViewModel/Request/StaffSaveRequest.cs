@@ -90,5 +90,7 @@ namespace Human.Chrs.ViewModel.Request
         public string Gender { get; set; }
 
         public int? ParttimeMoney { get; set; }
+
+       public string Language { get; set; }
     }
 }
