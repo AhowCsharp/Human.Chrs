@@ -23,7 +23,5 @@ namespace Human.Chrs.Domain.IRepository.Base
         Task<TDTO> InsertAsync(TDTO dto);
 
         Task<IEnumerable<TDTO>> InsertRangeAsync(IEnumerable<TDTO> dtos);
-
-        Task<List<TDTO>> UpdateRangeAsync(List<TDTO> dtos);
     }
 }

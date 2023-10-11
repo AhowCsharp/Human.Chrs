@@ -13,6 +13,8 @@ namespace Human.Chrs.Domain.DTO
 
         public int StaffId { get; set; }
 
+        public string StaffName { get; set; }
+
         public int CompanyId { get; set; }
 
         public DateTime IssueDate { get; set; }

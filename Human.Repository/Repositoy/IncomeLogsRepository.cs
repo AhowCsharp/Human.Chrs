@@ -34,6 +34,15 @@ namespace LineTag.Infrastructure.Repositories
             return data.Select(_mapper.Map<IncomeLogsDTO>);
         }
 
+        public async Task<IEnumerable<IncomeLogsDTO>> GetCompanyIncomeLogsAsync(int companyId,DateTime start,DateTime end)
+        {
+            var data = await _context.IncomeLogs
+                .Where(x =>x.CompanyId == companyId && x.IssueDate >= start && x.IssueDate <= end)
+                .ToListAsync();
+
+            return data.Select(_mapper.Map<IncomeLogsDTO>);
+        }
+
         public async Task<bool> IsRepeatPayAsync(int staffId, int companyId, int salaryOfMonth)
         {
             var isRepeat = await _context.IncomeLogs.AnyAsync(x => x.StaffId == staffId && x.CompanyId == companyId && x.SalaryOfMonth == salaryOfMonth);

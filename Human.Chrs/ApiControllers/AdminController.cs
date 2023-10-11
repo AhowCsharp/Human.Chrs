@@ -997,6 +997,135 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 取得該月公司薪資發放狀況Excel
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("downloadsalaryexcel")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DownloadsSalaryExcel(int month)
+        {
+            try
+            {
+                var result = new CommonResult<FileContentResult>();
+                var user = _userService.GetCurrentUser();
+                var data = await _admindomain.GetSalaryExcelDatasAsync(month);
+
+                var workbook = new XSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet("Sheet1");
+                ICellStyle headerStyle = workbook.CreateCellStyle();
+                headerStyle.FillForegroundColor = NPOI.HSSF.Util.HSSFColor.White.Index;
+                headerStyle.FillPattern = FillPattern.SolidForeground;
+                headerStyle.BorderTop = BorderStyle.Thin;
+                headerStyle.BorderRight = BorderStyle.Thin;
+                headerStyle.BorderBottom = BorderStyle.Thin;
+                headerStyle.BorderLeft = BorderStyle.Thin;
+                headerStyle.TopBorderColor = NPOI.HSSF.Util.HSSFColor.Black.Index;
+                headerStyle.RightBorderColor = NPOI.HSSF.Util.HSSFColor.Black.Index;
+                headerStyle.BottomBorderColor = NPOI.HSSF.Util.HSSFColor.Black.Index;
+                headerStyle.LeftBorderColor = NPOI.HSSF.Util.HSSFColor.Black.Index;
+                IFont font = workbook.CreateFont();
+                font.IsBold = true;
+                font.Color = NPOI.HSSF.Util.HSSFColor.Blue.Index;
+                headerStyle.SetFont(font);
+
+
+                string[] headers = new string[]
+                {
+                    "員工名稱", "發放日期", "本薪", "全勤獎金", "業績獎金", "伙食津貼", "加班費", "薪資加項總額",
+                    "病假扣款", "事假扣款", "生理假扣款", "安胎假扣款", "生育假扣款", "育嬰假扣款", "遲到早退扣款",
+                    "打卡違規扣款", "所得稅代扣", "勞保", "健保", "勞退", "二代健保補充保費", "薪資扣項總額",
+                    "健保-雇主負擔", "勞保-雇主負擔", "勞退-雇主負擔", "墊償基金-雇主負擔", "雇主負擔總額", "員工實領金額"
+                };
+
+                IRow row = sheet.CreateRow(0);
+
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    ICell cell = row.CreateCell(i);
+                    cell.SetCellValue(headers[i]);
+                    cell.CellStyle = headerStyle;
+                }
+
+
+                for (int i = 0; i < data.Count(); i++)
+                {
+                    var datarow = sheet.CreateRow(i + 1);
+                    datarow.CreateCell(0).SetCellValue(data[i].StaffName);
+                    datarow.CreateCell(1).SetCellValue(data[i].IssueDate.ToString("yyyy-MM-dd"));
+                    datarow.CreateCell(2).SetCellValue(data[i].BasicSalary.ToString());
+                    datarow.CreateCell(3).SetCellValue(data[i].FullCheckInMoney.ToString());
+                    datarow.CreateCell(4).SetCellValue(data[i].Bonus.ToString());
+                    datarow.CreateCell(5).SetCellValue(data[i].FoodSuportMoney.ToString());
+                    datarow.CreateCell(6).SetCellValue(data[i].OverTimeAmount.ToString());
+                    datarow.CreateCell(7).SetCellValue(data[i].StaffIncomeAmount.ToString());
+                    datarow.CreateCell(8).SetCellValue(data[i].SickHours.ToString());
+                    datarow.CreateCell(9).SetCellValue(data[i].ThingHours.ToString());
+                    datarow.CreateCell(10).SetCellValue(data[i].MenstruationHours.ToString());
+                    datarow.CreateCell(11).SetCellValue(data[i].TocolysisHours.ToString());
+                    datarow.CreateCell(12).SetCellValue(data[i].ChildbirthHours.ToString());
+                    datarow.CreateCell(13).SetCellValue(data[i].TakeCareBabyHours.ToString());
+                    datarow.CreateCell(14).SetCellValue(data[i].EarlyOrLateAmount.ToString());
+                    datarow.CreateCell(15).SetCellValue(data[i].OutLocationAmount.ToString());
+                    datarow.CreateCell(16).SetCellValue(data[i].IncomeTax.ToString());
+                    datarow.CreateCell(17).SetCellValue(data[i].HealthInsurance.ToString());
+                    datarow.CreateCell(18).SetCellValue(data[i].WorkerInsurance.ToString());
+                    datarow.CreateCell(19).SetCellValue(data[i].EmployeeRetirement.ToString());
+                    datarow.CreateCell(20).SetCellValue(data[i].SupplementaryPremium.ToString());
+                    datarow.CreateCell(21).SetCellValue(data[i].StaffDeductionAmount.ToString());
+                    datarow.CreateCell(22).SetCellValue(data[i].HealthInsuranceFromCompany.ToString());
+                    datarow.CreateCell(23).SetCellValue(data[i].WorkerInsuranceFromCompany.ToString());
+                    datarow.CreateCell(24).SetCellValue(data[i].EmployeeRetirementFromCompany.ToString());
+                    datarow.CreateCell(25).SetCellValue(data[i].AdvanceFundFromCompany.ToString());
+                    datarow.CreateCell(26).SetCellValue(data[i].CompanyCostAmount.ToString());
+                    datarow.CreateCell(27).SetCellValue(data[i].StaffActualIncomeAmount.ToString());
+                }
+
+                int maxColumnWidth = -1;
+
+                // First, auto size all columns to get their ideal width
+                for (int i = 0; i < 400; i++)  // For 30 columns
+                {
+                    sheet.AutoSizeColumn(i);
+                    int width = sheet.GetColumnWidth(i);
+                    if (width > maxColumnWidth)
+                    {
+                        maxColumnWidth = width;
+                    }
+                }
+
+                // Now set all columns to the maximum width
+                for (int i = 0; i < 400; i++)  // For 30 columns
+                {
+                    sheet.SetColumnWidth(i, maxColumnWidth + 600);
+                }
+                var tempFileName = Path.GetTempFileName() + ".xlsx";
+                using (var fileStream = new FileStream(tempFileName, FileMode.Create, FileAccess.Write))
+                {
+                    workbook.Write(fileStream);
+                }
+
+                var content = System.IO.File.ReadAllBytes(tempFileName);
+                System.IO.File.Delete(tempFileName);  // 刪除臨時檔案
+
+                return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "本月公司發放薪資單.xlsx");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(DownloadsStaffCheckrecordExcel));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 審核員工請假
         /// </summary>
         /// <response code="200">OK</response>

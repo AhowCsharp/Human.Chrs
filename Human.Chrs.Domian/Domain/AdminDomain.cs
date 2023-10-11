@@ -1407,6 +1407,28 @@ namespace Human.Chrs.Domain
             return (records, staff);
         }
 
+        public async Task<List<IncomeLogsDTO>> GetSalaryExcelDatasAsync(int month)
+        {
+            // 1. Validation and User Verification
+            var user = _userService.GetCurrentUser();
+            // 2. Fetch Data
+            int year = DateTimeHelper.TaipeiNow.Year;
+            DateTime start = new DateTime(year, month, 1);
+            DateTime end = start.AddMonths(1).AddDays(-1);
+            var records = (await _incomeLogsRepository.GetCompanyIncomeLogsAsync(user.CompanyId,start,end)).ToList();
+            foreach (var record in records)
+            {
+                var staff = await _staffRepository.GetUsingStaffAsync(record.StaffId, user.CompanyId);
+                if (staff != null)
+                {
+                    record.StaffName = staff.StaffName;
+                }
+            }
+            
+
+            return records;
+        }
+
         public async Task<CommonResult<VacationLogDTO>> VerifyVacationsAsync(int vacationId, bool isPass)
         {
             var result = new CommonResult<VacationLogDTO>();
