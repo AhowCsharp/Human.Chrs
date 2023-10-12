@@ -20,6 +20,7 @@ using Human.Chrs.Domain.Websocket;
 using Human.Chrs.Infra.Middleware;
 using Human.Repository.SubscribeTableDependencies;
 using SignalR_SqlTableDependency.MiddlewareExtensions;
+using SendGrid;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +55,9 @@ IConfiguration configuration = builder.Configuration;
 
 builder.Services.Configure<ChrsConfig>(configuration.GetSection("HumanConfig"));
 var connectionString = configuration.GetConnectionString("SqlConnection");
+
+var sendGridClient = new SendGridClient(builder.Configuration["SendGridApiKey"]);
+builder.Services.AddSingleton(sendGridClient);
 
 builder.Services.AddSingleton<WebSocketHandler>();
 
@@ -142,6 +146,7 @@ builder.Services.AddScoped<INotificationLogsRepository, NotificationLogsReposito
 builder.Services.AddScoped<IReadLogsRepository, ReadLogsRepository>();
 builder.Services.AddScoped<IAdminNotificationLogsRepository, AdminNotificationLogsRepository>();
 builder.Services.AddScoped<IAdminReadLogsRepository, AdminReadLogsRepository>();
+builder.Services.AddScoped<IResetPasswordLogsRepository, ResetPasswordLogsRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 builder.Services.AddHttpClient();

@@ -17,5 +17,7 @@ namespace Human.Chrs.Domain.IRepository
         Task<IEnumerable<AdminDTO>> GetAllAdminsAsync(int companyId);
 
         Task<bool> VerifyWebSocketAdminTokenAsync(string token, int adminId);
+
+        Task<bool> VerifyAdminAccountAsync(string account);
     }
 }

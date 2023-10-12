@@ -565,7 +565,15 @@ namespace Human.Chrs.Domain
             if (isCreate)
             {
                 var exsitAccount = await _staffRepository.VerifyAccountAsync(newStaff.StaffAccount);
-                if (exsitAccount)
+                var exsitAdminAccount = await _adminRepository.VerifyAdminAccountAsync(newStaff.StaffAccount);
+                var exsitEmail = await _staffRepository.VerifyEmailAsync(newStaff.Email);
+                if (exsitEmail)
+                {
+                    result.AddError("信箱已註冊過");
+
+                    return result;
+                }
+                if (exsitAccount || exsitAdminAccount)
                 {
                     result.AddError("帳號重複");
 
@@ -583,6 +591,14 @@ namespace Human.Chrs.Domain
             else
             {
                 var oldData = await _staffRepository.GetAsync(newStaff.id);
+                var exsitEmail = await _staffRepository.VerifyEmailAsync(newStaff.Email, newStaff.id);
+                if (exsitEmail)
+                {
+                    result.AddError("信箱已註冊過");
+
+                    return result;
+                }
+
                 if (newStaff.StaffAccount == oldData.StaffAccount)
                 {
                     newStaff.WorkLocation = (await _companyRuleRepository.GetCompanyRuleAsync(newStaff.CompanyId, newStaff.DepartmentId)).WorkAddress;
@@ -595,7 +611,8 @@ namespace Human.Chrs.Domain
                 else
                 {
                     var exsitAccount = await _staffRepository.VerifyAccountAsync(newStaff.StaffAccount);
-                    if (exsitAccount)
+                    var exsitAdminAccount = await _adminRepository.VerifyAdminAccountAsync(newStaff.StaffAccount);
+                    if (exsitAccount || exsitAdminAccount)
                     {
                         result.AddError("帳號重複");
 

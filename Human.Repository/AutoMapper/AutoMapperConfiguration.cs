@@ -13,6 +13,7 @@ namespace Human.Repository.AutoMapper
         {
             CreateMap<AdminNotificationReadLogs, AdminReadLogsDTO>().ReverseMap();
             CreateMap<ReadLogs, ReadLogsDTO>().ReverseMap();
+            CreateMap<ResetPasswordLogs, ResetPasswordLogsDTO>().ReverseMap();
             CreateMap<AdminNotificationLogs, AdminNotificationLogsDTO>().ReverseMap();
             CreateMap<NotificationLogs, NotificationLogsDTO>().ReverseMap();
             CreateMap<Staff, StaffDTO>().ReverseMap();

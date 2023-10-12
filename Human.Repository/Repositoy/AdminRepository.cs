@@ -57,5 +57,12 @@ namespace LineTag.Infrastructure.Repositories
 
             return data;
         }
+
+        public async Task<bool> VerifyAdminAccountAsync(string account)
+        {
+            var data = await _context.Admin.AnyAsync(x => x.Account == account);
+
+            return data;
+        }
     }
 }

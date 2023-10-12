@@ -45,6 +45,8 @@ public partial class HumanChrsContext : DbContext
 
     public virtual DbSet<ReadLogs> ReadLogs { get; set; }
 
+    public virtual DbSet<ResetPasswordLogs> ResetPasswordLogs { get; set; }
+
     public virtual DbSet<SalarySetting> SalarySetting { get; set; }
 
     public virtual DbSet<Staff> Staff { get; set; }
@@ -257,6 +259,11 @@ public partial class HumanChrsContext : DbContext
         modelBuilder.Entity<ReadLogs>(entity =>
         {
             entity.Property(e => e.ReadDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<ResetPasswordLogs>(entity =>
+        {
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<SalarySetting>(entity =>

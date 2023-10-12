@@ -80,6 +80,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[ResetPasswordLogs]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[SalarySetting]",
          "ObjectType": 0
       },

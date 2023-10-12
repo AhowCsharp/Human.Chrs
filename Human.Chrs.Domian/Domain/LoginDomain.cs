@@ -13,6 +13,7 @@ namespace Human.Chrs.Domain
         private readonly IAdminRepository _adminRepository;
         private readonly ICompanyRepository _companyRepository;
         private readonly IStaffRepository _staffRepository;
+        private readonly IResetPasswordLogsRepository _resetPasswordLogsRepository;
         private readonly UserService _userService;
 
         public LoginDomain(
@@ -20,12 +21,14 @@ namespace Human.Chrs.Domain
             IAdminRepository adminRepository,
             IStaffRepository staffRepository,
             ICompanyRepository companyRepository,
+            IResetPasswordLogsRepository resetPasswordLogsRepository,
             UserService userService)
         {
             _logger = logger;
             _adminRepository = adminRepository;
             _staffRepository = staffRepository;
             _companyRepository = companyRepository;
+            _resetPasswordLogsRepository = resetPasswordLogsRepository;
             _userService = userService;
         }
 
@@ -154,6 +157,48 @@ namespace Human.Chrs.Domain
             loginUserInfo.UserId = user_datas[0];
             result.Data = loginUserInfo;
 
+            return result;
+        }
+
+        public async Task<CommonResult<(string Email, string Name)>> GetForgetPasswordStaffAsync(string account, string email)
+        {
+            var result = new CommonResult<(string Email, string Name)>();
+            var staffInfo = await _staffRepository.GetForgetPasswordStaffAsync(account, email);
+            if (staffInfo == null)
+            {
+                result.AddError("驗證錯誤 找不到該註冊信箱");
+                return result;
+            }
+            var reseted = await _resetPasswordLogsRepository.GetResetLog(staffInfo.id, staffInfo.CompanyId);
+            if (reseted)
+            {
+                result.AddError("請隔五分鐘之後再嘗試");
+                return result;
+            }
+            result.Data = (staffInfo.Email, staffInfo.StaffName);
+
+            return result;
+        }
+
+        public async Task<CommonResult> GetResetStaffPasswordAsync(string account, string email, string password)
+        {
+            var result = new CommonResult();
+            var staff = await _staffRepository.GetForgetPasswordStaffAsync(account, email);
+            if (staff == null)
+            {
+                result.AddError("驗證錯誤 找不到該註冊信箱");
+                return result;
+            }
+            var log = new ResetPasswordLogsDTO
+            {
+                StaffId = staff.id,
+                CompanyId = staff.CompanyId,
+                CreateDate = DateTimeHelper.TaipeiNow,
+            };
+
+            await _resetPasswordLogsRepository.InsertAsync(log);
+            staff.StaffPassWord = password;
+            await _staffRepository.UpdateAsync(staff);
             return result;
         }
     }

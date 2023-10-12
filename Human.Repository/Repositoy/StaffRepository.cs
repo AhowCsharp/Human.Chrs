@@ -37,6 +37,20 @@ namespace LineTag.Infrastructure.Repositories
             return data;
         }
 
+        public async Task<bool> VerifyEmailAsync(string email)
+        {
+            var data = await _context.Staff.AnyAsync(x => x.Email == email);
+
+            return data;
+        }
+
+        public async Task<bool> VerifyEmailAsync(string email, int staffId)
+        {
+            var data = await _context.Staff.AnyAsync(x => x.Email == email && x.Id != staffId);
+
+            return data;
+        }
+
         public async Task<bool> VerifyExistStaffAsync(int staffId, int companyId)
         {
             var data = await _context.Staff.AnyAsync(x => x.Id == staffId && x.CompanyId == companyId && x.Status == 1);
@@ -58,7 +72,14 @@ namespace LineTag.Infrastructure.Repositories
             return data.Select(_mapper.Map<StaffDTO>);
         }
 
-        public async Task<IEnumerable<StaffDTO>> GetDepartmentStaffAsync(int companyId,int departrmentId)
+        public async Task<StaffDTO> GetForgetPasswordStaffAsync(string account, string email)
+        {
+            var data = await _context.Staff.FirstOrDefaultAsync(x => x.StaffAccount == account && x.Email == email);
+
+            return _mapper.Map<StaffDTO>(data);
+        }
+
+        public async Task<IEnumerable<StaffDTO>> GetDepartmentStaffAsync(int companyId, int departrmentId)
         {
             var data = await _context.Staff.Where(x => x.CompanyId == companyId && x.DepartmentId == departrmentId).ToListAsync();
 
