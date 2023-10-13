@@ -22,9 +22,16 @@ namespace LineTag.Infrastructure.Repositories
         public CompanyRepository(IMapper mapper, HumanChrsContext context) : base(mapper, context)
         {
         }
+
         public async Task<bool> IsAvailableCompanyAsync(int companyId)
         {
             return await _context.Company.AnyAsync(x => x.Id == companyId);
+        }
+
+        public async Task<IEnumerable<CompanyDTO>> AllCompanyAsync()
+        {
+            var data = await _context.Company.ToListAsync();
+            return data.Select(_mapper.Map<CompanyDTO>);
         }
     }
 }

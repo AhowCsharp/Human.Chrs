@@ -37,6 +37,13 @@ namespace LineTag.Infrastructure.Repositories
             return data.Select(_mapper.Map<AdminDTO>);
         }
 
+        public async Task<int> GetAllAdminsCountAsync(int companyId)
+        {
+            var data = await _context.Admin.Where(x => x.CompanyId == companyId).CountAsync();
+
+            return data;
+        }
+
         public async Task<AdminDTO> VerifyLoginAdminAsync(string account, string password)
         {
             var data = await _context.Admin.SingleOrDefaultAsync(x => x.Account == account && x.Password == password && x.Status != null && x.Status.Value);
@@ -63,6 +70,20 @@ namespace LineTag.Infrastructure.Repositories
             var data = await _context.Admin.AnyAsync(x => x.Account == account);
 
             return data;
+        }
+
+        public async Task<bool> VerifyAdminAccountAsync(string account, int adminId)
+        {
+            if (adminId == 0)
+            {
+                var data = await _context.Admin.AnyAsync(x => x.Account == account);
+                return data;
+            }
+            else
+            {
+                var data = await _context.Admin.AnyAsync(x => x.Account == account && x.Id != adminId);
+                return data;
+            }
         }
     }
 }

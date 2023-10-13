@@ -30,5 +30,7 @@ namespace Human.Chrs.Domain.IRepository
         Task<bool> VerifyEmailAsync(string email, int staffId);
 
         Task<StaffDTO> GetForgetPasswordStaffAsync(string account, string email);
+
+        Task<int> StaffCountAsync(int companyId);
     }
 }

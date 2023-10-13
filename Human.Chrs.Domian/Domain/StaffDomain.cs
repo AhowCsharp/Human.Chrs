@@ -4,7 +4,6 @@ using Human.Chrs.Domain.IRepository;
 using Human.Chrs.Domain.Services;
 using Human.Chrs.Domain.Helper;
 using Human.Chrs.Domain.CommonModels;
-using Human.Chrs.Enum;
 using System;
 using System.ComponentModel.Design;
 using Microsoft.AspNetCore.Http;
@@ -109,7 +108,7 @@ namespace Human.Chrs.Domain
                 result.AddError("未找到貴司登記的上班規定");
                 return result;
             }
-            var staff =  await _staffRepository.GetAsync(user.Id);
+            var staff = await _staffRepository.GetAsync(user.Id);
             staffView.Language = staff.Language;
             staffView.IsOverLocation = (_checkInAndOutDomain.CheckDistanceAsync(rule, longitude, latitude)).Data;
             staffView.CheckInRange = rule.CheckInStartTime.ToString(@"hh\:mm") + "~" + rule.CheckInEndTime.ToString(@"hh\:mm");
@@ -418,6 +417,37 @@ namespace Human.Chrs.Domain
             var events = (await EventsGetAsync()).Data;
             result.Data = events;
 
+            return result;
+        }
+
+        public async Task<CommonResult> ResetPwAsync(string pw, string newPw)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
+            if (!exist)
+            {
+                result.AddError("沒找到對應的員工");
+                return result;
+            }
+            var company = await _companyRepository.GetAsync(user.CompanyId);
+            if (company == null)
+            {
+                result.AddError("沒找到對應的公司");
+                return result;
+            }
+
+            var staff = await _staffRepository.GetAsync(user.Id);
+            if (staff.StaffPassWord == pw)
+            {
+                staff.StaffPassWord = newPw;
+                await _staffRepository.UpdateAsync(staff);
+            }
+            else
+            {
+                result.AddError("原先密碼錯誤");
+                return result;
+            }
             return result;
         }
 

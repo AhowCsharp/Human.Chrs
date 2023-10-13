@@ -116,7 +116,7 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuth]
         [ApUserAuth]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> SwitchReadStatus(int notificationId) 
+        public async Task<IActionResult> SwitchReadStatus(int notificationId)
         {
             try
             {
@@ -286,6 +286,44 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(ApplyVacation));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 修改密碼
+        /// </summary>
+        /// <param name="vacationRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("resetpw")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ResetPassword(PwRequest request)
+        {
+            try
+            {
+                var result = await _staffdomain.ResetPwAsync(request.Password, request.NewPassword);
+
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(ResetPassword));
 
                 return ServerError500();
             }

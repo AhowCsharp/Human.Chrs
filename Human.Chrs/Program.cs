@@ -60,7 +60,6 @@ var sendGridClient = new SendGridClient(builder.Configuration["SendGridApiKey"])
 builder.Services.AddSingleton(sendGridClient);
 
 builder.Services.AddSingleton<WebSocketHandler>();
-
 //builder.Services.AddSingleton<SqlNotificationService>(sp =>
 //{
 //    var webSocketHandler = sp.GetRequiredService<WebSocketHandler>();
@@ -125,6 +124,7 @@ builder.Services.AddScoped<AdminDomain>();
 builder.Services.AddScoped<CheckInAndOutDomain>();
 builder.Services.AddScoped<StaffDomain>();
 builder.Services.AddScoped<LoginDomain>();
+builder.Services.AddScoped<SuperDomain>();
 builder.Services.AddScoped<ScheduleDomain>();
 
 builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
@@ -147,6 +147,7 @@ builder.Services.AddScoped<IReadLogsRepository, ReadLogsRepository>();
 builder.Services.AddScoped<IAdminNotificationLogsRepository, AdminNotificationLogsRepository>();
 builder.Services.AddScoped<IAdminReadLogsRepository, AdminReadLogsRepository>();
 builder.Services.AddScoped<IResetPasswordLogsRepository, ResetPasswordLogsRepository>();
+builder.Services.AddScoped<IContractTypeRepository, ContractTypeRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 builder.Services.AddHttpClient();

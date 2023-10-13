@@ -4,7 +4,6 @@ using Human.Chrs.Domain.IRepository;
 using Human.Chrs.Domain.Services;
 using Human.Chrs.Domain.Helper;
 using Human.Chrs.Domain.CommonModels;
-using Human.Chrs.Enum;
 using System;
 using System.ComponentModel.Design;
 

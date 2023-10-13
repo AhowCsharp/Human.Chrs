@@ -49,7 +49,6 @@ namespace LineTag.Admin.ApiControllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateOrEditStaff(StaffSaveRequest newStaffSaveRequest)
         {
-            //CompanyId StaffAccount StaffPassWord Department EntryDate LevelPosition WorkPosition Email StaffPhoneNumber Auth DepartmentId
             try
             {
                 var result = await _admindomain.CreateOrEditStaffAsync(newStaffSaveRequest.ToDTO());
@@ -1036,7 +1035,6 @@ namespace LineTag.Admin.ApiControllers
                 font.Color = NPOI.HSSF.Util.HSSFColor.Blue.Index;
                 headerStyle.SetFont(font);
 
-
                 string[] headers = new string[]
                 {
                     "員工名稱", "發放日期", "本薪", "全勤獎金", "業績獎金", "伙食津貼", "加班費", "薪資加項總額",
@@ -1053,7 +1051,6 @@ namespace LineTag.Admin.ApiControllers
                     cell.SetCellValue(headers[i]);
                     cell.CellStyle = headerStyle;
                 }
-
 
                 for (int i = 0; i < data.Count(); i++)
                 {

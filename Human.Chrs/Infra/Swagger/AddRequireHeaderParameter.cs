@@ -74,6 +74,23 @@ namespace Human.Chrs.Infra.Swagger
                     Required = false
                 });
             }
+
+            if (context.ApiDescription.CustomAttributes().Any(x => x.GetType() == typeof(SuperTokenAuthAttribute)))
+            {
+                operation.Parameters.Add(new OpenApiParameter
+                {
+#if DEBUG
+                    //Example = new Microsoft.OpenApi.Any.OpenApiString("U234a729732732d29f0b1ff1dd9ab4baa,AN34pC0dnUUujrtOLziJrqq8USq6k3/fwEqppe5BajwOFMCrQYHTuHUFbAb/I6/x0A=="), // Loki Tao (working)
+                    // Example = new Microsoft.OpenApi.Any.OpenApiString("1,AOzIDKKxvfFR0U4c3TCM0I8hSQFfUedykUFrwRpSKB5OXdM5UhYCqDF8zx1Zl5CjOVyhelXFcKoklf3rVyjN+coil22SgF5YYSwATAiKN5gH"), // 這是員工
+                    Example = new Microsoft.OpenApi.Any.OpenApiString("ANJUuRR6lb3rCr9vNfTI8fEZdCvr87bhXRZRR6W62ZwPmWffGEr6LYR9anTaZcODnpCKsbtxXAVj79Xz8bFl8ZT7m9ftMV/zp+KtR0F+KU6Q"), // 這是管理者
+
+#endif
+                    Name = "X-Ap-SuperToken",
+                    Description = "SuperToken",
+                    In = ParameterLocation.Header,
+                    Required = false
+                });
+            }
         }
     }
 }

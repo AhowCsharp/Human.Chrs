@@ -8,5 +8,7 @@ namespace Human.Chrs.Domain.IRepository
     public interface ICompanyRepository : IRepository<CompanyDTO, int>
     {
         Task<bool> IsAvailableCompanyAsync(int companyId);
+
+        Task<IEnumerable<CompanyDTO>> AllCompanyAsync();
     }
 }

@@ -30,4 +30,8 @@ public partial class Admin
     public string AvatarUrl { get; set; }
 
     public bool? Status { get; set; }
+
+    public string SuperToken { get; set; }
+
+    public bool IsSuperAdmin { get; set; }
 }

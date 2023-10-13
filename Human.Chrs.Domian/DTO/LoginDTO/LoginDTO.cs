@@ -24,5 +24,9 @@ namespace Human.Chrs.Domain.DTO
         public string? AdminToken { get; set; }
 
         public string AvatarUrl { get; set; }
+
+        public string SuperToken { get; set; }
+
+        public bool IsSuper { get; set; } = false;
     }
 }

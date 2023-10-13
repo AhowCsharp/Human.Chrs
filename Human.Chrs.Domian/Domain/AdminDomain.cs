@@ -47,6 +47,7 @@ namespace Human.Chrs.Domain
         private readonly UserService _userService;
         private readonly GeocodingService _geocodingService;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IContractTypeRepository _contractTypeRepository;
 
         public AdminDomain(
             ILogger<AdminDomain> logger,
@@ -68,7 +69,8 @@ namespace Human.Chrs.Domain
             IMeetLogRepository meetLogRepository,
             UserService userService,
             GeocodingService geocodingService,
-             IWebHostEnvironment hostEnvironment)
+            IWebHostEnvironment hostEnvironment,
+            IContractTypeRepository contractTypeRepository)
         {
             _logger = logger;
             _adminRepository = adminRepository;
@@ -91,6 +93,7 @@ namespace Human.Chrs.Domain
             _userService = userService;
             _geocodingService = geocodingService;
             _hostEnvironment = hostEnvironment;
+            _contractTypeRepository = contractTypeRepository;
         }
 
         public async Task<CommonResult> SwitchReadStatusAsync(int notificationId)
@@ -546,7 +549,6 @@ namespace Human.Chrs.Domain
                 result.AddError(ex.Message);
                 return result;
             }
-            return result;
         }
 
         public async Task<CommonResult<IEnumerable<StaffDTO>>> CreateOrEditStaffAsync(StaffDTO newStaff)
@@ -564,16 +566,25 @@ namespace Human.Chrs.Domain
 
             if (isCreate)
             {
-                var exsitAccount = await _staffRepository.VerifyAccountAsync(newStaff.StaffAccount);
-                var exsitAdminAccount = await _adminRepository.VerifyAdminAccountAsync(newStaff.StaffAccount);
-                var exsitEmail = await _staffRepository.VerifyEmailAsync(newStaff.Email);
-                if (exsitEmail)
+                var staffCount = await _staffRepository.StaffCountAsync(user.CompanyId);
+                var company = await _companyRepository.GetAsync(user.CompanyId);
+                var contract = await _contractTypeRepository.GetContractTypeAsync(company.ContractType.Value);
+                if ((staffCount + 1) > contract.StaffLimit)
+                {
+                    result.AddError("超出合約員工人數限制");
+
+                    return result;
+                }
+                var existAccount = await _staffRepository.VerifyAccountAsync(newStaff.StaffAccount);
+                var existAdminAccount = await _adminRepository.VerifyAdminAccountAsync(newStaff.StaffAccount);
+                var existEmail = await _staffRepository.VerifyEmailAsync(newStaff.Email);
+                if (existEmail)
                 {
                     result.AddError("信箱已註冊過");
 
                     return result;
                 }
-                if (exsitAccount || exsitAdminAccount)
+                if (existAccount || existAdminAccount)
                 {
                     result.AddError("帳號重複");
 
@@ -591,8 +602,8 @@ namespace Human.Chrs.Domain
             else
             {
                 var oldData = await _staffRepository.GetAsync(newStaff.id);
-                var exsitEmail = await _staffRepository.VerifyEmailAsync(newStaff.Email, newStaff.id);
-                if (exsitEmail)
+                var existEmail = await _staffRepository.VerifyEmailAsync(newStaff.Email, newStaff.id);
+                if (existEmail)
                 {
                     result.AddError("信箱已註冊過");
 
@@ -610,9 +621,9 @@ namespace Human.Chrs.Domain
                 }
                 else
                 {
-                    var exsitAccount = await _staffRepository.VerifyAccountAsync(newStaff.StaffAccount);
-                    var exsitAdminAccount = await _adminRepository.VerifyAdminAccountAsync(newStaff.StaffAccount);
-                    if (exsitAccount || exsitAdminAccount)
+                    var existAccount = await _staffRepository.VerifyAccountAsync(newStaff.StaffAccount);
+                    var existAdminAccount = await _adminRepository.VerifyAdminAccountAsync(newStaff.StaffAccount);
+                    if (existAccount || existAdminAccount)
                     {
                         result.AddError("帳號重複");
 
@@ -1278,12 +1289,34 @@ namespace Human.Chrs.Domain
 
             if (adminDTO.id == 0)
             {
+                var adminCount = await _adminRepository.GetAllAdminsCountAsync(user.CompanyId);
+                var company = await _companyRepository.GetAsync(user.CompanyId);
+                var contract = await _contractTypeRepository.GetContractTypeAsync(company.ContractType.Value);
+                if ((adminCount + 1) > contract.AdminLimit)
+                {
+                    result.AddError("超出合約管理人數限制");
+
+                    return result;
+                }
+                var isExist = await _adminRepository.VerifyAdminAccountAsync(adminDTO.Account, adminDTO.id);
+                if (isExist)
+                {
+                    result.AddError("該帳號已註冊過 請換帳號");
+                    return result;
+                }
+
                 await _adminRepository.InsertAsync(adminDTO);
                 var admins = await GetAllAdminsAsync();
                 result.Data = admins.Data.ToList();
             }
             else
             {
+                var isExist = await _adminRepository.VerifyAdminAccountAsync(adminDTO.Account, adminDTO.id);
+                if (isExist)
+                {
+                    result.AddError("該帳號已註冊過 請換帳號");
+                    return result;
+                }
                 if (user.Id != adminDTO.id)
                 {
                     var editAdmin = await _adminRepository.GetAsync(adminDTO.id);
@@ -1432,7 +1465,7 @@ namespace Human.Chrs.Domain
             int year = DateTimeHelper.TaipeiNow.Year;
             DateTime start = new DateTime(year, month, 1);
             DateTime end = start.AddMonths(1).AddDays(-1);
-            var records = (await _incomeLogsRepository.GetCompanyIncomeLogsAsync(user.CompanyId,start,end)).ToList();
+            var records = (await _incomeLogsRepository.GetCompanyIncomeLogsAsync(user.CompanyId, start, end)).ToList();
             foreach (var record in records)
             {
                 var staff = await _staffRepository.GetUsingStaffAsync(record.StaffId, user.CompanyId);
@@ -1441,7 +1474,6 @@ namespace Human.Chrs.Domain
                     record.StaffName = staff.StaffName;
                 }
             }
-            
 
             return records;
         }

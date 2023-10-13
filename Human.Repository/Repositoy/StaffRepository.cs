@@ -37,6 +37,13 @@ namespace LineTag.Infrastructure.Repositories
             return data;
         }
 
+        public async Task<int> StaffCountAsync(int companyId)
+        {
+            var data = await _context.Staff.Where(x => x.CompanyId == companyId).CountAsync();
+
+            return data;
+        }
+
         public async Task<bool> VerifyEmailAsync(string email)
         {
             var data = await _context.Staff.AnyAsync(x => x.Email == email);

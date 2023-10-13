@@ -4,6 +4,7 @@ using Human.Chrs.Domain.IRepository;
 using Human.Chrs.Domain.Services;
 using Human.Chrs.Domain.Helper;
 using Human.Chrs.Domain.CommonModels;
+using Microsoft.Extensions.Configuration;
 
 namespace Human.Chrs.Domain
 {
@@ -15,6 +16,7 @@ namespace Human.Chrs.Domain
         private readonly IStaffRepository _staffRepository;
         private readonly IResetPasswordLogsRepository _resetPasswordLogsRepository;
         private readonly UserService _userService;
+        private readonly IConfiguration _configuration;
 
         public LoginDomain(
             ILogger<LoginDomain> logger,
@@ -22,6 +24,7 @@ namespace Human.Chrs.Domain
             IStaffRepository staffRepository,
             ICompanyRepository companyRepository,
             IResetPasswordLogsRepository resetPasswordLogsRepository,
+            IConfiguration configuration,
             UserService userService)
         {
             _logger = logger;
@@ -30,6 +33,7 @@ namespace Human.Chrs.Domain
             _companyRepository = companyRepository;
             _resetPasswordLogsRepository = resetPasswordLogsRepository;
             _userService = userService;
+            _configuration = configuration;
         }
 
         public async Task<CommonResult<LoginDTO>> LoginVerifyAsync(string account, string password)
@@ -56,6 +60,11 @@ namespace Human.Chrs.Domain
                 loginUserInfo.AdminToken = adminUser.AdminToken;
                 loginUserInfo.DepartmentId = adminUser.DepartmentId;
                 loginUserInfo.AvatarUrl = adminUser.AvatarUrl;
+                if (adminUser.SuperToken == _configuration["SuperToken"] && adminUser.IsSuperAdmin)
+                {
+                    loginUserInfo.SuperToken = CryptHelper.SaltHashPlus(_configuration["SuperToken"]);
+                    loginUserInfo.IsSuper = true;
+                }
                 companyId = adminUser.CompanyId;
             }
             else if (staff != null)

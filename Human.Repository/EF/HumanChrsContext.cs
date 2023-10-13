@@ -29,6 +29,8 @@ public partial class HumanChrsContext : DbContext
 
     public virtual DbSet<CompanyRule> CompanyRule { get; set; }
 
+    public virtual DbSet<ContractTypeList> ContractTypeList { get; set; }
+
     public virtual DbSet<Department> Department { get; set; }
 
     public virtual DbSet<EventLogs> EventLogs { get; set; }
@@ -78,7 +80,11 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<AdminNotificationLogs>(entity =>
         {
-            entity.ToTable(tb => tb.HasTrigger("tr_dbo_AdminNotificationLogs_b43c69f4-73ee-4a02-a533-5e21735a8f06_Sender"));
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("tr_dbo_AdminNotificationLogs_569ee9d9-3792-4186-91f4-c8241540c77a_Sender");
+                    tb.HasTrigger("tr_dbo_AdminNotificationLogs_ca2f90bd-49ad-4fba-9193-ed64027d7039_Sender");
+                });
 
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Creator)
@@ -170,6 +176,11 @@ public partial class HumanChrsContext : DbContext
             entity.Property(e => e.ParttimeDate).HasColumnType("date");
         });
 
+        modelBuilder.Entity<ContractTypeList>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_ContractType");
+        });
+
         modelBuilder.Entity<Department>(entity =>
         {
             entity.Property(e => e.DepartmentName)
@@ -213,7 +224,11 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<NotificationLogs>(entity =>
         {
-            entity.ToTable(tb => tb.HasTrigger("tr_dbo_NotificationLogs_33271e8c-3ac6-4c41-9b83-8957dce7ed7a_Sender"));
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("tr_dbo_NotificationLogs_14a2ed65-9335-4fd6-8055-4d5be32c9d34_Sender");
+                    tb.HasTrigger("tr_dbo_NotificationLogs_eee2fb4b-cdc7-448e-a687-0f2a60cadc9a_Sender");
+                });
 
             entity.Property(e => e.Avatar).IsRequired();
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
