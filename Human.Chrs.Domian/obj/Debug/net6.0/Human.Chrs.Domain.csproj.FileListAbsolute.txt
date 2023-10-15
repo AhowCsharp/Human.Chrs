@@ -10,14 +10,14 @@ D:\GitLab\Human.Chrs\Human.Chrs.Domian\obj\Debug\net6.0\Human.Chrs.Domain.dll
 D:\GitLab\Human.Chrs\Human.Chrs.Domian\obj\Debug\net6.0\refint\Human.Chrs.Domain.dll
 D:\GitLab\Human.Chrs\Human.Chrs.Domian\obj\Debug\net6.0\Human.Chrs.Domain.pdb
 D:\GitLab\Human.Chrs\Human.Chrs.Domian\obj\Debug\net6.0\ref\Human.Chrs.Domain.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\bin\Debug\net6.0\Human.Chrs.Domain.deps.json
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\bin\Debug\net6.0\Human.Chrs.Domain.dll
+C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\bin\Debug\net6.0\Human.Chrs.Domain.pdb
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\obj\Debug\net6.0\Human.Chrs.Domain.csproj.AssemblyReference.cache
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\obj\Debug\net6.0\Human.Chrs.Domain.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\obj\Debug\net6.0\Human.Chrs.Domain.AssemblyInfoInputs.cache
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\obj\Debug\net6.0\Human.Chrs.Domain.AssemblyInfo.cs
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\obj\Debug\net6.0\Human.Chrs.Domain.csproj.CoreCompileInputs.cache
-C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\bin\Debug\net6.0\Human.Chrs.Domain.deps.json
-C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\bin\Debug\net6.0\Human.Chrs.Domain.dll
-C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\bin\Debug\net6.0\Human.Chrs.Domain.pdb
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\obj\Debug\net6.0\Human.Chrs.Domain.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\obj\Debug\net6.0\refint\Human.Chrs.Domain.dll
 C:\Users\MSI MAG\Desktop\DoRay專案列表\Human.Chrs\Human.Chrs.Domian\obj\Debug\net6.0\Human.Chrs.Domain.pdb

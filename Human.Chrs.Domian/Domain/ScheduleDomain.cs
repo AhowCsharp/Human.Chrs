@@ -71,10 +71,9 @@ namespace Human.Chrs.Domain
             _userService = userService;
         }
 
-        public async Task<bool> UpdateStaffInfoAsync()
+        public async Task UpdateStaffInfoAsync()
         {
-            bool isSuccessFul = await _staffRepository.UpdateWorkDaysAndFindStaffAsync();
-            return isSuccessFul;
+            await _staffRepository.UpdateWorkDaysAndFindStaffAsync();
         }
 
         public async Task DeleteNotificationAsync()

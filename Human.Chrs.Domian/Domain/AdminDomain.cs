@@ -1738,6 +1738,14 @@ namespace Human.Chrs.Domain
                 result.AddError("操作者沒有權杖");
                 return result;
             }
+            var staff = await _staffRepository.GetUsingStaffAsync(staffId, user.CompanyId);
+            if (staff.CompanyId != user.CompanyId)
+            { 
+                                result.AddError("操作者沒有權杖");
+                return result;
+            }
+
+
             var salaryView = new SalaryViewDTO();
 
             DateTime today = DateTimeHelper.TaipeiNow;
@@ -1754,7 +1762,7 @@ namespace Human.Chrs.Domain
             }
 
             var setting = await _salarySettingRepository.GetSalarySettingAsync(staffId, user.CompanyId);
-            var staff = await _staffRepository.GetUsingStaffAsync(staffId, user.CompanyId);
+            
             setting.StaffName = staff.StaffName;
             setting.StaffNo = staff.StaffNo;
             salaryView.SalarySetting = setting;
@@ -1850,35 +1858,51 @@ namespace Human.Chrs.Domain
             salaryView.PrenatalCheckUpHours = (int)(total11Hours % 8);
             salaryView.TotalPrenatalCheckUpHours = (int)total11Hours;
 
-            var tempValue = (salaryView.SalarySetting.BasicSalary + salaryView.SalarySetting.FullCheckInMoney) / 30.0 / 8.0 * 10;
-            var roundedValue = Math.Round(tempValue);
-            var perHourSalary = Convert.ToInt32(roundedValue / 10);
+            // 首先，将int值转换为decimal，确保计算过程中的精度
+            decimal basicSalary = salaryView.SalarySetting.BasicSalary;
+            decimal fullCheckInMoney = salaryView.SalarySetting.FullCheckInMoney;
+
+            // 执行计算。由于我们已经使用了decimal类型，除法和乘法都将保持精度。
+            decimal tempValue = (basicSalary + fullCheckInMoney ) / 30.0m / 8.0m;
+
+            // 这里，我们可以根据需要进行四舍五入。假设我们想要保留两位小数。
+            decimal roundedValue = Math.Round(tempValue, 3); // 如果你希望结果更接近实际数值，可以增加小数位数
+
+            // 如果你需要将结果作为整数返回，可以进行转换。但是请注意，这可能会导致一些精度损失。
+            decimal perHourSalary = roundedValue;
 
             salaryView.TotalSalaryNoOvertime = salaryView.SalarySetting.BasicSalary + salaryView.SalarySetting.FullCheckInMoney - salaryView.TotalSickHours * perHourSalary / 2 -
                                                salaryView.TotalThingHours * perHourSalary - salaryView.TotalMenstruationHours * perHourSalary / 2;
             salaryView.PerHourSalary = perHourSalary;
 
-            int overtimemoney = 0;
+            decimal overtimemoney = 0;
             var overtimesList = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAfterValidateAsync(staff.id, user.CompanyId, start, end)).ToList();
             foreach (var log in overtimesList)
             {
-                var overFirstStepMoney = 0;
-                var overSecStepStepMoney = 0;
+                decimal overFirstStepMoney = 0;
+                decimal overSecStepStepMoney = 0;
                 if (log.OverHours <= 2)
                 {
-                    overFirstStepMoney = (int)Math.Round(log.OverHours * perHourSalary * 1.33);
+                    decimal overHoursDecimal = Convert.ToDecimal(log.OverHours);
+
+                    // 确保常数也是 decimal 类型
+                    decimal multiplier = 1.33m;
+
+                    // 现在，所有的值都是 decimal 类型，你可以进行计算
+                    overFirstStepMoney = overHoursDecimal * perHourSalary * multiplier;
                     overtimemoney += overFirstStepMoney;
                 }
                 else if (log.OverHours > 2)
                 {
-                    overFirstStepMoney = (int)Math.Round(2 * perHourSalary * 1.33);
+                    overFirstStepMoney = 2 * perHourSalary * 1.33m;
                     overtimemoney += overFirstStepMoney;
-                    overSecStepStepMoney = (int)Math.Round((log.OverHours - 2) * perHourSalary * 1.66);
+                    overSecStepStepMoney = (log.OverHours - 2) * perHourSalary * 1.66m;
                     overtimemoney += overSecStepStepMoney;
                 }
             }
             salaryView.OverTimeHours = overtimesList.Sum(x => x.OverHours);
-            salaryView.OverTimeMoney = overtimemoney;
+            decimal roundedOvertimeMoney = Math.Round(overtimemoney, MidpointRounding.AwayFromZero);
+            salaryView.OverTimeMoney = Convert.ToInt32(roundedOvertimeMoney);
             salaryView.FoodSuportMoney = setting.FoodSuportMoney.HasValue ? setting.FoodSuportMoney.Value : 0;
             result.Data = salaryView;
             return result;

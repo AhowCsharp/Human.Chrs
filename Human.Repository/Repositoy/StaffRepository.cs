@@ -100,7 +100,7 @@ namespace LineTag.Infrastructure.Repositories
             return data.Select(_mapper.Map<StaffDTO>);
         }
 
-        public async Task<bool> UpdateWorkDaysAndFindStaffAsync()
+        public async Task UpdateWorkDaysAndFindStaffAsync()
         {
             var log = new UpdateStaffInfoLogs();
             try
@@ -168,7 +168,6 @@ namespace LineTag.Infrastructure.Repositories
                 log.ErrorMessage = string.Empty;
                 await _context.UpdateStaffInfoLogs.AddAsync(log);
                 await _context.SaveChangesAsync();
-                return true;
             }
             catch (Exception ex)
             {
@@ -177,7 +176,6 @@ namespace LineTag.Infrastructure.Repositories
                 log.ErrorMessage = ex.ToString();
                 await _context.UpdateStaffInfoLogs.AddAsync(log);
                 await _context.SaveChangesAsync();
-                return false;
             }
         }
     }

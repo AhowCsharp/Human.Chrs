@@ -372,12 +372,23 @@ namespace Human.Chrs.Domain
             }
             if (staffId.HasValue)
             {
+                var staff = await _staffRepository.GetUsingStaffAsync(staffId.Value, user.CompanyId);
+                if (staff.CompanyId != user.CompanyId)
+                {
+                    result.AddError("操作者沒有權杖");
+                    return result;
+                }
                 var detail = await _personalDetailRepository.GetStaffDetailInfoAsync(staffId.Value, user.CompanyId);
                 result.Data = detail;
             }
             else
             {
                 var staff = await _staffRepository.GetUsingStaffAsync(user.Id, user.CompanyId);
+                if (staff.CompanyId != user.CompanyId)
+                {
+                    result.AddError("操作者沒有權杖");
+                    return result;
+                }
                 var detail = await _personalDetailRepository.GetStaffDetailInfoAsync(user.Id, user.CompanyId);
                 if (detail == null)
                 {
