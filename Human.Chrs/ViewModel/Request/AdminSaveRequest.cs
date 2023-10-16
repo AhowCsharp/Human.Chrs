@@ -19,6 +19,8 @@ namespace Human.Chrs.ViewModel.Request
 
         public string Password { get; set; }
 
+        public string? PrePassword { get; set; }
+
         public int? Auth { get; set; }
 
         public string WorkPosition { get; set; }
@@ -26,9 +28,5 @@ namespace Human.Chrs.ViewModel.Request
         public string StaffNo { get; set; }
 
         public int DepartmentId { get; set; }
-
-        public string? AdminToken { get; set; }
-
-        public bool Status { get; set; }
     }
 }

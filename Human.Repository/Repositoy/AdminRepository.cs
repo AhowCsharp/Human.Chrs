@@ -44,9 +44,9 @@ namespace LineTag.Infrastructure.Repositories
             return data;
         }
 
-        public async Task<AdminDTO> VerifyLoginAdminAsync(string account, string password)
+        public async Task<AdminDTO> VerifyLoginAdminAsync(string account)
         {
-            var data = await _context.Admin.SingleOrDefaultAsync(x => x.Account == account && x.Password == password && x.Status != null && x.Status.Value);
+            var data = await _context.Admin.SingleOrDefaultAsync(x => x.Account == account && x.Status != null && x.Status.Value);
 
             return _mapper.Map<AdminDTO>(data);
         }

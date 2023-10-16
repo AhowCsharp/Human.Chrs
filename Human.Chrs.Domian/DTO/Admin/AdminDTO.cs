@@ -38,5 +38,7 @@ namespace Human.Chrs.Domain.DTO
         public string SuperToken { get; set; }
 
         public bool IsSuperAdmin { get; set; } = false;
+
+        public string PrePassword { get; set; }
     }
 }

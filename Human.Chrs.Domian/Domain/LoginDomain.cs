@@ -42,7 +42,14 @@ namespace Human.Chrs.Domain
             int companyId = 0;
             LoginDTO? loginUserInfo = new LoginDTO();
             StaffDTO? staff = await _staffRepository.VerifyLoginStaffAsync(account, password);
-            AdminDTO? adminUser = staff == null ? await _adminRepository.VerifyLoginAdminAsync(account, password) : null;
+            AdminDTO? adminUser = staff == null ? await _adminRepository.VerifyLoginAdminAsync(account) : null;
+            if (adminUser != null)
+            {
+                if (!CryptHelper.VerifySaltHashPlus(adminUser.Password, password))
+                {
+                    adminUser = null;
+                }
+            }
 
             if (adminUser == null && staff == null)
             {

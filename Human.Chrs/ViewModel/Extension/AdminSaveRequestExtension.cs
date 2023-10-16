@@ -23,9 +23,13 @@ namespace Human.Chrs.ViewModel.Request
                 WorkPosition = request.WorkPosition,
                 StaffNo = request.StaffNo,
                 DepartmentId = request.DepartmentId,
-                AdminToken = request.id == 0 ? Guid.NewGuid().ToString() : request.AdminToken,
-                Status = request.Status
+                AdminToken = request.id == 0 ? Guid.NewGuid().ToString() : string.Empty,
+                Status = true
             };
+            if (!string.IsNullOrEmpty(request.PrePassword))
+            {
+                dto.PrePassword = request.PrePassword;
+            }
             return dto;
         }
 

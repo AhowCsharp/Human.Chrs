@@ -10,7 +10,7 @@ namespace Human.Chrs.Domain.IRepository
     {
         Task<AdminDTO> GetAvailableAdminAsync(int id, int companyId);
 
-        Task<AdminDTO> VerifyLoginAdminAsync(string account, string password);
+        Task<AdminDTO> VerifyLoginAdminAsync(string account);
 
         Task<bool> VerifyAdminTokenAsync(CurrentUser admin);
 

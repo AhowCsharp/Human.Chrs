@@ -1281,12 +1281,6 @@ namespace Human.Chrs.Domain
                 return result;
             }
 
-            if (user.Auth.Value < 10)
-            {
-                result.AddError("操作者沒有權杖");
-                return result;
-            }
-
             if (adminDTO.id == 0)
             {
                 var adminCount = await _adminRepository.GetAllAdminsCountAsync(user.CompanyId);
@@ -1304,7 +1298,7 @@ namespace Human.Chrs.Domain
                     result.AddError("該帳號已註冊過 請換帳號");
                     return result;
                 }
-
+                adminDTO.Password = CryptHelper.SaltHashPlus(adminDTO.Password);
                 await _adminRepository.InsertAsync(adminDTO);
                 var admins = await GetAllAdminsAsync();
                 result.Data = admins.Data.ToList();
@@ -1328,8 +1322,24 @@ namespace Human.Chrs.Domain
                 }
                 else
                 {
-                    await _adminRepository.UpdateAsync(adminDTO);
                     var admins = await GetAllAdminsAsync();
+                    if (!string.IsNullOrEmpty(adminDTO.PrePassword))
+                    {
+                        var ad = await _adminRepository.GetAsync(user.Id);
+                        adminDTO.AdminToken = ad.AdminToken;
+                        if (CryptHelper.VerifySaltHashPlus(adminDTO.PrePassword, ad.Password))
+                        {
+                            ad.Password = CryptHelper.SaltHashPlus(adminDTO.Password);
+                            await _adminRepository.UpdateAsync(adminDTO);
+                            result.Data = admins.Data.ToList();
+                        }
+                        else
+                        {
+                            result.AddError("先前密碼驗證錯誤");
+                            return result;
+                        }
+                    }
+                    await _adminRepository.UpdateAsync(adminDTO);
                     result.Data = admins.Data.ToList();
                 }
             }
@@ -1740,11 +1750,10 @@ namespace Human.Chrs.Domain
             }
             var staff = await _staffRepository.GetUsingStaffAsync(staffId, user.CompanyId);
             if (staff.CompanyId != user.CompanyId)
-            { 
-                                result.AddError("操作者沒有權杖");
+            {
+                result.AddError("操作者沒有權杖");
                 return result;
             }
-
 
             var salaryView = new SalaryViewDTO();
 
@@ -1762,7 +1771,7 @@ namespace Human.Chrs.Domain
             }
 
             var setting = await _salarySettingRepository.GetSalarySettingAsync(staffId, user.CompanyId);
-            
+
             setting.StaffName = staff.StaffName;
             setting.StaffNo = staff.StaffNo;
             salaryView.SalarySetting = setting;
@@ -1863,7 +1872,7 @@ namespace Human.Chrs.Domain
             decimal fullCheckInMoney = salaryView.SalarySetting.FullCheckInMoney;
 
             // 执行计算。由于我们已经使用了decimal类型，除法和乘法都将保持精度。
-            decimal tempValue = (basicSalary + fullCheckInMoney ) / 30.0m / 8.0m;
+            decimal tempValue = (basicSalary + fullCheckInMoney) / 30.0m / 8.0m;
 
             // 这里，我们可以根据需要进行四舍五入。假设我们想要保留两位小数。
             decimal roundedValue = Math.Round(tempValue, 3); // 如果你希望结果更接近实际数值，可以增加小数位数
