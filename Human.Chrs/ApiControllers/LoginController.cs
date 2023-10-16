@@ -63,6 +63,78 @@ namespace LineTag.Admin.ApiControllers
             }
         }
 
+        /// <summary>
+        /// 驗證單一設備資訊
+        /// </summary>
+        /// <param name="request">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("deviceid")]
+        [ApTokenAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> VerifyDeviceId(DeviceIdRequest request)
+        {
+            try
+            {
+                var result = await _logindomain.DeviceIdVerifyAsync(request.Account, request.Password, request.DeviceId);
+
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(VerifySignIn));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 初次綁定設備
+        /// </summary>
+        /// <param name="request">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("deviceid")]
+        [ApTokenAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RegisterDeviceId(DeviceIdRequest request)
+        {
+            try
+            {
+                var result = await _logindomain.RegisterDeviceIdAsync(request.Account, request.Password, request.DeviceId);
+
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(VerifySignIn));
+
+                return ServerError500();
+            }
+        }
+
         [HttpPost]
         [Route("send")]
         [ApTokenAuth]

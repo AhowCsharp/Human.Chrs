@@ -753,7 +753,41 @@ namespace Human.Chrs.Domain
 
                 return result;
             }
+            return result;
+        }
 
+        public async Task<CommonResult> DeleteDepartmentAsunc(int departmentId,int otherDepartmentId)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            var departments = await _departmentRepository.GetDepartmentsOfCompanyAsync(user.CompanyId);
+            if (departments.Count() == 1)
+            {
+                result.AddError("不可以刪除所有部門");
+
+                return result;
+            }
+
+            var rule = await _companyRuleRepository.GetCompanyRuleAsync(user.CompanyId, departmentId);
+            await _companyRuleRepository.DeleteAsync(rule.id);
+
+            var newDepartment = await _departmentRepository.GetAsync(otherDepartmentId);
+            var departmentStaffs = await _staffRepository.GetDepartmentStaffAsync(user.CompanyId, departmentId);
+            foreach (var staff in departmentStaffs)
+            {
+                staff.DepartmentId = newDepartment.id;
+                staff.Department = newDepartment.DepartmentName;
+                await _staffRepository.UpdateAsync(staff);
+            }
+
+            await _departmentRepository.DeleteAsync(departmentId);
             return result;
         }
 
@@ -1106,6 +1140,21 @@ namespace Human.Chrs.Domain
             }
             foreach (var dto in dtos.ToList())
             {
+                var rule = await _companyRuleRepository.GetCompanyRuleAsync(user.CompanyId, dto.id);
+                var staffs = await _staffRepository.GetAllStaffAsync(user.CompanyId);
+                foreach (var staff in staffs)
+                {
+                    if (staff.DepartmentId == dto.id && staff.Department != dto.DepartmentName)
+                    {
+                        staff.Department = dto.DepartmentName;
+                        await _staffRepository.UpdateAsync(staff);
+                    }
+                }
+                if (rule.DepartmentName != dto.DepartmentName)
+                {
+                    rule.DepartmentName = dto.DepartmentName;
+                    await _companyRuleRepository.UpdateAsync(rule);
+                }
                 await _departmentRepository.UpdateAsync(dto);
             }
 
@@ -1327,8 +1376,8 @@ namespace Human.Chrs.Domain
                     {
                         var ad = await _adminRepository.GetAsync(user.Id);
                         adminDTO.AdminToken = ad.AdminToken;
-                        if (CryptHelper.VerifySaltHashPlus(adminDTO.PrePassword, ad.Password))
-                        {
+                        if (CryptHelper.VerifySaltHashPlus(ad.Password, adminDTO.PrePassword))
+                        {                          
                             ad.Password = CryptHelper.SaltHashPlus(adminDTO.Password);
                             await _adminRepository.UpdateAsync(adminDTO);
                             result.Data = admins.Data.ToList();

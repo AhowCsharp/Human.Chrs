@@ -28,5 +28,7 @@ namespace Human.Chrs.Domain.DTO
         public string SuperToken { get; set; }
 
         public bool IsSuper { get; set; } = false;
+
+        public string DeviceId { get; set; }
     }
 }

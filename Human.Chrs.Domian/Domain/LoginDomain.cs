@@ -43,6 +43,7 @@ namespace Human.Chrs.Domain
             LoginDTO? loginUserInfo = new LoginDTO();
             StaffDTO? staff = await _staffRepository.VerifyLoginStaffAsync(account, password);
             AdminDTO? adminUser = staff == null ? await _adminRepository.VerifyLoginAdminAsync(account) : null;
+            var x = CryptHelper.SaltHashPlus(password);
             if (adminUser != null)
             {
                 if (!CryptHelper.VerifySaltHashPlus(adminUser.Password, password))
@@ -103,6 +104,50 @@ namespace Human.Chrs.Domain
             // 假設CommonResult有一個Data屬性用於儲存結果
             return result;
         }
+
+        public async Task<CommonResult<int>> DeviceIdVerifyAsync(string account, string password, string deviceId)
+        {
+            var result = new CommonResult<int>();
+            var staff = await _staffRepository.VerifyLoginStaffAsync(account, password);
+            if (staff == null)
+            {
+                result.AddError("找不到該員工");
+                return result;
+            }
+            if (string.IsNullOrEmpty(staff.DeviceId))
+            {
+                result.Data = 0;
+                return result;
+            }
+            else
+            {
+                if (staff.DeviceId == deviceId)
+                {
+                    result.Data = 1;
+                    return result;
+                }
+                else
+                {
+                    result.Data = -1;
+                    return result;
+                }
+            }
+        }
+
+        public async Task<CommonResult> RegisterDeviceIdAsync(string account, string password, string deviceId)
+        {
+            var result = new CommonResult();
+            var staff = await _staffRepository.VerifyLoginStaffAsync(account, password);
+            if (staff == null)
+            {
+                result.AddError("找不到該員工");
+                return result;
+            }
+            staff.DeviceId = deviceId;
+            await _staffRepository.UpdateAsync(staff);
+            return result;
+        }
+
 
         public async Task<CommonResult<LoginDTO>> GetUserWithSaltHashAsync(int companyId, string userId)
         {

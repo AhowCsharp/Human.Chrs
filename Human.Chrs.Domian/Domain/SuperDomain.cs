@@ -130,6 +130,38 @@ namespace Human.Chrs.Domain
             return result;
         }
 
+        public async Task<CommonResult> CreateOrEditAdminAsync(AdminDTO dto)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+
+            if (dto.id == 0)
+            {
+                try
+                {
+                    dto.Password = CryptHelper.SaltHashPlus(dto.Password);
+                    await _adminRepository.InsertAsync(dto);
+                }
+                catch (Exception ex)
+                {
+                    result.AddError(ex.Message);
+                    return result;
+                }
+            }
+            else
+            {
+                await _adminRepository.UpdateAsync(dto);
+            }
+            return result;
+        }
+
         public async Task<CommonResult<IEnumerable<CompanyDTO>>> GetAllCompanyAsync()
         {
             var result = new CommonResult<IEnumerable<CompanyDTO>>();
@@ -145,6 +177,7 @@ namespace Human.Chrs.Domain
             result.Data = allComs;
             return result;
         }
+
 
         public async Task<CommonResult<IEnumerable<ContractTypeDTO>>> GetAllContractTypeAsync()
         {

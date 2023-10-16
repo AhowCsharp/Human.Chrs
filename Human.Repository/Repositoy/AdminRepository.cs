@@ -37,6 +37,7 @@ namespace LineTag.Infrastructure.Repositories
             return data.Select(_mapper.Map<AdminDTO>);
         }
 
+
         public async Task<int> GetAllAdminsCountAsync(int companyId)
         {
             var data = await _context.Admin.Where(x => x.CompanyId == companyId).CountAsync();

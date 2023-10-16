@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj": {}
+    "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj": {}
   },
   "projects": {
-    "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj": {
+    "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj",
         "projectName": "Human.Chrs.Domain",
-        "projectPath": "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj",
-        "packagesPath": "C:\\Users\\j3537\\.nuget\\packages\\",
-        "outputPath": "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\obj\\",
+        "projectPath": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj",
+        "packagesPath": "C:\\Users\\MSI MAG\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\MSI MAG\\Desktop\\DoRay專案列表\\Human.Chrs\\Human.Chrs.Domian\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\j3537\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\MSI MAG\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -125,7 +129,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.401\\RuntimeIdentifierGraph.json"
         }
       }
     }

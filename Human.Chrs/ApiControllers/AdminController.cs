@@ -220,6 +220,44 @@ namespace LineTag.Admin.ApiControllers
             }
         }
 
+
+        /// <summary>
+        /// 裁撤該部門
+        /// </summary>
+        /// <param name="salarySettingRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("department")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteDepartment(int departmentId,int otherDepartmentId)
+        {
+            try
+            {
+                var result = await _admindomain.DeleteDepartmentAsunc(departmentId, otherDepartmentId);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(CreateOrEditSalarySetting));
+
+                return ServerError500();
+            }
+        }
+
         /// <summary>
         /// 新增員工詳細資料
         /// </summary>
