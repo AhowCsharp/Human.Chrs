@@ -80,7 +80,7 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<AdminNotificationLogs>(entity =>
         {
-            entity.ToTable(tb => tb.HasTrigger("tr_dbo_AdminNotificationLogs_90c72b72-5837-46ce-806d-5069ebe10345_Sender"));
+            entity.ToTable(tb => tb.HasTrigger("tr_dbo_AdminNotificationLogs_fd019d22-c7ea-432c-9388-55737b43c543_Sender"));
 
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Creator)
@@ -217,7 +217,7 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<NotificationLogs>(entity =>
         {
-            entity.ToTable(tb => tb.HasTrigger("tr_dbo_NotificationLogs_bfdff7df-8fd2-4841-a02e-3c1333c7f71e_Sender"));
+            entity.ToTable(tb => tb.HasTrigger("tr_dbo_NotificationLogs_66ecb1e2-989c-4406-ad48-8a4310062cdc_Sender"));
 
             entity.Property(e => e.Avatar).IsRequired();
             entity.Property(e => e.CreateDate).HasColumnType("datetime");

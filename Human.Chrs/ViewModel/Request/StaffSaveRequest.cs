@@ -91,6 +91,8 @@ namespace Human.Chrs.ViewModel.Request
 
         public int? ParttimeMoney { get; set; }
 
-       public string Language { get; set; }
+        public int? DaySalary { get; set; }
+
+        public string Language { get; set; }
     }
 }

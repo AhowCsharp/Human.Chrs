@@ -26,6 +26,42 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 取得當下地址
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("location")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetNowLocation(LocationRequest request)
+        {
+            try
+            {
+                var result = await _staffdomain.GetNowLocationAsync(request.Longitude, request.Latitude);
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetNowLocation));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 打卡
         /// </summary>
         /// <param name="checkRequest">請求資料</param>

@@ -93,9 +93,16 @@ namespace LineTag.Infrastructure.Repositories
             return data.Select(_mapper.Map<StaffDTO>);
         }
 
-        public async Task<IEnumerable<StaffDTO>> GetAllParttimeStaffAsync(int companyId)
+        public async Task<IEnumerable<StaffDTO>> GetAllParttimeStaffAsync(int companyId) // 工讀
         {
             var data = await _context.Staff.Where(x => x.CompanyId == companyId && x.EmploymentTypeId == 2).ToListAsync();
+
+            return data.Select(_mapper.Map<StaffDTO>);
+        }
+
+        public async Task<IEnumerable<StaffDTO>> GetAllDaySalaryStaffAsync(int companyId) // 日薪制
+        {
+            var data = await _context.Staff.Where(x => x.CompanyId == companyId && x.EmploymentTypeId == 3).ToListAsync();
 
             return data.Select(_mapper.Map<StaffDTO>);
         }

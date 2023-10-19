@@ -20,6 +20,7 @@ namespace Human.Chrs.Domain.CommonModels
     public class Result
     {
         public Geometry Geometry { get; set; }
+        public string FormattedAddress { get; set; }
     }
 
     public class RootObject

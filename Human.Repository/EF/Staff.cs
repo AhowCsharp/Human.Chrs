@@ -104,4 +104,6 @@ public partial class Staff
     public string Language { get; set; }
 
     public string DeviceId { get; set; }
+
+    public int? DaySalary { get; set; }
 }

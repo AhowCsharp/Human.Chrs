@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/Human.Repository.csproj": {}
+    "D:\\GitLab\\Human.Chrs\\Human.Repository\\Human.Repository.csproj": {}
   },
   "projects": {
-    "/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Chrs.Domian/Human.Chrs.Domain.csproj": {
+    "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Chrs.Domian/Human.Chrs.Domain.csproj",
+        "projectUniqueName": "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj",
         "projectName": "Human.Chrs.Domain",
-        "projectPath": "/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Chrs.Domian/Human.Chrs.Domain.csproj",
-        "packagesPath": "/home/ahow/.nuget/packages/",
-        "outputPath": "/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Chrs.Domian/obj/",
+        "projectPath": "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj",
+        "packagesPath": "C:\\Users\\j3537\\.nuget\\packages\\",
+        "outputPath": "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/ahow/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\j3537\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -113,7 +115,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -122,34 +125,36 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/6.0.123/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/Human.Repository.csproj": {
+    "D:\\GitLab\\Human.Chrs\\Human.Repository\\Human.Repository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/Human.Repository.csproj",
+        "projectUniqueName": "D:\\GitLab\\Human.Chrs\\Human.Repository\\Human.Repository.csproj",
         "projectName": "Human.Repository",
-        "projectPath": "/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/Human.Repository.csproj",
-        "packagesPath": "/home/ahow/.nuget/packages/",
-        "outputPath": "/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/obj/",
+        "projectPath": "D:\\GitLab\\Human.Chrs\\Human.Repository\\Human.Repository.csproj",
+        "packagesPath": "C:\\Users\\j3537\\.nuget\\packages\\",
+        "outputPath": "D:\\GitLab\\Human.Chrs\\Human.Repository\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/ahow/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\j3537\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Chrs.Domian/Human.Chrs.Domain.csproj": {
-                "projectPath": "/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Chrs.Domian/Human.Chrs.Domain.csproj"
+              "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj": {
+                "projectPath": "D:\\GitLab\\Human.Chrs\\Human.Chrs.Domian\\Human.Chrs.Domain.csproj"
               }
             }
           }
@@ -239,7 +244,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -248,7 +254,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/6.0.123/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
         }
       }
     }

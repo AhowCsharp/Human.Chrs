@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Xml;
+using NPOI.SS.Formula.Functions;
 
 namespace Human.Chrs.Domain
 {
@@ -109,13 +110,12 @@ namespace Human.Chrs.Domain
                 return result;
             }
             var staff = await _staffRepository.GetAsync(user.Id);
-            staffView.SpecialRestDays = staff.SpecialRestDays*8 + staff.SpecialRestHours;
+            staffView.SpecialRestDays = staff.SpecialRestDays * 8 + staff.SpecialRestHours;
             staffView.SickDays = staff.SickDays * 8 + staff.SickHours;
             staffView.PrenatalCheckUpDays = staff.PrenatalCheckUpDays * 8 + staff.PrenatalCheckUpHours;
             staffView.DeathDays = staff.DeathDays * 8 + staff.DeathHours; ;
             staffView.MarriedDays = staff.MarryDays * 8 + staff.MarryHours;
             staffView.ThingDays = staff.ThingDays * 8 + staff.ThingHours;
-
 
             staffView.Language = staff.Language;
             staffView.IsOverLocation = (_checkInAndOutDomain.CheckDistanceAsync(rule, longitude, latitude)).Data;
@@ -186,30 +186,37 @@ namespace Human.Chrs.Domain
 
                         item.VacationTypeName = "婚假";
                         break;
+
                     case 6:
 
                         item.VacationTypeName = "公假";
                         break;
+
                     case 7:
 
                         item.VacationTypeName = "工傷病假";
                         break;
+
                     case 8:
 
                         item.VacationTypeName = "生理假";
                         break;
+
                     case 9:
 
                         item.VacationTypeName = "育嬰留職停薪假";
                         break;
+
                     case 10:
 
                         item.VacationTypeName = "安胎假";
                         break;
+
                     case 11:
 
                         item.VacationTypeName = "產檢假";
                         break;
+
                     default:
                         item.VacationTypeName = "未知假別";
                         break;
@@ -459,6 +466,35 @@ namespace Human.Chrs.Domain
             var events = (await EventsGetAsync()).Data;
             result.Data = events;
 
+            return result;
+        }
+
+        public async Task<CommonResult<string>> GetNowLocationAsync(double latitude, double longitude)
+        {
+            var result = new CommonResult<string>();
+            var user = _userService.GetCurrentUser();
+            var exist = await _staffRepository.VerifyExistStaffAsync(user.Id, user.CompanyId);
+            if (!exist)
+            {
+                result.AddError("沒找到對應的員工");
+                return result;
+            }
+            var company = await _companyRepository.GetAsync(user.CompanyId);
+            if (company == null)
+            {
+                result.AddError("沒找到對應的公司");
+                return result;
+            }
+
+            try
+            {
+                var address = await _geocodingService.GetAddressFromCoordinates(latitude, longitude);
+                result.Data = address;
+            }
+            catch (Exception ex)
+            {
+                result.Data = ex.Message;
+            }
             return result;
         }
 

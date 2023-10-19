@@ -22,6 +22,8 @@ using NPOI.POIFS.Crypt.Dsig;
 using NPOI.SS.Util;
 using System.Globalization;
 using NPOI.SS.Formula.Functions;
+using System.ComponentModel.Design;
+using NPOI.OpenXmlFormats.Wordprocessing;
 
 namespace Human.Chrs.Domain
 {
@@ -265,10 +267,10 @@ namespace Human.Chrs.Domain
                     DateTime newEndDateTime = new DateTime(
                     eventDTO.StartDate.Year,
                     eventDTO.StartDate.Month,
-                    eventDTO.StartDate.Day, 
-                    eventDTO.EndTime.HasValue? eventDTO.EndTime.Value.Hours : eventDTO.StartTime.Hours,
-                    eventDTO.EndTime.HasValue? eventDTO.EndTime.Value.Minutes: eventDTO.StartTime.Minutes,
-                    eventDTO.EndTime.HasValue? eventDTO.EndTime.Value.Seconds: eventDTO.StartTime.Seconds
+                    eventDTO.StartDate.Day,
+                    eventDTO.EndTime.HasValue ? eventDTO.EndTime.Value.Hours : eventDTO.StartTime.Hours,
+                    eventDTO.EndTime.HasValue ? eventDTO.EndTime.Value.Minutes : eventDTO.StartTime.Minutes,
+                    eventDTO.EndTime.HasValue ? eventDTO.EndTime.Value.Seconds : eventDTO.StartTime.Seconds
                     );
                     newEvent.AllDay = false;
                     newEvent.Start = newDateTime;
@@ -756,7 +758,7 @@ namespace Human.Chrs.Domain
             return result;
         }
 
-        public async Task<CommonResult> DeleteDepartmentAsunc(int departmentId,int otherDepartmentId)
+        public async Task<CommonResult> DeleteDepartmentAsunc(int departmentId, int otherDepartmentId)
         {
             var result = new CommonResult();
             var user = _userService.GetCurrentUser();
@@ -1377,7 +1379,7 @@ namespace Human.Chrs.Domain
                         var ad = await _adminRepository.GetAsync(user.Id);
                         adminDTO.AdminToken = ad.AdminToken;
                         if (CryptHelper.VerifySaltHashPlus(ad.Password, adminDTO.PrePassword))
-                        {                          
+                        {
                             ad.Password = CryptHelper.SaltHashPlus(adminDTO.Password);
                             await _adminRepository.UpdateAsync(adminDTO);
                             result.Data = admins.Data.ToList();
@@ -1499,6 +1501,84 @@ namespace Human.Chrs.Domain
                 overtime.StaffName = staff.StaffName;
             }
             result.Data = overtimeList;
+            return result;
+        }
+
+        public async Task<CommonResult<IEnumerable<StaffDTO>>> GetAllDaySalaryStaffAsync()
+        {
+            var result = new CommonResult<IEnumerable<StaffDTO>>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+                return result;
+            }
+            var staffs = await _staffRepository.GetAllDaySalaryStaffAsync(user.CompanyId);
+
+            result.Data = staffs;
+            return result;
+        }
+
+        public async Task<CommonResult<DayStaffDTO>> GetDayStaffSalaryView(int staffId, int month)
+        {
+            var result = new CommonResult<DayStaffDTO>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            int year = DateTimeHelper.TaipeiNow.Year;
+            DateTime start = new DateTime(year, month, 1);
+            DateTime end = start.AddMonths(1).AddDays(-1);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+                return result;
+            }
+
+            var staff = await _staffRepository.GetAsync(staffId);
+            if (staff.CompanyId != user.CompanyId)
+            {
+                result.AddError("操作者沒有該公司讀取權杖");
+                return result;
+            }
+            var records = (await _checkRecordsRepository.GetCheckRecordListAsync(staffId, user.CompanyId, start, end)).ToList();
+            int workDays = 0;
+            int lateOrEarlyDays = 0;
+            int outLocationDays = 0;
+            foreach (var record in records)
+            {
+                if (record.CheckInTime.HasValue && record.CheckOutTime.HasValue)
+                {
+                    if (record.IsCheckInLate == 1 || record.IsCheckOutEarly == 1)
+                    {
+                        lateOrEarlyDays += 1;
+                    }
+                    if (record.IsCheckInOutLocation == 1 || record.IsCheckOutOutLocation == 1)
+                    {
+                        outLocationDays += 1;
+                    }
+                    workDays += 1;
+                }
+            }
+
+            var dayStaffSalaryView = new DayStaffDTO
+            {
+                StaffId = staffId,
+                StaffNo = staff.StaffNo,
+                CompanyId = staff.CompanyId,
+                Department = staff.Department,
+                LevelPosition = staff.LevelPosition,
+                WorkLocation = staff.WorkLocation,
+                Status = staff.Status,
+                StaffName = staff.StaffName,
+                DaySalary = staff.DaySalary,
+                WorkDays = $"工作天數:{workDays}",
+                LateOrEarlyDays = $"遲到早退天數:{lateOrEarlyDays}",
+                OutLocationDays = $"定位外打卡天數:{outLocationDays}",
+                Month = $"{month}月份",
+                TotalDaysSalary = workDays * (staff.DaySalary ?? 0)
+            };
+
+            result.Data = dayStaffSalaryView;
             return result;
         }
 

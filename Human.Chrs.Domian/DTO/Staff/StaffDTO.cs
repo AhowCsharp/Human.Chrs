@@ -114,5 +114,7 @@ namespace Human.Chrs.Domain.DTO
         public string Language { get; set; }
 
         public string DeviceId { get; set; }
+
+        public int? DaySalary { get; set; }
     }
 }

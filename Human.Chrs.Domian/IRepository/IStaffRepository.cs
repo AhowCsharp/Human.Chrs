@@ -32,5 +32,7 @@ namespace Human.Chrs.Domain.IRepository
         Task<StaffDTO> GetForgetPasswordStaffAsync(string account, string email);
 
         Task<int> StaffCountAsync(int companyId);
+
+        Task<IEnumerable<StaffDTO>> GetAllDaySalaryStaffAsync(int companyId);
     }
 }

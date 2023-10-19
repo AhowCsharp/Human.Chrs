@@ -220,7 +220,6 @@ namespace LineTag.Admin.ApiControllers
             }
         }
 
-
         /// <summary>
         /// 裁撤該部門
         /// </summary>
@@ -236,7 +235,7 @@ namespace LineTag.Admin.ApiControllers
         [ApCompanyIdAuthAttribute]
         [ApUserAuthAttribute]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> DeleteDepartment(int departmentId,int otherDepartmentId)
+        public async Task<IActionResult> DeleteDepartment(int departmentId, int otherDepartmentId)
         {
             try
             {
@@ -327,7 +326,7 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
-        /// 取得員工列表
+        /// 取得部分工時員工列表
         /// </summary>
         /// <response code="200">OK</response>
         /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
@@ -685,6 +684,42 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 取得日薪員工列表
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("daysalarystaffs")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllDaySalaryStaffs()
+        {
+            try
+            {
+                var result = await _admindomain.GetAllDaySalaryStaffAsync();
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetAllDaySalaryStaffs));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 部分工時排班紀錄
         /// </summary>
         /// <param name="ditanceRequest">請求資料</param>
@@ -908,62 +943,26 @@ namespace LineTag.Admin.ApiControllers
                 headerStyle.RightBorderColor = NPOI.HSSF.Util.HSSFColor.Black.Index;
                 headerStyle.BottomBorderColor = NPOI.HSSF.Util.HSSFColor.Black.Index;
                 headerStyle.LeftBorderColor = NPOI.HSSF.Util.HSSFColor.Black.Index;
+
                 IFont font = workbook.CreateFont();
                 font.IsBold = true;
                 font.Color = NPOI.HSSF.Util.HSSFColor.Blue.Index;
                 headerStyle.SetFont(font);
 
-                //    "員工", "上班打卡時間", "下班打卡時間", "是否超出上班打卡範圍", "是否超出下班打卡範圍",
-                //    "是否遲到", "是否早退", "遲到分鐘數", "早退分鐘數", "上班備註", "下班備註"
+                string[] headers = new string[] {
+                "員工", "上班打卡時間", "下班打卡時間", "是否超出上班打卡範圍", "是否超出下班打卡範圍",
+                "是否遲到", "是否早退", "遲到分鐘數", "早退分鐘數", "上班備註", "下班備註"
+                };
 
-                IRow Row1 = sheet.CreateRow(0);
-                ICell Row1Cell1 = Row1.CreateCell(0);
-                Row1Cell1.SetCellValue("員工");
-                Row1Cell1.CellStyle = headerStyle;
+                // Create header row
+                IRow headerRow = sheet.CreateRow(0);
 
-                ICell Row1Cell2 = Row1.CreateCell(1);
-                Row1Cell2.SetCellValue("上班打卡時間");
-                Row1Cell2.CellStyle = headerStyle;
-
-                ICell Row1Cell3 = Row1.CreateCell(2);
-                Row1Cell3.SetCellValue("上班打卡時間");
-                Row1Cell3.CellStyle = headerStyle;
-
-                ICell Row1Cell4 = Row1.CreateCell(3);
-                Row1Cell4.SetCellValue("上班打卡時間");
-                Row1Cell4.CellStyle = headerStyle;
-
-                ICell Row1Cell5 = Row1.CreateCell(4);
-                Row1Cell5.SetCellValue("是否超出上班打卡範圍");
-                Row1Cell5.CellStyle = headerStyle;
-
-                ICell Row1Cell6 = Row1.CreateCell(5);
-                Row1Cell6.SetCellValue("是否超出下班打卡範圍");
-                Row1Cell6.CellStyle = headerStyle;
-
-                ICell Row1Cell7 = Row1.CreateCell(6);
-                Row1Cell7.SetCellValue("是否遲到");
-                Row1Cell7.CellStyle = headerStyle;
-
-                ICell Row1Cell8 = Row1.CreateCell(7);
-                Row1Cell8.SetCellValue("是否早退");
-                Row1Cell8.CellStyle = headerStyle;
-
-                ICell Row1Cell9 = Row1.CreateCell(8);
-                Row1Cell9.SetCellValue("遲到分鐘數");
-                Row1Cell9.CellStyle = headerStyle;
-
-                ICell Row1Cell10 = Row1.CreateCell(9);
-                Row1Cell10.SetCellValue("早退分鐘數");
-                Row1Cell10.CellStyle = headerStyle;
-
-                ICell Row1Cell11 = Row1.CreateCell(10);
-                Row1Cell11.SetCellValue("上班備註");
-                Row1Cell11.CellStyle = headerStyle;
-
-                ICell Row1Cell12 = Row1.CreateCell(11);
-                Row1Cell12.SetCellValue("下班備註");
-                Row1Cell12.CellStyle = headerStyle;
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    ICell cell = headerRow.CreateCell(i);
+                    cell.SetCellValue(headers[i]);
+                    cell.CellStyle = headerStyle;
+                }
 
                 for (int i = 0; i < data.list.Count(); i++)
                 {
@@ -1021,7 +1020,7 @@ namespace LineTag.Admin.ApiControllers
                 }
 
                 var content = System.IO.File.ReadAllBytes(tempFileName);
-                System.IO.File.Delete(tempFileName);  // 刪除臨時檔案
+                System.IO.File.Delete(tempFileName);
 
                 return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "出勤狀況單.xlsx");
             }
@@ -1299,6 +1298,42 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(ReadyToPayMoney));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 日薪制員工薪資資訊
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("daystaff")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetDayStaffSalaryView(int staffId, int month)
+        {
+            try
+            {
+                var result = await _admindomain.GetDayStaffSalaryView(staffId, month);
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetDayStaffSalaryView));
 
                 return ServerError500();
             }
