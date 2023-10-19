@@ -1,0 +1,15 @@
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/bin/Release/net6.0/Human.Repository.deps.json
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/bin/Release/net6.0/Human.Repository.dll
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/bin/Release/net6.0/ref/Human.Repository.dll
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/bin/Release/net6.0/Human.Repository.pdb
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/bin/Release/net6.0/Human.Chrs.Domain.dll
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/bin/Release/net6.0/Human.Chrs.Domain.pdb
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/obj/Release/net6.0/Human.Repository.csproj.AssemblyReference.cache
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/obj/Release/net6.0/Human.Repository.GeneratedMSBuildEditorConfig.editorconfig
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/obj/Release/net6.0/Human.Repository.AssemblyInfoInputs.cache
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/obj/Release/net6.0/Human.Repository.AssemblyInfo.cs
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/obj/Release/net6.0/Human.Repository.csproj.CoreCompileInputs.cache
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/obj/Release/net6.0/Human.Repository.csproj.CopyComplete
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/obj/Release/net6.0/Human.Repository.dll
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/obj/Release/net6.0/ref/Human.Repository.dll
+/mnt/c/Users/MSI MAG/Desktop/DoRay專案列表/Human.Chrs/Human.Repository/obj/Release/net6.0/Human.Repository.pdb

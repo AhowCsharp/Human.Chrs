@@ -100,7 +100,7 @@ namespace Human.Chrs.Domain
 
 
             var rule = await _companyRuleRepository.GetCompanyRuleAsync(user.CompanyId, user.DepartmentId);
-            if (rule == null || !rule.Latitude.HasValue || rule.Longitude.HasValue || string.IsNullOrEmpty(rule.WorkAddress))
+            if (rule == null || !rule.Latitude.HasValue ||  !rule.Longitude.HasValue || string.IsNullOrEmpty(rule.WorkAddress))
             {
                 result.AddError("該公司尚未設置規則");
                 return result;
@@ -192,7 +192,7 @@ namespace Human.Chrs.Domain
         public CommonResult<bool> CheckDistanceAsync(CompanyRuleDTO rule, double longitude, double latitude)
         {
             var result = new CommonResult<bool>();
-            if (rule.Longitude.HasValue || string.IsNullOrEmpty(rule.WorkAddress))
+            if (!rule.Longitude.HasValue || string.IsNullOrEmpty(rule.WorkAddress))
             {
                 result.AddError("該公司尚未設置規則");
                 return result;

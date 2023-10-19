@@ -188,7 +188,7 @@ namespace Human.Chrs.Domain
             {
                 var staff = await _staffRepository.GetAsync(eventDTO.StaffId);
                 var newEvent = new EventDTO();
-                if (eventDTO.StartDate == eventDTO.EndDate)
+                if (eventDTO.StartDate.Date == eventDTO.EndDate.Date)
                 {
                     DateTime newDateTime = new DateTime(
                         eventDTO.StartDate.Year,
@@ -252,7 +252,7 @@ namespace Human.Chrs.Domain
             {
                 var staff = await _staffRepository.GetAsync(eventDTO.StaffId.Value);
                 var newEvent = new EventDTO();
-                if (eventDTO.StartDate == eventDTO.EndDate)
+                if (eventDTO.StartDate.Date == eventDTO.EndDate.Date)
                 {
                     DateTime newDateTime = new DateTime(
                         eventDTO.StartDate.Year,
@@ -263,12 +263,12 @@ namespace Human.Chrs.Domain
                         eventDTO.StartTime.Seconds
                     );
                     DateTime newEndDateTime = new DateTime(
-                    eventDTO.EndDate.Year,
-                    eventDTO.EndDate.Month,
-                    eventDTO.EndDate.Day,
-                    eventDTO.StartTime.Hours,
-                    eventDTO.StartTime.Minutes,
-                    eventDTO.StartTime.Seconds
+                    eventDTO.StartDate.Year,
+                    eventDTO.StartDate.Month,
+                    eventDTO.StartDate.Day, 
+                    eventDTO.EndTime.HasValue? eventDTO.EndTime.Value.Hours : eventDTO.StartTime.Hours,
+                    eventDTO.EndTime.HasValue? eventDTO.EndTime.Value.Minutes: eventDTO.StartTime.Minutes,
+                    eventDTO.EndTime.HasValue? eventDTO.EndTime.Value.Seconds: eventDTO.StartTime.Seconds
                     );
                     newEvent.AllDay = false;
                     newEvent.Start = newDateTime;

@@ -46,5 +46,17 @@ namespace Human.Chrs.Domain.DTO
         public string AvatarUrl { get; set; }
 
         public string Language { get; set; }
+
+        public int SickDays { get; set; }
+        public int SpecialRestDays { get; set; }
+
+        public int PrenatalCheckUpDays { get; set; }
+
+        public int DeathDays { get; set; }
+
+        public int ThingDays { get; set; }
+
+        public int MarriedDays { get; set; }
+
     }
 }

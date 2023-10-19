@@ -109,6 +109,14 @@ namespace Human.Chrs.Domain
                 return result;
             }
             var staff = await _staffRepository.GetAsync(user.Id);
+            staffView.SpecialRestDays = staff.SpecialRestDays*8 + staff.SpecialRestHours;
+            staffView.SickDays = staff.SickDays * 8 + staff.SickHours;
+            staffView.PrenatalCheckUpDays = staff.PrenatalCheckUpDays * 8 + staff.PrenatalCheckUpHours;
+            staffView.DeathDays = staff.DeathDays * 8 + staff.DeathHours; ;
+            staffView.MarriedDays = staff.MarryDays * 8 + staff.MarryHours;
+            staffView.ThingDays = staff.ThingDays * 8 + staff.ThingHours;
+
+
             staffView.Language = staff.Language;
             staffView.IsOverLocation = (_checkInAndOutDomain.CheckDistanceAsync(rule, longitude, latitude)).Data;
             staffView.CheckInRange = rule.CheckInStartTime.ToString(@"hh\:mm") + "~" + rule.CheckInEndTime.ToString(@"hh\:mm");
@@ -178,7 +186,30 @@ namespace Human.Chrs.Domain
 
                         item.VacationTypeName = "婚假";
                         break;
+                    case 6:
 
+                        item.VacationTypeName = "公假";
+                        break;
+                    case 7:
+
+                        item.VacationTypeName = "工傷病假";
+                        break;
+                    case 8:
+
+                        item.VacationTypeName = "生理假";
+                        break;
+                    case 9:
+
+                        item.VacationTypeName = "育嬰留職停薪假";
+                        break;
+                    case 10:
+
+                        item.VacationTypeName = "安胎假";
+                        break;
+                    case 11:
+
+                        item.VacationTypeName = "產檢假";
+                        break;
                     default:
                         item.VacationTypeName = "未知假別";
                         break;
@@ -981,7 +1012,7 @@ namespace Human.Chrs.Domain
             }
 
             // 3. Save the URL to the database
-            var url = $"/avatar/{fileName}";
+            var url = $"/Avatar/{fileName}";
             staff.AvatarUrl = url; // 假設您的Staff模型中有一個名為AvatarUrl的屬性
             await _staffRepository.UpdateAsync(staff);
             result.Data = url;
