@@ -36,9 +36,5 @@ namespace Human.Chrs.Domain.DTO
         public string OutLocationDays { get; set; }
 
         public int TotalDaysSalary { get; set; }
-
-        public int OverTimeSalary { get; set; }
-
-        public int OverTimeHours { get; set; }
     }
 }

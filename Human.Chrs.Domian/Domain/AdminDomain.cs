@@ -1560,28 +1560,6 @@ namespace Human.Chrs.Domain
                 }
             }
 
-            int overtimemoney = 0;
-            staff.ParttimeMoney = staff.DaySalary.Value / 8;
-            var overtimesList = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAfterValidateAsync(staff.id, user.CompanyId, start, end)).ToList();
-            foreach (var log in overtimesList)
-            {
-                var overFirstStepMoney = 0;
-                var overSecStepStepMoney = 0;
-                if (log.OverHours <= 2)
-                {
-                    overFirstStepMoney = (int)Math.Round(log.OverHours * staff.ParttimeMoney.Value * 1.33);
-                    overtimemoney += overFirstStepMoney;
-                }
-                else if (log.OverHours > 2)
-                {
-                    overFirstStepMoney = (int)Math.Round(2 * staff.ParttimeMoney.Value * 1.33);
-                    overtimemoney += overFirstStepMoney;
-                    overSecStepStepMoney = (int)Math.Round((log.OverHours - 2) * staff.ParttimeMoney.Value * 1.66);
-                    overtimemoney += overSecStepStepMoney;
-                }
-            }
-            var overtimesHours = overtimesList.Sum(x => x.OverHours);
-
             var dayStaffSalaryView = new DayStaffDTO
             {
                 StaffId = staffId,
@@ -1593,11 +1571,9 @@ namespace Human.Chrs.Domain
                 Status = staff.Status,
                 StaffName = staff.StaffName,
                 DaySalary = staff.DaySalary,
-                WorkDays = $"工作日:{workDays} 天",
-                LateOrEarlyDays = $"遲到早退:{lateOrEarlyDays} 天",
-                OutLocationDays = $"定位外打卡:{outLocationDays} 天",
-                OverTimeHours = overtimesHours,
-                OverTimeSalary = overtimemoney,
+                WorkDays = $"工作天數:{workDays}",
+                LateOrEarlyDays = $"遲到早退天數:{lateOrEarlyDays}",
+                OutLocationDays = $"定位外打卡天數:{outLocationDays}",
                 Month = $"{month}月份",
                 TotalDaysSalary = workDays * (staff.DaySalary ?? 0)
             };
