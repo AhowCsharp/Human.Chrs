@@ -160,7 +160,7 @@ namespace Human.Chrs.Domain
             overTime.CompanyId = user.CompanyId;
             overTime.OverHours = hours;
             overTime.IsValidate = 0;
-            overTime.OvertimeDate = DateTimeHelper.TaipeiNow.Date;
+            overTime.OvertimeDate = DateTimeHelper.TaipeiNow;
             overTime.Reason = reason;
             await _overTimeLogRepository.InsertAsync(overTime);
             return result;

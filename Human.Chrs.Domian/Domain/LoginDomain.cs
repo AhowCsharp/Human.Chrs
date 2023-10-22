@@ -258,7 +258,7 @@ namespace Human.Chrs.Domain
             };
 
             await _resetPasswordLogsRepository.InsertAsync(log);
-            staff.StaffPassWord = CryptHelper.SaltHashPlus(password);
+            staff.StaffPassWord = password;
             await _staffRepository.UpdateAsync(staff);
             return result;
         }

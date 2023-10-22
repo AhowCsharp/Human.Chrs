@@ -85,5 +85,7 @@ namespace Human.Chrs.Domain.DTO
 
         public int OutLocationAmount { get; set; }
 
+        public int? TotalDaySalary { get; set; }
+
     }
 }

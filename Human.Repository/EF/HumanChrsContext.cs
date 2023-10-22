@@ -80,7 +80,11 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<AdminNotificationLogs>(entity =>
         {
-            entity.ToTable(tb => tb.HasTrigger("tr_dbo_AdminNotificationLogs_fd019d22-c7ea-432c-9388-55737b43c543_Sender"));
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("tr_dbo_AdminNotificationLogs_4ce28a6d-b9ea-4f4a-a6d6-34b1ea5068d0_Sender");
+                    tb.HasTrigger("tr_dbo_AdminNotificationLogs_b28c1ba5-27ad-4f9f-9424-b66a07a2b446_Sender");
+                });
 
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Creator)
@@ -217,7 +221,11 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<NotificationLogs>(entity =>
         {
-            entity.ToTable(tb => tb.HasTrigger("tr_dbo_NotificationLogs_66ecb1e2-989c-4406-ad48-8a4310062cdc_Sender"));
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("tr_dbo_NotificationLogs_a70d9c7e-754b-4c31-a91b-e723e913f5f6_Sender");
+                    tb.HasTrigger("tr_dbo_NotificationLogs_be05d646-cfd9-4230-a7ac-531787ad4bca_Sender");
+                });
 
             entity.Property(e => e.Avatar).IsRequired();
             entity.Property(e => e.CreateDate).HasColumnType("datetime");

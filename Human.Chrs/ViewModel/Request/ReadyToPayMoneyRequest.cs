@@ -75,6 +75,8 @@ namespace Human.Chrs.ViewModel.Request
         public int? ParttimeSalary { get; set; }
 
         public int FoodSuportMoney { get; set; }
+
+        public int? TotalDaySalary { get; set; }
     }
 
 

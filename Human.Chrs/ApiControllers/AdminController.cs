@@ -1094,7 +1094,16 @@ namespace LineTag.Admin.ApiControllers
                     var datarow = sheet.CreateRow(i + 1);
                     datarow.CreateCell(0).SetCellValue(data[i].StaffName);
                     datarow.CreateCell(1).SetCellValue(data[i].IssueDate.ToString("yyyy-MM-dd"));
-                    datarow.CreateCell(2).SetCellValue(data[i].BasicSalary.ToString());
+                    if (data[i].BasicSalary == 0)
+                    {
+                        // 如果 BasicSalary 是 0，那么就使用 TOTAL 字段
+                        datarow.CreateCell(2).SetCellValue(data[i].TotalDaySalary.ToString());
+                    }
+                    else
+                    {
+                        // 否则，就使用 BasicSalary 字段
+                        datarow.CreateCell(2).SetCellValue(data[i].BasicSalary.ToString());
+                    }
                     datarow.CreateCell(3).SetCellValue(data[i].FullCheckInMoney.ToString());
                     datarow.CreateCell(4).SetCellValue(data[i].Bonus.ToString());
                     datarow.CreateCell(5).SetCellValue(data[i].FoodSuportMoney.ToString());

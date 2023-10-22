@@ -56,6 +56,11 @@ namespace Human.Chrs.ViewModel.Extension
                 dto.ParttimeSalary = request.ParttimeSalary.Value;
             }
 
+            if (request.TotalDaySalary.HasValue)
+            {
+                dto.TotalDaySalary = request.TotalDaySalary.Value;
+            }
+
             return dto;
         }
 
