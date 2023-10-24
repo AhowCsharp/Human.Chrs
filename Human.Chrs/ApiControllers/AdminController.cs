@@ -612,6 +612,43 @@ namespace LineTag.Admin.ApiControllers
         }
 
         /// <summary>
+        /// 清除手機綁定
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("clear")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ClearPhoneSet(int id)
+        {
+            try
+            {
+                var result = await _admindomain.ClearPhoneSetAsync(id);
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(ClearPhoneSet));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
         /// 新增或修改管理者
         /// </summary>
         /// <response code="200">OK</response>

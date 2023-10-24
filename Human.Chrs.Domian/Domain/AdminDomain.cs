@@ -361,6 +361,23 @@ namespace Human.Chrs.Domain
             return result;
         }
 
+        public async Task<CommonResult> ClearPhoneSetAsync(int id)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            var staff = await _staffRepository.GetAsync(id);
+            staff.DeviceId = string.Empty;
+            await _staffRepository.UpdateAsync(staff);
+            return result;
+        }
+
         public async Task<CommonResult> ParttimeWorkAdd(int staffId, DateTime startDate, DateTime endDate, TimeSpan startTime, TimeSpan endTime, string title, string detail, int level)
         {
             var result = new CommonResult();
