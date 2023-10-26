@@ -81,7 +81,7 @@ namespace LineTag.Infrastructure.Repositories
 
         public async Task<StaffDTO> GetForgetPasswordStaffAsync(string account, string email)
         {
-            var data = await _context.Staff.FirstOrDefaultAsync(x => x.StaffAccount == account && x.Email == email);
+            var data = await _context.Staff.FirstOrDefaultAsync(x => x.StaffAccount == account && x.Email == email && x.Status == 1);
 
             return _mapper.Map<StaffDTO>(data);
         }

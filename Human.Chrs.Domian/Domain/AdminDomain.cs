@@ -758,7 +758,7 @@ namespace Human.Chrs.Domain
             {
                 var dto = await _salarySettingRepository.GetAsync(id);
                 var staff = await _staffRepository.GetUsingStaffAsync(dto.StaffId, dto.CompanyId);
-                if (staff != null)
+                if (staff != null && staff.Status != 0)
                 {
                     result.AddError("請先更改該員工狀態");
 
@@ -966,7 +966,7 @@ namespace Human.Chrs.Domain
                 var settings = (await _salarySettingRepository.GetAllSalarySettingAsync(user.CompanyId)).ToList();
                 foreach (var setting in settings)
                 {
-                    var staff = await _staffRepository.GetUsingStaffAsync(setting.StaffId, setting.CompanyId);
+                    var staff = await _staffRepository.GetAsync(setting.StaffId);
                     if (staff == null)
                     {
                         result.AddError("系統錯誤 找不到該員工");
@@ -1918,7 +1918,7 @@ namespace Human.Chrs.Domain
                 result.AddError("操作者沒有權杖");
                 return result;
             }
-            var staff = await _staffRepository.GetUsingStaffAsync(staffId, user.CompanyId);
+            var staff = await _staffRepository.GetAsync(staffId);
             if (staff.CompanyId != user.CompanyId)
             {
                 result.AddError("操作者沒有權杖");
@@ -2097,8 +2097,17 @@ namespace Human.Chrs.Domain
                 result.AddError("操作者沒有權杖");
                 return result;
             }
+            var staff = await _staffRepository.GetAsync(dto.StaffId);
+
+            if (staff.Status != 1)
+            {
+                result.AddError("該員工已離職");
+                return result;
+            }
             dto.IssueDate = DateTimeHelper.TaipeiNow;
             dto.CompanyId = user.CompanyId;
+
+
 
             if (await _incomeLogsRepository.IsRepeatPayAsync(dto.StaffId, user.CompanyId, dto.SalaryOfMonth))
             {
@@ -2111,7 +2120,6 @@ namespace Human.Chrs.Domain
                 DateTime firstDayOfLastMonth = dto.IssueDate.AddMonths(-1);
                 firstDayOfLastMonth = new DateTime(firstDayOfLastMonth.Year, firstDayOfLastMonth.Month, 1);
                 DateTime lastDayOfLastMonth = dto.IssueDate.AddDays(-dto.IssueDate.Day);
-                var staff = await _staffRepository.GetUsingStaffAsync(dto.StaffId, user.CompanyId);
                 var lastMonthOverTime = (await _overTimeLogRepository.GetOverTimeLogOfPeriodAfterValidateAsync(dto.StaffId, user.CompanyId, firstDayOfLastMonth, lastDayOfLastMonth)).Sum(x => x.OverHours);
                 if (staff == null)
                 {

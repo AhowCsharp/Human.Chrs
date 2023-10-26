@@ -773,8 +773,8 @@ namespace Human.Chrs.Domain
             var result = new CommonResult<IEnumerable<CheckRecordsDTO>>();
             var user = _userService.GetCurrentUser();
 
-            var exist = await _staffRepository.VerifyExistStaffAsync(staffId, user.CompanyId);
-            if (!exist)
+            var staff = await _staffRepository.GetAsync(staffId);
+            if (staff == null)
             {
                 result.AddError("沒找到對應的員工");
                 return result;
@@ -785,6 +785,12 @@ namespace Human.Chrs.Domain
                 result.AddError("沒找到對應的公司");
                 return result;
             }
+            if (staff.CompanyId != user.CompanyId)
+            {
+                result.AddError("請勿跨公司搜索資料");
+                return result;
+            }
+
             if (startDate == null)
             {
                 startDate = new DateTime(DateTimeHelper.TaipeiNow.Year, DateTimeHelper.TaipeiNow.Month, 1);
