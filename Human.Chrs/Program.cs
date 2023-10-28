@@ -11,7 +11,7 @@ using Human.Chrs.Infra.Swagger;
 using Human.Repository.AutoMapper;
 using Human.Chrs.Domain.IRepository;
 using Human.Repository.Repository;
-using LineTag.Infrastructure.Repositories;
+using Human.Chrs.Infrastructure.Repositories;
 using Human.Chrs.Domain.Services;
 using Human.Chrs.Domain;
 using Quartz;
@@ -148,6 +148,7 @@ builder.Services.AddScoped<IAdminNotificationLogsRepository, AdminNotificationLo
 builder.Services.AddScoped<IAdminReadLogsRepository, AdminReadLogsRepository>();
 builder.Services.AddScoped<IResetPasswordLogsRepository, ResetPasswordLogsRepository>();
 builder.Services.AddScoped<IContractTypeRepository, ContractTypeRepository>();
+builder.Services.AddScoped<IShiftWorkListRepository, ShiftWorkListRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
 builder.Services.AddHttpClient();

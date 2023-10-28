@@ -51,6 +51,8 @@ public partial class HumanChrsContext : DbContext
 
     public virtual DbSet<SalarySetting> SalarySetting { get; set; }
 
+    public virtual DbSet<ShiftWorkList> ShiftWorkList { get; set; }
+
     public virtual DbSet<Staff> Staff { get; set; }
 
     public virtual DbSet<UpdateStaffInfoLogs> UpdateStaffInfoLogs { get; set; }
@@ -80,11 +82,7 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<AdminNotificationLogs>(entity =>
         {
-            entity.ToTable(tb =>
-                {
-                    tb.HasTrigger("tr_dbo_AdminNotificationLogs_4ce28a6d-b9ea-4f4a-a6d6-34b1ea5068d0_Sender");
-                    tb.HasTrigger("tr_dbo_AdminNotificationLogs_b28c1ba5-27ad-4f9f-9424-b66a07a2b446_Sender");
-                });
+            entity.ToTable(tb => tb.HasTrigger("tr_dbo_AdminNotificationLogs_6063b888-d32b-4341-ad67-2404259dd6ff_Sender"));
 
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Creator)
@@ -171,6 +169,7 @@ public partial class HumanChrsContext : DbContext
             entity.Property(e => e.EditDate).HasColumnType("datetime");
             entity.Property(e => e.Editor).HasMaxLength(255);
             entity.Property(e => e.ParttimeDate).HasColumnType("date");
+            entity.Property(e => e.ShiftWorkDarte).HasColumnType("date");
         });
 
         modelBuilder.Entity<ContractTypeList>(entity =>
@@ -221,11 +220,7 @@ public partial class HumanChrsContext : DbContext
 
         modelBuilder.Entity<NotificationLogs>(entity =>
         {
-            entity.ToTable(tb =>
-                {
-                    tb.HasTrigger("tr_dbo_NotificationLogs_a70d9c7e-754b-4c31-a91b-e723e913f5f6_Sender");
-                    tb.HasTrigger("tr_dbo_NotificationLogs_be05d646-cfd9-4230-a7ac-531787ad4bca_Sender");
-                });
+            entity.ToTable(tb => tb.HasTrigger("tr_dbo_NotificationLogs_8bd5628e-3032-4f68-a2c3-e55161f717ac_Sender"));
 
             entity.Property(e => e.Avatar).IsRequired();
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
@@ -288,6 +283,13 @@ public partial class HumanChrsContext : DbContext
             entity.Property(e => e.Editor)
                 .IsRequired()
                 .HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<ShiftWorkList>(entity =>
+        {
+            entity.Property(e => e.ClassName)
+                .IsRequired()
+                .HasMaxLength(50);
         });
 
         modelBuilder.Entity<Staff>(entity =>

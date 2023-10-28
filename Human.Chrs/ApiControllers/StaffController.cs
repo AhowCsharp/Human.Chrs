@@ -4,7 +4,7 @@ using Human.Chrs.Infra.Attribute;
 using Human.Chrs.ViewModel.Request;
 using Human.Repository.EF;
 
-namespace LineTag.Admin.ApiControllers
+namespace Human.Chrs.Admin.ApiControllers
 {
     /// <response code="401">登入失敗、驗證失敗</response>
     [Route("staff")]

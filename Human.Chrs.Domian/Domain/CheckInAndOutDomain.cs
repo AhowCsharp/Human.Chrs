@@ -54,8 +54,10 @@ namespace Human.Chrs.Domain
             var dateNow = DateTimeHelper.TaipeiNow;
             var start = dateNow.Date; // 設置為那天的 00:00:00
             var end = dateNow.Date.AddSeconds(86399); // 設置為那天的 23:59:59
+            var staff = await _staffRepository.GetAsync(user.Id);
+
             var partimeRule = await _companyRuleRepository.GetParttimeRuleAsync(user.CompanyId, user.DepartmentId, user.Id, start, end);
-            if (partimeRule != null)
+            if (partimeRule != null && staff.EmploymentTypeId == 2)
             {
                 var checkLog = await _checkRecordsRepository.GetCheckRecordAsync(user.CompanyId, user.Id);
                 if (checkLog == null)
@@ -97,7 +99,47 @@ namespace Human.Chrs.Domain
             }
 
 
+            var shiftworkRule = await _companyRuleRepository.GetShiftWorkRuleAsync(user.CompanyId, user.DepartmentId, user.Id, start, end);
+            if (shiftworkRule != null && staff.EmploymentTypeId == 4)
+            {
+                var checkLog = await _checkRecordsRepository.GetCheckRecordAsync(user.CompanyId, user.Id);
+                if (checkLog == null)
+                {
+                    record.CompanyId = user.CompanyId;
+                    record.StaffId = user.Id;
+                    record.IsCheckInOutLocation = DistanceHelper.CalculateDistance(shiftworkRule.Latitude.Value, shiftworkRule.Longitude.Value, latitude, longitude) > 200 ? 1 : 0;
+                    record.CheckInTime = DateTimeHelper.TaipeiNow;
+                    record.CheckInMemo = memo;
+                    record.IsCheckInLate = DateTimeHelper.TaipeiNow.TimeOfDay > shiftworkRule.CheckInEndTime ? 1 : 0;
+                    if (record.IsCheckInLate == 1)
+                    {
+                        exceededMinutes = (int)(DateTimeHelper.TaipeiNow.TimeOfDay - shiftworkRule.CheckInEndTime).TotalMinutes;
+                    }
+                    record.CheckInLateTimes = exceededMinutes;
+                    await _checkRecordsRepository.InsertAsync(record);
+                }
+                else if (checkLog.CheckOutTime == null)
+                {
+                    checkLog.IsCheckOutOutLocation = DistanceHelper.CalculateDistance(shiftworkRule.Latitude.Value, shiftworkRule.Longitude.Value, latitude, longitude) > 200 ? 1 : 0;
+                    checkLog.CheckOutTime = DateTimeHelper.TaipeiNow;
+                    checkLog.CheckOutMemo = memo;
+                    checkLog.IsCheckOutEarly = DateTimeHelper.TaipeiNow.TimeOfDay < shiftworkRule.CheckOutStartTime ? 1 : 0;
+                    checkLog.IsCheckOutEarly = DateTimeHelper.TaipeiNow.TimeOfDay < checkLog.CheckInTime.Value.TimeOfDay.Add(TimeSpan.FromHours(shiftworkRule.NeedWorkMinute / 60)) ? 1 : 0;
+                    if (checkLog.IsCheckOutEarly == 1)
+                    {
+                        exceededMinutes = (int)(checkLog.CheckInTime.Value.TimeOfDay.Add(TimeSpan.FromHours(shiftworkRule.NeedWorkMinute / 60)) - DateTimeHelper.TaipeiNow.TimeOfDay).TotalMinutes;
+                    }
+                    checkLog.CheckOutEarlyTimes = exceededMinutes;
+                    await _checkRecordsRepository.UpdateAsync(checkLog);
+                }
+                else
+                {
+                    result.AddError("今天已打過卡");
+                    return result;
+                }
 
+                return result;
+            }
 
             var rule = await _companyRuleRepository.GetCompanyRuleAsync(user.CompanyId, user.DepartmentId);
             if (rule == null || !rule.Latitude.HasValue ||  !rule.Longitude.HasValue || string.IsNullOrEmpty(rule.WorkAddress))

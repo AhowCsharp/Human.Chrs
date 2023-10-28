@@ -15,7 +15,7 @@ using Human.Repository.EF;
 using Human.Chrs.Domain.DTO;
 using Human.Chrs.Domain.CommonModels;
 
-namespace LineTag.Infrastructure.Repositories
+namespace Human.Chrs.Infrastructure.Repositories
 {
     public class AdminRepository : BaseRepository<Admin, AdminDTO, int>, IAdminRepository
     {

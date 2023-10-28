@@ -15,7 +15,7 @@ using Human.Repository.EF;
 using Human.Chrs.Domain.DTO;
 using System.Drawing;
 
-namespace LineTag.Infrastructure.Repositories
+namespace Human.Chrs.Infrastructure.Repositories
 {
     public class AmendCheckRecordRepository : BaseRepository<AmendCheckRecord, AmendCheckRecordDTO, int>, IAmendCheckRecordRepository
     {

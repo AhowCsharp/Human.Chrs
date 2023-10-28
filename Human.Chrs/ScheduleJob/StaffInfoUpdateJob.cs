@@ -1,5 +1,5 @@
 ﻿using Human.Chrs.Domain;
-using LineTag.Admin.ApiControllers;
+using Human.Chrs.Admin.ApiControllers;
 using Quartz;
 
 namespace Human.Chrs.ScheduleJob

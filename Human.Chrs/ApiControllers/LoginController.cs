@@ -6,7 +6,7 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using Human.Chrs.Domain.Helper;
 
-namespace LineTag.Admin.ApiControllers
+namespace Human.Chrs.Admin.ApiControllers
 {
     /// <response code="401">登入失敗、驗證失敗</response>
     [Route("login")]

@@ -50,6 +50,7 @@ namespace Human.Chrs.Domain
         private readonly GeocodingService _geocodingService;
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IContractTypeRepository _contractTypeRepository;
+        private readonly IShiftWorkListRepository _shiftWorkListRepository;
 
         public AdminDomain(
             ILogger<AdminDomain> logger,
@@ -72,7 +73,8 @@ namespace Human.Chrs.Domain
             UserService userService,
             GeocodingService geocodingService,
             IWebHostEnvironment hostEnvironment,
-            IContractTypeRepository contractTypeRepository)
+            IContractTypeRepository contractTypeRepository,
+            IShiftWorkListRepository shiftWorkListRepository)
         {
             _logger = logger;
             _adminRepository = adminRepository;
@@ -96,6 +98,7 @@ namespace Human.Chrs.Domain
             _geocodingService = geocodingService;
             _hostEnvironment = hostEnvironment;
             _contractTypeRepository = contractTypeRepository;
+            _shiftWorkListRepository = shiftWorkListRepository;
         }
 
         public async Task<CommonResult> SwitchReadStatusAsync(int notificationId)
@@ -449,6 +452,71 @@ namespace Human.Chrs.Domain
             return result;
         }
 
+        public async Task<CommonResult> ShiftWorkAdd(int staffId, DateTime startDate, DateTime endDate, TimeSpan startTime, TimeSpan endTime, string title, string detail, int level)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+
+            if (endDate < startDate)
+            {
+                result.AddError("時間格式不正確");
+                return result;
+            }
+
+            var staff = await _staffRepository.GetUsingStaffAsync(staffId, user.CompanyId);
+            var department = await _departmentRepository.GetAsync(staff.DepartmentId);
+            try
+            {
+                var map = await _geocodingService.GetCoordinates(detail);
+                var dto = new EventLogsDTO();
+                dto.StartDate = startDate;
+                dto.EndDate = endDate;
+                dto.EndTime = endTime;
+                dto.Title = title;
+                dto.StartTime = startTime;
+                dto.Detail = detail;
+                dto.StaffId = staffId;
+                dto.CompanyId = user.CompanyId;
+                dto.LevelStatus = level;
+                await _eventLogsRepository.InsertAsync(dto);
+
+                var shiftworkRule = new CompanyRuleDTO
+                {
+                    CompanyId = user.CompanyId,
+                    DepartmentId = staff.DepartmentId,
+                    CheckInStartTime = startTime,
+                    CheckInEndTime = startTime,
+                    CheckOutStartTime = endTime,
+                    CheckOutEndTime = endTime,
+                    DepartmentName = department.DepartmentName,
+                    NeedWorkMinute = (int)(endTime - startTime).TotalMinutes, // 這裡要修正，您可能想要用 endTime - startTime
+                    CreateDate = DateTimeHelper.TaipeiNow,
+                    Creator = user.StaffName,
+                    EditDate = DateTimeHelper.TaipeiNow,
+                    Editor = user.StaffName,
+                    WorkAddress = detail,
+                    Latitude = map.Latitude,
+                    Longitude = map.Longitude,
+                    ShiftWorkStaffId = staff.id,
+                    ShiftWorkDarte = startDate
+                };
+                await _companyRuleRepository.InsertAsync(shiftworkRule);
+            }
+            catch (Exception ex)
+            {
+                result.AddError(ex.Message);
+                return result;
+            }
+            return result;
+        }
+
         public async Task<CommonResult> MeetAdd(EventLogsDTO dto)
         {
             var result = new CommonResult();
@@ -775,6 +843,68 @@ namespace Human.Chrs.Domain
             return result;
         }
 
+        public async Task<CommonResult<IEnumerable<ShiftWorkListDTO>>> GetAllShiftworks()
+        {
+            var result = new CommonResult<IEnumerable<ShiftWorkListDTO>>();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (verifyAdminToken)
+            {
+                var data = await _shiftWorkListRepository.GetShiftWorkListAsync(user.CompanyId);
+                result.Data = data;
+            }
+            else
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            return result;
+        }
+
+        public async Task<CommonResult> CreateShiftworkAsync(string className,TimeSpan start,TimeSpan end)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (verifyAdminToken)
+            {
+                var dto = new ShiftWorkListDTO
+                {
+                    ClassName = className,
+                    StartTime = start,
+                    EndTime = end,
+                    CompanyId = user.CompanyId
+                };
+                await _shiftWorkListRepository.InsertAsync(dto);
+            }
+            else
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            return result;
+        }
+
+        public async Task<CommonResult> RemoveShiftworkAsync(int id)
+        {
+            var result = new CommonResult();
+            var user = _userService.GetCurrentUser();
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (verifyAdminToken)
+            {
+                await _shiftWorkListRepository.DeleteAsync(id);
+            }
+            else
+            {
+                result.AddError("操作者沒有權杖");
+
+                return result;
+            }
+            return result;
+        }
+
         public async Task<CommonResult> DeleteDepartmentAsunc(int departmentId, int otherDepartmentId)
         {
             var result = new CommonResult();
@@ -991,8 +1121,12 @@ namespace Human.Chrs.Domain
         {
             var user = _userService.GetCurrentUser();
 
-            var staffs = await _staffRepository.GetAllStaffAsync(user.CompanyId);
-
+            var staffs = (await _staffRepository.GetAllStaffAsync(user.CompanyId)).ToList();
+            foreach (var staff in staffs)
+            {
+                staff.IsCheckin = await _checkRecordsRepository.GetStaffCheckInStatus(staff.id);
+                staff.IsCheckOut = await _checkRecordsRepository.GetStaffCheckOutStatus(staff.id);
+            }
             return staffs;
         }
 
@@ -1284,7 +1418,7 @@ namespace Human.Chrs.Domain
                     return result;
                 }
                 dto.Creator = user.StaffName;
-                dto.NeedWorkMinute = dto.NeedWorkMinute * 60;
+                dto.NeedWorkMinute *= 60;
                 dto.CreateDate = DateTimeHelper.TaipeiNow;
                 dto.DepartmentName = (await _departmentRepository.GetAsync(dto.DepartmentId)).DepartmentName;
 
@@ -1424,7 +1558,7 @@ namespace Human.Chrs.Domain
                 result.AddError("操作者沒有權杖");
                 return result;
             }
-            var allVacations = (await _vacationLogRepository.GetPeriodVacationLogsAsync(user.Id, start, end)).ToList();
+            var allVacations = (await _vacationLogRepository.GetPeriodVacationLogsAsync(user.CompanyId, start, end)).ToList();
             foreach (var log in allVacations)
             {
                 var staff = await _staffRepository.GetUsingStaffAsync(log.StaffId, log.CompanyId);
@@ -1905,6 +2039,135 @@ namespace Human.Chrs.Domain
                 }
             }
             result.Data = await _vacationLogRepository.UpdateAsync(vacationLog);
+            return result;
+        }
+
+        public async Task<CommonResult<bool>> ApplyVacationAsync(int type, DateTime startDate, DateTime endDate, int hours, string reason,int staffId)
+        {
+            var result = new CommonResult<bool>();
+            var user = _userService.GetCurrentUser();
+            var exist = await _staffRepository.VerifyExistStaffAsync(staffId, user.CompanyId);
+            if (!exist)
+            {
+                result.AddError("沒找到對應的員工");
+                return result;
+            }
+            var verifyAdminToken = await _adminRepository.VerifyAdminTokenAsync(user);
+            if (!verifyAdminToken)
+            {
+                result.AddError("操作者沒有權杖");
+                return result;
+            }
+            var repeat = await _vacationLogRepository.VerifyVacationLogsAsync(staffId, user.CompanyId, startDate, endDate);
+            var staffDetail = await _personalDetailRepository.GetStaffDetailInfoAsync(staffId, user.CompanyId);
+            if (staffDetail == null)
+            {
+                result.AddError("員工個人詳細資料未填寫完整");
+                return result;
+            }
+            bool canApply = false;
+            var staff = await _staffRepository.GetAsync(staffId);
+            var vacation = new VacationLogDTO();
+            vacation.ApplyDate = DateTimeHelper.TaipeiNow;
+            vacation.CompanyId = user.CompanyId;
+            vacation.StaffId = staffId;
+            vacation.VacationType = type;
+            vacation.ActualStartDate = startDate;
+            vacation.ActualEndDate = endDate;
+            vacation.Hours = hours;
+            vacation.Reason = reason;
+            switch (type)
+            {
+                case 0: //特休
+                    if ((staff.SpecialRestDays * 8 + staff.SpecialRestHours) > hours && !repeat)
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 1://病假
+                    if ((staff.SickDays * 8 + staff.SickHours) > hours && !repeat)
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 2: //事假
+                    if ((staff.ThingDays * 8 + staff.ThingHours) > hours && !repeat)
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 3://產假
+                    if ((staff.ChildbirthDays * 8 + staff.ChildbirthHours) > hours && !repeat && staffDetail.Gender == "女性")
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 4://喪假
+                    if ((staff.DeathDays * 8 + staff.DeathHours) > hours && !repeat)
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 5://婚假
+                    if ((staff.MarryDays * 8 + staff.MarryHours) > hours && !repeat)
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 6://公假
+                    canApply = true;
+                    break;
+
+                case 7://工傷病假
+                    canApply = true;
+                    break;
+
+                case 8://生理假
+                    if ((staff.MenstruationDays * 8 + staff.MenstruationHours) > hours && !repeat && staffDetail.Gender == "女性")
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 9://育嬰留職停薪假
+                    if ((staff.TackeCareBabyDays * 8 + staff.TackeCareBabyHours) > hours && !repeat && staffDetail.Gender == "女性")
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 10://安胎
+                    if ((staff.TocolysisDays * 8 + staff.TocolysisHours) > hours && !repeat && staffDetail.Gender == "女性")
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                case 11://產檢
+                    if ((staff.PrenatalCheckUpDays * 8 + staff.PrenatalCheckUpHours) > hours && !repeat)
+                    {
+                        canApply = true;
+                    }
+                    break;
+
+                default:
+                    canApply = false;
+                    break;
+            }
+
+            if (!canApply)
+            {
+                result.AddError("您已超過該假別可請求的時數");
+                return result;
+            }
+            await _vacationLogRepository.InsertAsync(vacation);
+
             return result;
         }
 

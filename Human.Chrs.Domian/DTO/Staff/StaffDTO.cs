@@ -116,5 +116,9 @@ namespace Human.Chrs.Domain.DTO
         public string DeviceId { get; set; }
 
         public int? DaySalary { get; set; }
+
+        public bool IsCheckin { get; set; }
+
+        public bool IsCheckOut { get; set; }
     }
 }

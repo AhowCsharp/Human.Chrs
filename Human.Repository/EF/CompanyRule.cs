@@ -44,4 +44,8 @@ public partial class CompanyRule
     public int? ParttimeStaffId { get; set; }
 
     public DateTime? ParttimeDate { get; set; }
+
+    public int? ShiftWorkStaffId { get; set; }
+
+    public DateTime? ShiftWorkDarte { get; set; }
 }

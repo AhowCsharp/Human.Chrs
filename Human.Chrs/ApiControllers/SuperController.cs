@@ -11,7 +11,7 @@ using NPOI.XSSF.UserModel;
 using System.Globalization;
 using NPOI.SS.Util;
 
-namespace LineTag.Admin.ApiControllers
+namespace Human.Chrs.Admin.ApiControllers
 {
     /// <response code="401">登入失敗、驗證失敗</response>
     [Route("super")]

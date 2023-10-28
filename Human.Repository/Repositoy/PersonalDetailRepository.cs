@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using Human.Repository.EF;
 using Human.Chrs.Domain.DTO;
 
-namespace LineTag.Infrastructure.Repositories
+namespace Human.Chrs.Infrastructure.Repositories
 {
     public class PersonalDetailRepository : BaseRepository<PersonalDetail, PersonalDetailDTO, int>, IPersonalDetailRepository
     {

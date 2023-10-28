@@ -11,7 +11,7 @@ using NPOI.XSSF.UserModel;
 using System.Globalization;
 using NPOI.SS.Util;
 
-namespace LineTag.Admin.ApiControllers
+namespace Human.Chrs.Admin.ApiControllers
 {
     /// <response code="401">登入失敗、驗證失敗</response>
     [Route("admin")]
@@ -766,7 +766,7 @@ namespace LineTag.Admin.ApiControllers
         /// <response code="500">內部錯誤</response>
         /// <returns></returns>
         [HttpGet]
-        [Route("eventdetails")]
+        [Route("workeventdetails")]
         [ApTokenAuth]
         [ApCompanyIdAuth]
         [ApUserAuth]
@@ -879,7 +879,7 @@ namespace LineTag.Admin.ApiControllers
         /// <response code="500">內部錯誤</response>
         /// <returns></returns>
         [HttpPost]
-        [Route("event")]
+        [Route("workevent")]
         [ApTokenAuth]
         [ApCompanyIdAuth]
         [ApUserAuth]
@@ -889,6 +889,44 @@ namespace LineTag.Admin.ApiControllers
             try
             {
                 var result = await _admindomain.ParttimeWorkAdd(request.StaffId, request.EventStartDate, request.EventEndDate, request.StartTime, request.EndTime, request.Title, request.Detail, request.LevelStatus);
+
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(ParttimeWorkAdd));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 輪班人員排班
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("shiftworkevent")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ShiftWorkAdd(ShiftWorkRequest request)
+        {
+            try
+            {
+                var result = await _admindomain.ShiftWorkAdd(request.StaffId, request.EventStartDate, request.EventEndDate, request.StartTime, request.EndTime, request.Title, request.Detail, request.LevelStatus);
 
                 if (result.Success)
                 {
@@ -1065,7 +1103,7 @@ namespace LineTag.Admin.ApiControllers
             {
                 _logger.LogError(ex, nameof(DownloadsStaffCheckrecordExcel));
 
-                return ServerError500();
+                return BadRequest(ex.Message);
             }
         }
 
@@ -1133,8 +1171,15 @@ namespace LineTag.Admin.ApiControllers
                     datarow.CreateCell(1).SetCellValue(data[i].IssueDate.ToString("yyyy-MM-dd"));
                     if (data[i].BasicSalary == 0)
                     {
-                        // 如果 BasicSalary 是 0，那么就使用 TOTAL 字段
-                        datarow.CreateCell(2).SetCellValue(data[i].TotalDaySalary.ToString());
+                        if (data[i].TotalDaySalary.HasValue)
+                        {
+                            datarow.CreateCell(2).SetCellValue(data[i].TotalDaySalary.ToString());
+                        }
+                        else if (data[i].ParttimeSalary.HasValue)
+                        {
+                            datarow.CreateCell(2).SetCellValue(data[i].ParttimeSalary.ToString());
+                        }
+
                     }
                     else
                     {
@@ -1149,7 +1194,7 @@ namespace LineTag.Admin.ApiControllers
                     datarow.CreateCell(8).SetCellValue(data[i].SickHours.ToString());
                     datarow.CreateCell(9).SetCellValue(data[i].ThingHours.ToString());
                     datarow.CreateCell(10).SetCellValue(data[i].MenstruationHours.ToString());
-                    datarow.CreateCell(11).SetCellValue(data[i].TocolysisHours.ToString());
+                    datarow.CreateCell(11).SetCellValue(data[i].TocolysisHours != null? data[i].TocolysisHours.ToString():"0");
                     datarow.CreateCell(12).SetCellValue(data[i].ChildbirthHours.ToString());
                     datarow.CreateCell(13).SetCellValue(data[i].TakeCareBabyHours.ToString());
                     datarow.CreateCell(14).SetCellValue(data[i].EarlyOrLateAmount.ToString());
@@ -1201,7 +1246,7 @@ namespace LineTag.Admin.ApiControllers
             {
                 _logger.LogError(ex, nameof(DownloadsStaffCheckrecordExcel));
 
-                return ServerError500();
+                return BadRequest(ex.Message);
             }
         }
 
@@ -1394,7 +1439,7 @@ namespace LineTag.Admin.ApiControllers
         /// <response code="500">內部錯誤</response>
         /// <returns></returns>
         [HttpGet]
-        [Route("paymoeny")]
+        [Route("paymoney")]
         [ApTokenAuth]
         [ApCompanyIdAuthAttribute]
         [ApUserAuthAttribute]
@@ -1416,6 +1461,44 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(GetStaffSalaryView));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 申請休假
+        /// </summary>
+        /// <param name="vacationRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("vacation")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ApplyVacation(AdminHelpVacationRequest vacationRequest)
+        {
+            try
+            {
+                var result = await _admindomain.ApplyVacationAsync(vacationRequest.Type, vacationRequest.StartDate, vacationRequest.EndDate, vacationRequest.Hours, vacationRequest.Reason,vacationRequest.staffId);
+
+                if (result.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(ApplyVacation));
 
                 return ServerError500();
             }
@@ -1560,6 +1643,117 @@ namespace LineTag.Admin.ApiControllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, nameof(GetAllAdmins));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 輪班制班別列表
+        /// </summary>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("shiftwork")]
+        [ApTokenAuth]
+        [ApCompanyIdAuthAttribute]
+        [ApUserAuthAttribute]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllShiftworks()
+        {
+            try
+            {
+                var result = await _admindomain.GetAllShiftworks();
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(GetAllShiftworks));
+
+                return ServerError500();
+            }
+        }
+
+        /// <summary>
+        /// 新增輪班班別
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("shiftwork")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> CreateShiftwork(ClassNameRequest request)
+        {
+            try
+            {
+                var result = await _admindomain.CreateShiftworkAsync(request.ClassName,request.StartTime,request.EndTime);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(CreateShiftwork));
+
+                return ServerError500();
+            }
+        }
+
+
+        /// <summary>
+        /// 刪除輪班班別
+        /// </summary>
+        /// <param name="eventRequest">請求資料</param>
+        /// <response code="200">OK</response>
+        /// <response code="400">後端驗證錯誤、少參數、數值有誤、格式錯誤</response>
+        /// <response code="403">無此權限</response>
+        /// <response code="500">內部錯誤</response>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("shiftwork")]
+        [ApTokenAuth]
+        [ApCompanyIdAuth]
+        [ApUserAuth]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoveShiftwork(int id)
+        {
+            try
+            {
+                var result = await _admindomain.RemoveShiftworkAsync(id);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, nameof(RemoveShiftwork));
 
                 return ServerError500();
             }

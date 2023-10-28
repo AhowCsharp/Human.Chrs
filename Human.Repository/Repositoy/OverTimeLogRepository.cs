@@ -16,7 +16,7 @@ using Human.Chrs.Domain.DTO;
 using Human.Chrs.Domain.Helper;
 using System.Collections;
 
-namespace LineTag.Infrastructure.Repositories
+namespace Human.Chrs.Infrastructure.Repositories
 {
     public class OverTimeLogRepository : BaseRepository<OverTimeLog, OverTimeLogDTO, int>, IOverTimeLogRepository
     {

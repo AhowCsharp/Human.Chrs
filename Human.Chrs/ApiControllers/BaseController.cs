@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace LineTag.Admin.ApiControllers
+namespace Human.Chrs.Admin.ApiControllers
 {
     public class BaseController : ControllerBase
     {

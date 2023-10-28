@@ -17,7 +17,7 @@ using Human.Chrs.Domain.Helper;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 
-namespace LineTag.Infrastructure.Repositories
+namespace Human.Chrs.Infrastructure.Repositories
 {
     public class CompanyRuleRepository : BaseRepository<CompanyRule, CompanyRuleDTO, int>, ICompanyRuleRepository
     {
@@ -29,6 +29,13 @@ namespace LineTag.Infrastructure.Repositories
         {
             var data = await _context.CompanyRule.FirstOrDefaultAsync(x => x.CompanyId == companyId && x.DepartmentId == DepartmentId 
             && x.ParttimeStaffId == staffId && x.ParttimeDate >= start && x.ParttimeDate <= end);
+            return _mapper.Map<CompanyRuleDTO>(data);
+        }
+
+        public async Task<CompanyRuleDTO> GetShiftWorkRuleAsync(int companyId, int DepartmentId, int staffId, DateTime start, DateTime end)
+        {
+            var data = await _context.CompanyRule.FirstOrDefaultAsync(x => x.CompanyId == companyId && x.DepartmentId == DepartmentId
+            && x.ShiftWorkStaffId == staffId && x.ShiftWorkDarte >= start && x.ShiftWorkDarte <= end);
             return _mapper.Map<CompanyRuleDTO>(data);
         }
         public async Task<CompanyRuleDTO> GetCompanyRuleAsync(int companyId, int DepartmentId)

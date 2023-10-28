@@ -15,7 +15,7 @@ using Human.Repository.EF;
 using Human.Chrs.Domain.DTO;
 using Human.Chrs.Domain.Helper;
 
-namespace LineTag.Infrastructure.Repositories
+namespace Human.Chrs.Infrastructure.Repositories
 {
     public class StaffRepository : BaseRepository<Staff, StaffDTO, int>, IStaffRepository
     {
